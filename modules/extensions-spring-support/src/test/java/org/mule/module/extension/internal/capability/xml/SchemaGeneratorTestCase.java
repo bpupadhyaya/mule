@@ -7,8 +7,7 @@
 package org.mule.module.extension.internal.capability.xml;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.mule.api.registry.ServiceRegistry;
@@ -27,6 +26,11 @@ import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 import org.mule.util.IOUtils;
 
+import java.util.List;
+
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,9 +64,23 @@ public class SchemaGeneratorTestCase extends AbstractMuleTestCase
         XmlModelProperty capability = extensionModel.getModelProperty(XmlModelProperty.KEY);
 
         String schema = generator.generate(extensionModel, capability);
-        System.out.println(schema);
+        XMLUnit.setNormalizeWhitespace(Boolean.TRUE);
+        XMLUnit.setIgnoreWhitespace(Boolean.TRUE);
+        XMLUnit.setIgnoreComments(Boolean.TRUE);
+        XMLUnit.setIgnoreAttributeOrder(Boolean.TRUE);
 
-        XMLUnit.setIgnoreWhitespace(true);
-        assertThat(XMLUnit.compareXML(expectedSchema, schema).identical(), is(true));
+        Diff diff = new Diff(expectedSchema, schema);
+        if (!(diff.similar() && diff.identical())) {
+
+            DetailedDiff detDiff = new DetailedDiff(diff);
+            List differences = detDiff.getAllDifferences();
+            StringBuilder diffLines = new StringBuilder();
+            for (Object object : differences) {
+                Difference difference = (Difference) object;
+                diffLines.append(difference.toString() + '\n');
+            }
+
+            assertEquals("The Output of the template manager was not the expected:", expectedSchema, schema);
+    }
     }
 }
