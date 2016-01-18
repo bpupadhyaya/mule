@@ -6,18 +6,17 @@
  */
 package org.mule.test.integration.routing.inbound;
 
-import static org.junit.Assert.assertEquals;
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
-import org.junit.Ignore;
-import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleMessage;
 import org.mule.api.client.MuleClient;
 import org.mule.functional.junit4.FunctionalTestCase;
 
 import org.junit.Test;
 
-@Ignore("MULE-4485")
 public class InboundRouterSyncAsyncClientTestCase extends FunctionalTestCase
 {
     @Override
@@ -29,23 +28,19 @@ public class InboundRouterSyncAsyncClientTestCase extends FunctionalTestCase
     @Test
     public void testSync() throws Exception
     {
-        MuleClient client = muleContext.getClient();
-        DefaultMuleMessage message = new DefaultMuleMessage("testSync", muleContext);
-        message.setOutboundProperty("messageType", "sync");
-        MuleMessage result = client.send("vm://singleSyncAsyncEntry", message);
-        assertEquals("testSync OK", result.getPayload());
+        MuleMessage result = runFlow("SyncAsync", "testSync", singletonMap("messageType", "sync")).getMessage();
+
+        assertThat(result.getPayload(), is("OK"));
     }
 
     @Test
     public void testAsync() throws Exception
     {
-        MuleClient client = muleContext.getClient();
-        DefaultMuleMessage messsage = new DefaultMuleMessage("testAsync", muleContext);
-        messsage.setOutboundProperty("messageType", "async");
-        client.dispatch("vm://singleSyncAsyncEntry", messsage);
+        runFlow("SyncAsync", "testAsync", singletonMap("messageType", "async"));
 
-        MuleMessage result = client.request("vm://asyncResponse", 5000);
+        MuleClient client = muleContext.getClient();
+        MuleMessage result = client.request("test://asyncResponse", RECEIVE_TIMEOUT);
         assertNotNull(result);
-        assertEquals("testAsync's Response sent to asyncResponse", result.getPayload());
+        assertThat(result.getPayload(), is("Response sent to asyncResponse"));
     }
 }

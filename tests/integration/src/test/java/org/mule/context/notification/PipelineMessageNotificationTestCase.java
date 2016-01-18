@@ -7,10 +7,17 @@
 package org.mule.context.notification;
 
 import static org.junit.Assert.assertNotNull;
+import org.mule.api.MessagingException;
 import org.mule.api.client.MuleClient;
+
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 public class PipelineMessageNotificationTestCase extends AbstractNotificationTestCase
 {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Override
     protected String getConfigFile()
@@ -22,13 +29,14 @@ public class PipelineMessageNotificationTestCase extends AbstractNotificationTes
     public void doTest() throws Exception
     {
         MuleClient client = muleContext.getClient();
-        assertNotNull(client.send("vm://rr", "hello sweet world", null));
-        assertNotNull(client.send("vm://rrException", "hello sweet world", null));
-        assertNotNull(client.send("vm://rrResponseException", "hello sweet world", null));
-        client.dispatch("vm://ow", "goodbye cruel world", null);
-        client.request("vm://ow-out", RECEIVE_TIMEOUT);
-        client.dispatch("vm://owException", "goodbye cruel world", null);
-        client.request("vm://owException-out", RECEIVE_TIMEOUT);
+        assertNotNull(runFlow("service-1", "hello sweet world"));
+        expectedException.expect(MessagingException.class);
+        assertNotNull(runFlow("service-2", "hello sweet world"));
+        assertNotNull(runFlow("service-3", "hello sweet world"));
+        runFlowAsync("service-4", "goodbye cruel world");
+        client.request("test://ow-out", RECEIVE_TIMEOUT);
+        runFlowAsync("service-5", "goodbye cruel world", null);
+        client.request("test://owException-out", RECEIVE_TIMEOUT);
     }
 
     @Override

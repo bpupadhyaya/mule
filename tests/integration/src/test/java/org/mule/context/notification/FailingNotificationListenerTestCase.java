@@ -7,7 +7,6 @@
 
 package org.mule.context.notification;
 
-import org.mule.api.client.LocalMuleClient;
 import org.mule.api.context.notification.ExceptionNotificationListener;
 import org.mule.api.context.notification.ServerNotification;
 import org.mule.functional.junit4.FunctionalTestCase;
@@ -31,9 +30,8 @@ public class FailingNotificationListenerTestCase extends FunctionalTestCase
     @Test
     public void testName() throws Exception
     {
-        LocalMuleClient client = muleContext.getClient();
-        client.dispatch("vm://testInput", TEST_MESSAGE, null);
-        client.dispatch("vm://testInput", TEST_MESSAGE, null);
+        runFlowAsync("testFlow", TEST_MESSAGE);
+        runFlowAsync("testFlow", TEST_MESSAGE);
 
         Prober prober = new PollingProber(1000, 10);
         prober.check(new Probe()

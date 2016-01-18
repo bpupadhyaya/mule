@@ -6,8 +6,10 @@
  */
 package org.mule.test.integration.messaging.meps;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
 import org.mule.api.MuleMessage;
 import org.mule.api.client.MuleClient;
 import org.mule.functional.junit4.FunctionalTestCase;
@@ -19,8 +21,6 @@ import org.junit.Test;
 
 public class InOnlyOutOnlyTestCase extends FunctionalTestCase
 {
-    public static final long TIMEOUT = 3000;
-
     @Override
     protected String getConfigFile()
     {
@@ -32,17 +32,18 @@ public class InOnlyOutOnlyTestCase extends FunctionalTestCase
     {
         MuleClient client = muleContext.getClient();
 
-        client.dispatch("inboundEndpoint", "some data", null);
+        runFlowAsync("In-Only_Out-Only-Service", "some data");
+
         Map<String, Object> props = new HashMap<String, Object>();
         props.put("foo", "bar");
-        client.dispatch("inboundEndpoint", "some data", props);
+        runFlowAsync("In-Only_Out-Only-Service", "some data", props);
 
-        MuleMessage result = client.request("receivedEndpoint", TIMEOUT);
+        MuleMessage result = client.request("test://received", RECEIVE_TIMEOUT);
         assertNotNull(result);
-        assertEquals("foo header received", getPayloadAsString(result));
+        assertThat(getPayloadAsString(result), is("foo header received"));
 
-        result = client.request("notReceivedEndpoint", TIMEOUT);
+        result = client.request("test://notReceived", RECEIVE_TIMEOUT);
         assertNotNull(result);
-        assertEquals("foo header not received", getPayloadAsString(result));
+        assertThat(getPayloadAsString(result), is("foo header not received"));
     }
 }

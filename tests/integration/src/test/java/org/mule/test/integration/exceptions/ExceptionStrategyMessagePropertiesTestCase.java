@@ -40,9 +40,9 @@ public class ExceptionStrategyMessagePropertiesTestCase extends FunctionalTestCa
         MuleMessage msg;
         for (int i = 0; i < numMessages; ++i)
         {
-            msg = client.request("vm://error", 5000);
+            msg = client.request("test://out", 5000);
             assertNotNull(msg);
-            assertEquals("bar", msg.getInboundProperty("foo"));
+            assertEquals("bar", msg.getOutboundProperty("prop"));
         }
     }
 
@@ -53,13 +53,11 @@ public class ExceptionStrategyMessagePropertiesTestCase extends FunctionalTestCa
         {
             try
             {
-                MuleClient client = muleContext.getClient();
-
                 Map<String, Object> props = new HashMap<String, Object>();
                 props.put("foo", "bar");
                 for (int i = 0; i < numMessages; ++i)
                 {
-                    client.dispatch("vm://in", "test", props);
+                    runFlowAsync("inbound", getTestMuleMessage(), props);
                 }
             }
             catch (Exception e)

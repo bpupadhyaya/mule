@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.MessageExchangePattern;
@@ -31,10 +32,10 @@ import org.mule.api.routing.AggregationContext;
 import org.mule.api.routing.ResponseTimeoutException;
 import org.mule.api.transport.DispatchException;
 import org.mule.construct.Flow;
-import org.mule.routing.AggregationStrategy;
-import org.mule.routing.CompositeRoutingException;
 import org.mule.functional.functional.FlowAssert;
 import org.mule.functional.junit4.FunctionalTestCase;
+import org.mule.routing.AggregationStrategy;
+import org.mule.routing.CompositeRoutingException;
 import org.mule.util.concurrent.Latch;
 
 import java.io.ByteArrayInputStream;
@@ -184,14 +185,14 @@ public class ScatterGatherRouterTestCase extends FunctionalTestCase
     @Test
     public void requestResponseInboundEndpoint() throws Exception
     {
-        muleContext.getClient().send("vm://requestResponseInboundEndpoint", getTestEvent("").getMessage());
+        runFlow("requestResponseInboundEndpoint", "");
         FlowAssert.verify("requestResponseInboundEndpoint");
     }
 
     @Test
     public void oneWayInboundEndpoint() throws Exception
     {
-        muleContext.getClient().send("vm://oneWayInboundEndpoint", getTestEvent("").getMessage());
+        runFlowAsync("oneWayInboundEndpoint", "");
         FlowAssert.verify("oneWayInboundEndpoint");
     }
 
@@ -199,7 +200,7 @@ public class ScatterGatherRouterTestCase extends FunctionalTestCase
     public void routesWithForeachAndInboundEndpoint() throws Exception
     {
         final String[] payload = new String[] {"apple", "banana", "orange"};
-        muleContext.getClient().send("vm://routesWithForeachAndInboundEndpoint", getTestEvent(Arrays.asList(payload)).getMessage());
+        runFlow("routesWithForeachAndInboundEndpoint", Arrays.asList(payload));
         FlowAssert.verify("routesWithForeachAndInboundEndpoint");
     }
 
@@ -220,7 +221,7 @@ public class ScatterGatherRouterTestCase extends FunctionalTestCase
     {
         try
         {
-            this.runFlow("failingMergeStrategy", getTestEvent(""));
+            runFlow("failingMergeStrategy", getTestEvent(""));
             fail("Was expecting a exception");
         }
         catch (MessagingException e)
@@ -238,21 +239,21 @@ public class ScatterGatherRouterTestCase extends FunctionalTestCase
     @Test
     public void oneWayRouteWithSingleResponse() throws Exception
     {
-        muleContext.getClient().send("vm://oneWayRouteWithSingleResponse", getTestEvent("").getMessage());
+        runFlow("oneWayRouteWithSingleResponse", "");
         FlowAssert.verify("oneWayRouteWithSingleResponse");
     }
 
     @Test
     public void oneWayRouteWithMultipleResponses() throws Exception
     {
-        muleContext.getClient().send("vm://oneWayRouteWithMultipleResponses", getTestEvent("").getMessage());
+        runFlow("oneWayRouteWithMultipleResponses", "");
         FlowAssert.verify("oneWayRouteWithMultipleResponses");
     }
 
     @Test
     public void expressionFilterRoute() throws Exception
     {
-        muleContext.getClient().send("vm://expressionFilterRoute", getTestEvent("").getMessage());
+        runFlow("expressionFilterRoute", "");
         FlowAssert.verify("expressionFilterRoute");
     }
 
@@ -269,7 +270,7 @@ public class ScatterGatherRouterTestCase extends FunctionalTestCase
     @Test
     public void oneWayRoutesOnly() throws Exception
     {
-        muleContext.getClient().send("vm://oneWayRoutesOnly", getTestEvent("").getMessage());
+        runFlow("oneWayRoutesOnly", "");
         FlowAssert.verify("oneWayRoutesOnly");
     }
 

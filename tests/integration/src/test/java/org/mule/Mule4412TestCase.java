@@ -6,13 +6,14 @@
  */
 package org.mule;
 
-import static org.junit.Assert.assertEquals;
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
+
 import org.mule.api.MuleMessage;
 import org.mule.api.client.MuleClient;
-import org.mule.api.transport.PropertyScope;
 import org.mule.functional.junit4.FunctionalTestCase;
 import org.mule.test.filters.FilterCounter;
 
@@ -25,8 +26,6 @@ import org.junit.Test;
  */
 public class Mule4412TestCase extends FunctionalTestCase
 {
-    private int RECEIVE_TIMEOUT_MS = 3000;
-
     @Override
     protected String getConfigFile()
     {
@@ -57,21 +56,18 @@ public class Mule4412TestCase extends FunctionalTestCase
     @Test
     public void testFilterOnce() throws Exception
     {
-        MuleMessage msg = getTestMuleMessage(TEST_MESSAGE);
-        msg.setOutboundProperty("pass", "true");
-
         MuleClient client = muleContext.getClient();
-        client.send("vm://async", msg);
-        MuleMessage reply = client.request("vm://asyncResponse", RECEIVE_TIMEOUT_MS);
+        runFlowAsync("AsyncRequest", TEST_MESSAGE, singletonMap("pass", "true"));
+
+        MuleMessage reply = client.request("test://asyncResponse", RECEIVE_TIMEOUT);
         int times = FilterCounter.counter.get();
-        assertTrue("did not filter one time as expected, times filtered " + times, times == 1);
+        assertThat("did not filter one time as expected", times, is(1));
         assertNotNull(reply);
-        assertEquals("wrong message received : " + getPayloadAsString(reply), TEST_MESSAGE,
-            getPayloadAsString(reply));
-        assertEquals("'pass' property value not correct", "true", reply.getInboundProperty("pass"));
+        assertThat("wrong message received", getPayloadAsString(reply), is(TEST_MESSAGE));
+        assertThat("'pass' property value not correct", reply.getInboundProperty("pass"), is("true"));
 
         // make sure there are no more messages
-        assertNull(client.request("vm://asyncResponse", RECEIVE_TIMEOUT_MS));
+        assertNull(client.request("test://asyncResponse", RECEIVE_TIMEOUT));
     }
 
     /**
@@ -82,14 +78,11 @@ public class Mule4412TestCase extends FunctionalTestCase
     @Test
     public void testWrongPropertyKey() throws Exception
     {
-        MuleMessage msg = getTestMuleMessage(TEST_MESSAGE);
-        msg.setProperty("fail", "true", PropertyScope.INVOCATION);
-
         MuleClient client = muleContext.getClient();
-        client.send("vm://async", msg);
-        MuleMessage reply = client.request("vm://asyncResponse", RECEIVE_TIMEOUT_MS);
+        runFlowAsync("AsyncRequest", TEST_MESSAGE, singletonMap("fail", "true"));
+        MuleMessage reply = client.request("test://asyncResponse", RECEIVE_TIMEOUT);
         assertNull(reply);
-        assertTrue("should not have filtered", FilterCounter.counter.get() == 0);
+        assertThat("should not have filtered", FilterCounter.counter.get(), is(0));
     }
 
     /**
@@ -101,14 +94,12 @@ public class Mule4412TestCase extends FunctionalTestCase
     @Test
     public void testWrongPropertyValue() throws Exception
     {
-        MuleMessage msg = getTestMuleMessage(TEST_MESSAGE);
-        msg.setProperty("pass", "false", PropertyScope.INBOUND);
-
         MuleClient client = muleContext.getClient();
-        client.send("vm://async", msg);
-        MuleMessage reply = client.request("vm://asyncResponse", RECEIVE_TIMEOUT_MS);
+        runFlowAsync("AsyncRequest", TEST_MESSAGE, singletonMap("pass", "false"));
+
+        MuleMessage reply = client.request("test://asyncResponse", RECEIVE_TIMEOUT);
         assertNull(reply);
-        assertTrue("should not have filtered", FilterCounter.counter.get() == 0);
+        assertThat("should not have filtered", FilterCounter.counter.get(), is(0));
     }
 
     /**
@@ -120,12 +111,10 @@ public class Mule4412TestCase extends FunctionalTestCase
     @Test
     public void testNoProperty() throws Exception
     {
-        MuleMessage msg = getTestMuleMessage(TEST_MESSAGE);
-
         MuleClient client = muleContext.getClient();
-        client.send("vm://async", msg);
-        MuleMessage reply = client.request("vm://asyncResponse", RECEIVE_TIMEOUT_MS);
+        runFlowAsync("AsyncRequest", TEST_MESSAGE);
+        MuleMessage reply = client.request("test://asyncResponse", RECEIVE_TIMEOUT);
         assertNull(reply);
-        assertTrue("should not have filtered", FilterCounter.counter.get() == 0);
+        assertThat("should not have filtered", FilterCounter.counter.get(), is(0));
     }
 }

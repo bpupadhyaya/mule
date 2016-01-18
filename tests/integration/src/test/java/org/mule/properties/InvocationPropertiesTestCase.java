@@ -6,14 +6,16 @@
  */
 package org.mule.properties;
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
+import static org.junit.Assert.assertThat;
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
+import org.mule.api.routing.filter.FilterUnacceptedException;
 import org.mule.api.transport.PropertyScope;
 import org.mule.construct.Flow;
 import org.mule.functional.functional.FlowAssert;
@@ -41,6 +43,12 @@ public class InvocationPropertiesTestCase extends FunctionalTestCase
 
     @Rule
     public DynamicPort dynamicPort3 = new DynamicPort("port3");
+
+    @Override
+    protected String getConfigFile()
+    {
+        return "org/mule/properties/invocation-properties-config.xml";
+    }
 
     @Test
     public void setInvocationPropertyUsingAPIGetInFlow() throws Exception
@@ -85,20 +93,6 @@ public class InvocationPropertiesTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void noPropagationInDifferentFlowVMRequestResponse() throws Exception
-    {
-        testFlow("noPropagationInDifferentFlowVMRequestResponse");
-        FlowAssert.verify("noPropagationInDifferentFlowVMRequestResponse-2");
-    }
-
-    @Test
-    public void noPropagationInDifferentFlowVMOneWay() throws Exception
-    {
-        testFlow("noPropagationInDifferentFlowVMOneWay");
-        FlowAssert.verify("noPropagationInDifferentFlowVMOneWay-2");
-    }
-
-    @Test
     public void noPropagationInDifferentFlowHttp() throws Exception
     {
         testFlow("noPropagationInDifferentFlowHttp");
@@ -121,12 +115,6 @@ public class InvocationPropertiesTestCase extends FunctionalTestCase
         assertNotNull(message.getInvocationProperty("P1"));
         assertNotNull(message.getInvocationProperty("P2"));
         assertNull(message.getInvocationProperty("P3"));
-    }
-
-    @Test
-    public void propagationWithVMRequestResponseOutboundEndpointMidFlow() throws Exception
-    {
-        testFlow("VMRequestResponseEndpointFlowMidFlow");
     }
 
     @Test
@@ -283,14 +271,15 @@ public class InvocationPropertiesTestCase extends FunctionalTestCase
     @Test
     public void defaultExceptionStrategyAfterCallSubflow() throws Exception
     {
-        muleContext.getClient().send("vm://in","test",null,RECEIVE_TIMEOUT);
+        try
+        {
+            runFlow("defaultExceptionStrategyAfterCallingSubflow", TEST_PAYLOAD);
+        }
+        catch (Exception e)
+        {
+            assertThat(e, instanceOf(FilterUnacceptedException.class));
+        }
         FlowAssert.verify("defaultExceptionStrategyAfterCallingSubflow");
-    }
-
-    @Override
-    protected String getConfigFile()
-    {
-        return "org/mule/properties/invocation-properties-config.xml";
     }
 
 }

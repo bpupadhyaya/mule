@@ -9,7 +9,6 @@ package org.mule.issues;
 import static org.junit.Assert.assertEquals;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
-import org.mule.api.client.MuleClient;
 import org.mule.functional.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.transformer.AbstractMessageTransformer;
@@ -39,12 +38,12 @@ public class MessageRootIdPropagationTestCase extends FunctionalTestCase
     public void testRootIDs() throws Exception
     {
         RootIDGatherer.initialize();
-        MuleClient client = muleContext.getClient();
 
-        MuleMessage msg = getTestMuleMessage("Hello");
-        msg.setOutboundProperty("where", "client");
-        RootIDGatherer.process(msg);
-        client.send("vm://vmin", msg);
+        MuleEvent event = getTestEvent("Hello");
+        MuleMessage message = event.getMessage();
+        message.setOutboundProperty("where", "client");
+        RootIDGatherer.process(message);
+        runFlow("flow1", event);
         Thread.sleep(1000);
         assertEquals(6, RootIDGatherer.getMessageCount());
         assertEquals(1, RootIDGatherer.getIds().size());

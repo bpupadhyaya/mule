@@ -6,11 +6,12 @@
  */
 package org.mule.test.routing;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.collection.IsArrayWithSize.arrayWithSize;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -67,19 +68,19 @@ public class ForeachTestCase extends FunctionalTestCase
         payload.add("julio");
         payload.add("sosa");
 
-        MuleMessage result = client.send("vm://input-1", payload, null);
-        assertTrue(result.getPayload() instanceof Collection);
+        MuleMessage result = runFlow("minimal-config", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(Collection.class));
         Collection<?> resultPayload = (Collection<?>) result.getPayload();
-        assertEquals(2, resultPayload.size());
+        assertThat(resultPayload, hasSize(2));
         assertSame(payload, resultPayload);
 
-        MuleMessage out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
-        assertEquals("julio", out.getPayload());
+        MuleMessage out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
+        assertThat(out.getPayload(), is("julio"));
 
-        out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
-        assertEquals("sosa", out.getPayload());
+        out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
+        assertThat(out.getPayload(), is("sosa"));
     }
 
     @Test
@@ -89,20 +90,19 @@ public class ForeachTestCase extends FunctionalTestCase
         payload.add("syd");
         payload.add("barrett");
 
-        MuleMessage result = client.send("vm://input-2", payload, null);
-        assertTrue(result.getPayload() instanceof Collection);
+        MuleMessage result = runFlow("minimal-config-plus-mp", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(Collection.class));
         Collection<?> resultPayload = (Collection<?>) result.getPayload();
-        assertEquals(3, resultPayload.size());
+        assertThat(resultPayload, hasSize(3));
         assertSame(payload, resultPayload);
 
-        MuleMessage out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
-        assertEquals("syd", out.getPayload());
+        MuleMessage out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
+        assertThat(out.getPayload(), is("syd"));
 
-        out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
-        assertEquals("barrett", out.getPayload());
-
+        out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
+        assertThat(out.getPayload(), is("barrett"));
     }
 
     @Test
@@ -115,17 +115,17 @@ public class ForeachTestCase extends FunctionalTestCase
         props.put("names", names);
         MuleMessage message = new DefaultMuleMessage("message payload", props, muleContext);
 
-        MuleMessage result = client.send("vm://input-3", message);
-        assertTrue(result.getPayload() instanceof String);
-        assertEquals(names.size(), ((Collection<?>) message.getOutboundProperty("names")).size());
+        MuleMessage result = runFlow("minimal-config-expression", "message payload", props).getMessage();
+        assertThat(result.getPayload(), instanceOf(String.class));
+        assertThat(((Collection<?>) message.getOutboundProperty("names")), hasSize(names.size()));
 
-        MuleMessage out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
-        assertEquals("residente", out.getPayload());
+        MuleMessage out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
+        assertThat(out.getPayload(), is("residente"));
 
-        out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
-        assertEquals("visitante", out.getPayload());
+        out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
+        assertThat(out.getPayload(), is("visitante"));
     }
 
     @Test
@@ -138,21 +138,21 @@ public class ForeachTestCase extends FunctionalTestCase
         payload.add("bang bang");
         payload.add("la mosca");
 
-        MuleMessage result = client.send("vm://input-4", payload, null);
-        assertTrue(result.getPayload() instanceof Collection);
+        MuleMessage result = runFlow("partitioned-config", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(Collection.class));
         Collection<?> resultPayload = (Collection<?>) result.getPayload();
-        assertEquals(5, resultPayload.size());
+        assertThat(resultPayload, hasSize(5));
         assertSame(payload, resultPayload);
 
-        MuleMessage out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof Collection);
+        MuleMessage out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(Collection.class));
         Collection<?> outPayload = (Collection<?>) out.getPayload();
-        assertEquals(3, outPayload.size());
+        assertThat(outPayload, hasSize(3));
 
-        out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof Collection);
+        out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(Collection.class));
         outPayload = (Collection<?>) out.getPayload();
-        assertEquals(2, outPayload.size());
+        assertThat(outPayload, hasSize(2));
     }
 
     @Test
@@ -161,15 +161,14 @@ public class ForeachTestCase extends FunctionalTestCase
         final Collection<String> payload = new ArrayList<String>();
         payload.add("pyotr");
         payload.add("ilych");
-        MuleMessage parent = new DefaultMuleMessage(payload, muleContext);
 
-        MuleMessage result = client.send("vm://input-5", parent);
-        assertTrue(result.getPayload() instanceof Collection);
+        MuleMessage result = runFlow("parent-message-config", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(Collection.class));
         Collection<?> resultPayload = (Collection<?>) result.getPayload();
-        assertEquals(2, resultPayload.size());
+        assertThat(resultPayload, hasSize(2));
         assertSame(payload, resultPayload);
 
-        assertSame(parent.getPayload(), ((MuleMessage) result.getInboundProperty("parent")).getPayload());
+        assertSame(payload, ((MuleMessage) result.getOutboundProperty("parent")).getPayload());
     }
 
     @Test
@@ -179,15 +178,14 @@ public class ForeachTestCase extends FunctionalTestCase
         payload.add("wolfgang");
         payload.add("amadeus");
         payload.add("mozart");
-        MuleMessage parent = new DefaultMuleMessage(payload, muleContext);
 
-        MuleMessage result = client.send("vm://input-6", parent);
-        assertTrue(result.getPayload() instanceof Collection);
+        MuleMessage result = runFlow("counter-config", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(Collection.class));
         Collection<?> resultPayload = (Collection<?>) result.getPayload();
-        assertEquals(3, resultPayload.size());
+        assertThat(resultPayload, hasSize(3));
         assertSame(payload, resultPayload);
 
-        assertThat(result.getInboundProperty("msg-last-index"), is(3));
+        assertThat(result.getOutboundProperty("msg-last-index"), is(3));
     }
 
     @Test
@@ -202,9 +200,9 @@ public class ForeachTestCase extends FunctionalTestCase
         }
 
         MuleMessage msgCollection = new DefaultMuleMessage(list, muleContext);
-        MuleMessage result = client.send("vm://input-7", msgCollection);
-        assertThat(result.getInboundProperty("totalMessages"), is(10));
-        assertEquals(msgCollection.getPayload(), result.getPayload());
+        MuleMessage result = runFlow("message-collection-config", msgCollection).getMessage();
+        assertThat(result.getOutboundProperty("totalMessages"), is(10));
+        assertThat(result.getPayload(), is(msgCollection.getPayload()));
         FlowAssert.verify("message-collection-config");
     }
 
@@ -234,13 +232,12 @@ public class ForeachTestCase extends FunctionalTestCase
         final Map<String, String> payload = new HashMap<String, String>();
         payload.put("name", "david");
         payload.put("surname", "bowie");
-        MuleMessage parent = new DefaultMuleMessage(payload, muleContext);
 
-        MuleMessage result = client.send("vm://input-8", parent);
-        assertTrue(result.getPayload() instanceof Map);
+        MuleMessage result = runFlow("map-config", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(Map.class));
         Map<?, ?> resultPayload = (Map<?, ?>) result.getPayload();
-        assertEquals(payload.size(), resultPayload.size());
-        assertThat(result.getInboundProperty("totalMessages"), is(payload.size()));
+        assertThat(resultPayload.entrySet(), hasSize(payload.size()));
+        assertThat(result.getOutboundProperty("totalMessages"), is(payload.size()));
         assertSame(payload, resultPayload);
     }
 
@@ -255,10 +252,10 @@ public class ForeachTestCase extends FunctionalTestCase
         props.put("names", names);
         MuleMessage message = new DefaultMuleMessage("message payload", props, muleContext);
 
-        MuleMessage result = client.send("vm://input-9", message);
-        assertTrue(result.getPayload() instanceof String);
-        assertEquals(names.size(), ((Collection<?>) message.getOutboundProperty("names")).size());
-        assertThat(result.getInboundProperty("totalMessages"), is(names.size()));
+        MuleMessage result = runFlow("map-expression-config", "message payload", props).getMessage();
+        assertThat(result.getPayload(), instanceOf(String.class));
+        assertThat(((Collection<?>) message.getOutboundProperty("names")), hasSize(names.size()));
+        assertThat(result.getOutboundProperty("totalMessages"), is(names.size()));
     }
 
     static String sampleXml = "<PurchaseOrder>" + "<Address><Name>Ellen Adams</Name></Address>" + "<Items>"
@@ -288,7 +285,7 @@ public class ForeachTestCase extends FunctionalTestCase
     public void jsonUpdate() throws Exception
     {
         String json = "{\"order\": {\"name\": \"Ellen\", \"email\": \"ellen@mail.com\", \"items\": [{\"key1\": \"value1\"}, {\"key2\": \"value2\"}] } }";
-        client.send("vm://input-11", json, null);
+        runFlow("process-json-update", json);
         FlowAssert.verify("process-json-update");
     }
 
@@ -296,12 +293,11 @@ public class ForeachTestCase extends FunctionalTestCase
     public void arrayPayload() throws Exception
     {
         String[] payload = {"uno", "dos", "tres"};
-        MuleMessage parent = new DefaultMuleMessage(payload, muleContext);
 
-        MuleMessage result = client.send("vm://input-12", parent);
-        assertTrue(result.getPayload() instanceof String[]);
+        MuleMessage result = runFlow("array-expression-config", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(String[].class));
         String[] resultPayload = (String[]) result.getPayload();
-        assertEquals(payload.length, resultPayload.length);
+        assertThat(resultPayload, arrayWithSize(payload.length));
         assertSame(payload, resultPayload);
         FlowAssert.verify("array-expression-config");
     }
@@ -313,9 +309,8 @@ public class ForeachTestCase extends FunctionalTestCase
         payload.add("pedro");
         payload.add("rodolfo");
         payload.add("roque");
-        MuleMessage parent = new DefaultMuleMessage(payload, muleContext);
 
-        client.send("vm://input-13", parent);
+        runFlow("counter-scope", payload);
 
         FlowAssert.verify("counter-scope");
     }
@@ -327,27 +322,25 @@ public class ForeachTestCase extends FunctionalTestCase
         payload.add("rosa");
         payload.add("maria");
         payload.add("florencia");
-        MuleMessage parent = new DefaultMuleMessage(payload, muleContext);
 
-        MuleMessage result = client.send("vm://input-14", parent);
-        assertTrue(result.getPayload() instanceof Collection);
+        MuleMessage result = runFlow("counter-two-foreach-independence", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(Collection.class));
         Collection<?> resultPayload = (Collection<?>) result.getPayload();
-        assertEquals(3, resultPayload.size());
+        assertThat(resultPayload, hasSize(3));
         assertSame(payload, resultPayload);
 
-        assertThat(result.getInboundProperty("msg-total-messages"), is(3));
+        assertThat(result.getOutboundProperty("msg-total-messages"), is(3));
     }
 
     @Test
     public void nestedConfig() throws Exception
     {
         final List<List<String>> payload = createNestedPayload();
-        MuleMessage parent = new DefaultMuleMessage(payload, muleContext);
 
-        MuleMessage result = client.send("vm://input-15", parent);
-        assertTrue(result.getPayload() instanceof Collection);
+        MuleMessage result = runFlow("nested-foreach", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(Collection.class));
         Collection<?> resultPayload = (Collection<?>) result.getPayload();
-        assertEquals(3, resultPayload.size());
+        assertThat(resultPayload, hasSize(3));
         assertSame(payload, resultPayload);
 
         MuleMessage out;
@@ -355,9 +348,9 @@ public class ForeachTestCase extends FunctionalTestCase
         {
             for(int j = 0; j < payload.get(i).size(); j++)
             {
-                out = client.request("vm://out", getTestTimeoutSecs());
-                assertTrue(out.getPayload() instanceof String);
-                assertEquals(payload.get(i).get(j), out.getPayload());
+                out = client.request("test://out", getTestTimeoutSecs());
+                assertThat(out.getPayload(), instanceOf(String.class));
+                assertThat(out.getPayload(), is(payload.get(i).get(j)));
             }
         }
     }
@@ -366,12 +359,11 @@ public class ForeachTestCase extends FunctionalTestCase
     public void nestedCounters() throws Exception
     {
         final List<List<String>> payload = createNestedPayload();
-        MuleMessage parent = new DefaultMuleMessage(payload, muleContext);
 
-        MuleMessage result = client.send("vm://input-16", parent);
-        assertTrue(result.getPayload() instanceof Collection);
+        MuleMessage result = runFlow("nested-foreach-counters", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(Collection.class));
         Collection<?> resultPayload = (Collection<?>) result.getPayload();
-        assertEquals(3, resultPayload.size());
+        assertThat(resultPayload, hasSize(3));
         assertSame(payload, resultPayload);
 
         MuleMessage out;
@@ -379,11 +371,11 @@ public class ForeachTestCase extends FunctionalTestCase
         {
             for(int j = 0; j < payload.get(i).size(); j++)
             {
-                out = client.request("vm://out", getTestTimeoutSecs());
-                assertThat("The nested counters are not consistent.", out.getInboundProperty("j"), is(j + 1));
+                out = client.request("test://out", getTestTimeoutSecs());
+                assertThat("The nested counters are not consistent.", out.getOutboundProperty("j"), is(j + 1));
             }
-            out = client.request("vm://out", getTestTimeoutSecs());
-            assertThat("The nested counters are not consistent", out.getInboundProperty("i"), is(i +1));
+            out = client.request("test://out", getTestTimeoutSecs());
+            assertThat("The nested counters are not consistent", out.getOutboundProperty("i"), is(i + 1));
         }
     }
 
@@ -410,52 +402,47 @@ public class ForeachTestCase extends FunctionalTestCase
     public void propertiesRestored() throws Exception
     {
         String[] payload = {"uno", "dos", "tres"};
-        MuleMessage parent = new DefaultMuleMessage(payload, muleContext);
 
-        MuleMessage result = client.send("vm://input-17", parent);
-        assertTrue(result.getPayload() instanceof String[]);
+        MuleMessage result = runFlow("foreach-properties-restored", payload).getMessage();
+        assertThat(result.getPayload(), instanceOf(String[].class));
         String[] resultPayload = (String[]) result.getPayload();
-        assertEquals(payload.length, resultPayload.length);
+        assertThat(resultPayload, arrayWithSize(payload.length));
         assertSame(payload, resultPayload);
         FlowAssert.verify("foreach-properties-restored");
     }
 
-
-
     @Test
     public void mvelList() throws Exception
     {
-        MuleMessage parent = new DefaultMuleMessage(null, muleContext);
-        client.send("vm://input-18", parent);
+        runFlow("mvel-list");
 
-        MuleMessage out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
+        MuleMessage out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
         String outPayload = (String) out.getPayload();
-        assertEquals("foo", outPayload);
+        assertThat(outPayload, is("foo"));
 
-        out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
+        out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
         outPayload = (String) out.getPayload();
-        assertEquals("bar", outPayload);
+        assertThat(outPayload, is("bar"));
     }
 
     @Test
     public void mvelMap() throws Exception
     {
-        MuleMessage parent = new DefaultMuleMessage(null, muleContext);
-        client.send("vm://input-19", parent);
+        runFlow("mvel-map");
 
         Map<String,String> m = new HashMap<String, String>();
         m.put("key1", "val1");
         m.put("key2", "val2");
 
-        MuleMessage out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
+        MuleMessage out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
         String outPayload = (String) out.getPayload();
         assertTrue(m.containsValue(outPayload));
 
-        out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
+        out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
         outPayload = (String) out.getPayload();
         assertTrue(m.containsValue(outPayload));
     }
@@ -463,20 +450,19 @@ public class ForeachTestCase extends FunctionalTestCase
     @Test
     public void mvelCollection() throws Exception
     {
-        MuleMessage parent = new DefaultMuleMessage(null, muleContext);
-        client.send("vm://input-20", parent);
+        runFlow("mvel-collection");
 
         Map<String,String> m = new HashMap<String, String>();
         m.put("key1", "val1");
         m.put("key2", "val2");
 
-        MuleMessage out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
+        MuleMessage out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
         String outPayload = (String) out.getPayload();
         assertTrue(m.containsValue(outPayload));
 
-        out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
+        out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
         outPayload = (String) out.getPayload();
         assertTrue(m.containsValue(outPayload));
     }
@@ -484,21 +470,19 @@ public class ForeachTestCase extends FunctionalTestCase
     @Test
     public void mvelArray() throws Exception
     {
-        MuleMessage parent = new DefaultMuleMessage(null, muleContext);
+        runFlow("mvel-array");
 
-        client.send("vm://input-21", parent);
-
-        MuleMessage out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
+        MuleMessage out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
         String outPayload = (String) out.getPayload();
 
-        assertEquals("foo", outPayload);
+        assertThat(outPayload, is("foo"));
         FlowAssert.verify("mvel-array");
 
-        out = client.request("vm://out", getTestTimeoutSecs());
-        assertTrue(out.getPayload() instanceof String);
+        out = client.request("test://out", getTestTimeoutSecs());
+        assertThat(out.getPayload(), instanceOf(String.class));
         outPayload = (String) out.getPayload();
-        assertEquals("bar", outPayload);
+        assertThat(outPayload, is("bar"));
     }
 
     @Test
@@ -515,15 +499,6 @@ public class ForeachTestCase extends FunctionalTestCase
         }
     }
 
-    @Test
-    public void requestReply() throws Exception
-    {
-        MuleMessage parent = new DefaultMuleMessage(null, muleContext);
-        MuleMessage msg = client.send("vm://input-22", parent);
-        assertNotNull(msg);
-        assertEquals(msg.getProperty("processedMessages", PropertyScope.SESSION), "0123");
-    }
-    
     @Test
     public void foreachWithAsync() throws Exception
     {

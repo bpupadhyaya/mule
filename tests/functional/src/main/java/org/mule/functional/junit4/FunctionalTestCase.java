@@ -315,6 +315,33 @@ public abstract class FunctionalTestCase extends AbstractMuleContextTestCase
     }
 
     /**
+     * Runs the given flow asynchronously with a default event inside a transaction
+     * 
+     * @param flowName the name of the flow to be executed
+     * @param payload the payload to use in the message
+     * @param action See {@link TransactionConfig} constants
+     * @param factory See {@link MuleTransactionConfig#setFactory(TransactionFactory)}.
+     * @throws Exception
+     */
+    protected <T> void runTransactionalFlowAsync(String flowName, T payload, byte action, TransactionFactory factory) throws Exception
+    {
+        MuleTransactionConfig transactionConfig = new MuleTransactionConfig(action);
+        transactionConfig.setFactory(factory);
+
+        ExecutionTemplate<MuleEvent> executionTemplate = createTransactionalExecutionTemplate(muleContext, transactionConfig);
+
+        executionTemplate.execute(new ExecutionCallback<MuleEvent>()
+        {
+            @Override
+            public MuleEvent process() throws Exception
+            {
+                runFlowAsync(flowName, payload);
+                return null;
+            }
+        });
+    }
+
+    /**
      * Runs the given flow with a default event inside a transaction expecting a failure. Will fail if there's no
      * failure running the flow.
      *
@@ -426,6 +453,23 @@ public abstract class FunctionalTestCase extends AbstractMuleContextTestCase
     protected <T> MuleEvent runFlow(String flowName, T payload) throws Exception
     {
         return runFlow(flowName, getTestEvent(payload));
+    }
+
+    /**
+     * Executes the given flow with a default message carrying the payload
+     * 
+     * @param flowName the name of the flow to be executed
+     * @param payload the payload to use in the message
+     * @param inboundProperties inbound properties for the message.
+     * @return the resulting <code>MuleEvent</code>
+     * @throws Exception
+     */
+    protected <T> MuleEvent runFlow(String flowName, T payload, Map<String, Object> inboundProperties) throws Exception
+    {
+        final DefaultMuleMessage muleMessage = new DefaultMuleMessage(payload, inboundProperties, Collections.emptyMap(), Collections.emptyMap(), muleContext);
+        final DefaultMuleEvent muleEvent = new DefaultMuleEvent(muleMessage, MessageExchangePattern.REQUEST_RESPONSE, null);
+
+        return runFlow(flowName, muleEvent);
     }
 
     /**

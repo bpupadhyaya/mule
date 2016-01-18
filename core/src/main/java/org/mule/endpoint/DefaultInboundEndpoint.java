@@ -191,6 +191,7 @@ public class DefaultInboundEndpoint extends AbstractEndpoint implements InboundE
         /*TODO Next commit will fix this horrible thing:
          inbound endpoint should only be aware of a redelivery policy configured on it
          flowConstruct should be responsible of redelivery policy use */
+        //TODO: MULE-9307 re-write junits for rollback exception strategy
         AbstractRedeliveryPolicy redeliveryPolicy = super.getRedeliveryPolicy();
         RollbackMessagingExceptionStrategy rollbackMessagingExceptionStrategy = null;
         if (flowConstruct != null && flowConstruct.getExceptionListener() != null)

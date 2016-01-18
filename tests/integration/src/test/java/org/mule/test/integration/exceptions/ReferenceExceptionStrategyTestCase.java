@@ -9,10 +9,11 @@ package org.mule.test.integration.exceptions;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import org.mule.api.MuleMessage;
-import org.mule.api.client.LocalMuleClient;
 import org.mule.api.exception.MessagingExceptionHandler;
+import org.mule.component.ComponentException;
 import org.mule.exception.AbstractExceptionListener;
 import org.mule.exception.ChoiceMessagingExceptionStrategy;
 import org.mule.functional.junit4.FunctionalTestCase;
@@ -39,8 +40,7 @@ public class ReferenceExceptionStrategyTestCase extends FunctionalTestCase
     @Test
     public void testFlowUsingGlobalExceptionStrategy() throws Exception
     {
-        LocalMuleClient client = muleContext.getClient();
-        MuleMessage response = client.send("vm://in", JSON_REQUEST, null, 5000);
+        MuleMessage response = runFlow("referenceExceptionStrategyFlow", getTestMuleMessage(JSON_REQUEST)).getMessage();
         assertThat(response, IsNull.<Object>notNullValue());
         // compare the structure and values but not the attributes' order
         ObjectMapper mapper = new ObjectMapper();
@@ -52,11 +52,17 @@ public class ReferenceExceptionStrategyTestCase extends FunctionalTestCase
     @Test
     public void testFlowUsingConfiguredExceptionStrategy() throws Exception
     {
-        LocalMuleClient client = muleContext.getClient();
-        MuleMessage response = client.send("vm://in2", JSON_REQUEST, null, 5000);
-        assertThat(response, IsNull.<Object>notNullValue());
-        assertThat((NullPayload) response.getPayload(), is(NullPayload.getInstance()));
-        assertThat(response.getExceptionPayload(), IsNull.<Object>notNullValue());
+        try
+        {
+            runFlow("configuredExceptionStrategyFlow", getTestMuleMessage(JSON_REQUEST)).getMessage();
+            fail("It should have failed");
+        }
+        catch(ComponentException e)
+        {
+            assertThat(e.getEvent().getMessage(), IsNull.<Object>notNullValue());
+            assertThat(e.getEvent().getMessage().getPayload(), is(NullPayload.getInstance()));
+            assertThat(e.getEvent().getMessage().getExceptionPayload(), IsNull.<Object>notNullValue());
+        }
     }
 
     @Test

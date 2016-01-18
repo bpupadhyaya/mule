@@ -6,8 +6,10 @@
  */
 package org.mule.test.integration.messaging.meps;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
 import org.mule.api.MuleMessage;
 import org.mule.api.client.MuleClient;
 import org.mule.functional.junit4.FunctionalTestCase;
@@ -19,8 +21,6 @@ import org.junit.Test;
 
 public class InOutOutOnlyTestCase extends FunctionalTestCase
 {
-    public static final long TIMEOUT = 3000;
-
     @Override
     protected String getConfigFile()
     {
@@ -32,22 +32,22 @@ public class InOutOutOnlyTestCase extends FunctionalTestCase
     {
         MuleClient client = muleContext.getClient();
 
-        MuleMessage result = client.send("inboundEndpoint", "some data", null);
+        MuleMessage result = runFlow("In-Out_Out-Only-Service", "some data").getMessage();
         assertNotNull(result);
-        assertEquals("foo header not received", getPayloadAsString(result));
+        assertThat(getPayloadAsString(result), is("foo header not received"));
 
         Map<String, Object> props = new HashMap<String, Object>();
         props.put("foo", "bar");
-        result = client.send("inboundEndpoint", "some data", props);
+        result = runFlow("In-Out_Out-Only-Service", "some data", props).getMessage();
         assertNotNull(result);
-        assertEquals("foo header received", getPayloadAsString(result));
+        assertThat(getPayloadAsString(result), is("foo header received"));
 
-        result = client.request("receivedEndpoint", TIMEOUT);
+        result = client.request("test://received", RECEIVE_TIMEOUT);
         assertNotNull(result);
-        assertEquals("foo header received", getPayloadAsString(result));
+        assertThat(getPayloadAsString(result), is("foo header received"));
 
-        result = client.request("notReceivedEndpoint", TIMEOUT);
+        result = client.request("test://notReceived", RECEIVE_TIMEOUT);
         assertNotNull(result);
-        assertEquals("foo header not received", getPayloadAsString(result));
+        assertThat(getPayloadAsString(result), is("foo header not received"));
     }
 }

@@ -9,10 +9,17 @@ package org.mule.context.notification;
 import static org.junit.Assert.assertNotNull;
 import static org.mule.context.notification.ExceptionStrategyNotification.PROCESS_END;
 import static org.mule.context.notification.ExceptionStrategyNotification.PROCESS_START;
-import org.mule.api.client.MuleClient;
+
+import org.mule.component.ComponentException;
+
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 public class ExceptionStrategyNotificationTestCase extends AbstractNotificationTestCase
 {
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
 
     @Override
     protected String getConfigFile()
@@ -23,11 +30,11 @@ public class ExceptionStrategyNotificationTestCase extends AbstractNotificationT
     @Override
     public void doTest() throws Exception
     {
-        MuleClient client = muleContext.getClient();
-        assertNotNull(client.send("vm://in-catch", "test", null));
-        assertNotNull(client.send("vm://in-rollback", "test", null));
-        assertNotNull(client.send("vm://in-choice-es", "test", null));
-        assertNotNull(client.send("vm://in-default-es", "test", null));
+        assertNotNull(runFlow("catch-es", TEST_PAYLOAD));
+        assertNotNull(runFlow("choice-es", TEST_PAYLOAD));
+        expectedException.expect(ComponentException.class);
+        assertNotNull(runFlow("rollback-es", TEST_PAYLOAD));
+        assertNotNull(runFlow("default-es", TEST_PAYLOAD));
     }
 
     @Override

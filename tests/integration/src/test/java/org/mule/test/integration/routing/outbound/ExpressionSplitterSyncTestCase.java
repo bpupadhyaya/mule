@@ -9,8 +9,8 @@ package org.mule.test.integration.routing.outbound;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import org.mule.api.MuleMessage;
-import org.mule.api.client.MuleClient;
 import org.mule.functional.functional.FlowAssert;
 import org.mule.functional.junit4.FunctionalTestCase;
 import org.mule.tck.testmodels.fruit.Apple;
@@ -37,8 +37,13 @@ public class ExpressionSplitterSyncTestCase extends FunctionalTestCase
         FruitBowl fruitBowl = new FruitBowl(new Apple(), new Banana());
         fruitBowl.addFruit(new Orange());
 
-        MuleClient client = muleContext.getClient();
-        MuleMessage result = client.send("vm://distributor.queue", fruitBowl, null);
+        // runFlow("Distributor", fruitBowl).getMessage();
+
+        // FruitBowl fruitBowl = new FruitBowl(new Apple(), new Banana());
+        // fruitBowl.addFruit(new Orange());
+
+        // MuleClient client = muleContext.getClient();
+        MuleMessage result = runFlow("Distributor", fruitBowl).getMessage();
 
         assertNotNull(result);
         assertTrue(result.getPayload() instanceof List);

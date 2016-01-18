@@ -29,21 +29,21 @@ public abstract class OneWayOutboundTestCase extends FunctionalTestCase
     @Test
     public void noOutbound() throws Exception
     {
-        MuleMessage response = client.send("vm://noOutbound", "TEST", null);
+        MuleMessage response = runFlow("noOutbound", "TEST").getMessage();
         assertEquals("TEST processed", response.getPayload());
     }
 
     @Test
     public void noOutboundEndpointAsync() throws Exception
     {
-        MuleMessage response = client.send("vm://noOutboundAsync", "TEST", null);
+        MuleMessage response = runFlow("noOutboundAsync", "TEST").getMessage();
         assertEquals("TEST", response.getPayload());
     }
 
     @Test
     public void oneWayOutbound() throws Exception
     {
-        MuleMessage response = client.send("vm://oneWayOutbound", "TEST", null);
+        MuleMessage response = runFlow("oneWayOutbound", "TEST").getMessage();
         assertOneWayOutboundResponse(response);
     }
 
@@ -52,7 +52,7 @@ public abstract class OneWayOutboundTestCase extends FunctionalTestCase
     @Test
     public void oneWayOutboundAfterComponent() throws Exception
     {
-        MuleMessage response = client.send("vm://oneWayOutboundAfterComponent", "TEST", null);
+        MuleMessage response = runFlow("oneWayOutboundAfterComponent", "TEST").getMessage();
         assertOneWayOutboundAfterComponentResponse(response);
     }
 
@@ -61,7 +61,7 @@ public abstract class OneWayOutboundTestCase extends FunctionalTestCase
     @Test
     public void oneWayOutboundBeforeComponent() throws Exception
     {
-        MuleMessage response = client.send("vm://oneWayOutboundBeforeComponent", "TEST", null);
+        MuleMessage response = runFlow("oneWayOutboundBeforeComponent", "TEST").getMessage();
         assertEquals("TEST processed", response.getPayload());
     }
 }

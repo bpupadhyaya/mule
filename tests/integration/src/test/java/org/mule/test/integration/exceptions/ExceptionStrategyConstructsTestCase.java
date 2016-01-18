@@ -35,14 +35,14 @@ public class ExceptionStrategyConstructsTestCase extends FunctionalTestCase
     {
         MuleClient client = muleContext.getClient();
 
-        client.dispatch("vm://inservice2", "test", null);
-        assertExceptionMessage(client.request("vm://modelout", RECEIVE_TIMEOUT));
+        runFlowAsync("testService", getTestMuleMessage(TEST_PAYLOAD));
+        assertExceptionMessage(client.request("test://modelout", RECEIVE_TIMEOUT));
 
-        client.dispatch("vm://inservice1", "test", null);
-        assertExceptionMessage(client.request("vm://service1out", RECEIVE_TIMEOUT));
+        runFlowAsync("testService1", getTestMuleMessage(TEST_PAYLOAD));
+        assertExceptionMessage(client.request("test://service1out", RECEIVE_TIMEOUT));
 
-        client.dispatch("vm://inflow1", "test", null);
-        assertExceptionMessage(client.request("vm://flow1out", RECEIVE_TIMEOUT));
+        runFlowAsync("testflow1", getTestMuleMessage(TEST_PAYLOAD));
+        assertExceptionMessage(client.request("test://flow1out", RECEIVE_TIMEOUT));
     }
 
     private void assertExceptionMessage(MuleMessage out)
