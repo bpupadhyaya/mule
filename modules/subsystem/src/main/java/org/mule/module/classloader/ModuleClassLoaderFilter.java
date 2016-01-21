@@ -7,12 +7,12 @@
 
 package org.mule.module.classloader;
 
-import org.mule.module.factory.PluginDescriptor;
+import org.mule.module.factory.ModuleDescriptor;
 
 import java.util.List;
 
 /**
- * Filters classes and resources using a {@link PluginDescriptor} describing
+ * Filters classes and resources using a {@link ModuleDescriptor} describing
  * exported/blocked names.
  * <p>
  * An exact blocked/exported name match has precedence over a prefix match
@@ -20,12 +20,12 @@ import java.util.List;
  * subpackages from a blocked package.
  * </p>
  */
-public class PluginClassLoaderFilter implements ClassLoaderFilter
+public class ModuleClassLoaderFilter implements ClassLoaderFilter
 {
 
-    private final PluginDescriptor descriptor;
+    private final ModuleDescriptor descriptor;
 
-    public PluginClassLoaderFilter(PluginDescriptor descriptor)
+    public ModuleClassLoaderFilter(ModuleDescriptor descriptor)
     {
         this.descriptor = descriptor;
     }

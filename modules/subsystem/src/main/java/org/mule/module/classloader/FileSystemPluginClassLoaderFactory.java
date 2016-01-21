@@ -7,7 +7,7 @@
 
 package org.mule.module.classloader;
 
-import org.mule.module.factory.PluginDescriptor;
+import org.mule.module.factory.ModuleDescriptor;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -19,7 +19,7 @@ import java.util.List;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 /**
- * Creates an {@link PluginClassLoader} accessing to the folder in which
+ * Creates an {@link ModuleClassLoader} accessing to the folder in which
  * a plugin is contained.
  * <p/>
  * <p>
@@ -32,7 +32,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
  * classLoader will use that to override default class loading order
  * </p>
  */
-public class FileSystemPluginClassLoaderFactory implements PluginClassLoaderFactory
+public class FileSystemPluginClassLoaderFactory implements ModuleClassLoaderFactory
 {
 
     public static final String CLASSES_DIR = "classes";
@@ -40,7 +40,7 @@ public class FileSystemPluginClassLoaderFactory implements PluginClassLoaderFact
     private static final String JAR_FILE = "*.jar";
 
     @Override
-    public PluginClassLoader create(PluginDescriptor descriptor)
+    public ModuleClassLoader create(ModuleDescriptor descriptor)
     {
         File rootFolder = descriptor.getRootFolder();
         if (rootFolder == null || !rootFolder.exists())
@@ -54,7 +54,7 @@ public class FileSystemPluginClassLoaderFactory implements PluginClassLoaderFact
         addDirectoryToClassLoader(urls, new File(rootFolder, CLASSES_DIR));
         loadJarsFromFolder(urls, new File(rootFolder, LIB_DIR));
 
-        return new PluginClassLoader(parentClassLoader, urls.toArray(new URL[0]), descriptor.getLoaderOverrides());
+        return new ModuleClassLoader(parentClassLoader, urls.toArray(new URL[0]), descriptor.getLoaderOverrides());
     }
 
     private void loadJarsFromFolder(List<URL> urls, File folder)

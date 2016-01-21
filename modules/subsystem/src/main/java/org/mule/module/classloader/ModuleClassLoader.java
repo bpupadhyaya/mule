@@ -14,15 +14,15 @@ import java.util.Set;
 /**
  * Defines a class loader to be used inside an mule plugin.
  */
-public class PluginClassLoader extends FineGrainedControlClassLoader
+public class ModuleClassLoader extends FineGrainedControlClassLoader
 {
 
-    public PluginClassLoader(ClassLoader parent, URL[] urls)
+    public ModuleClassLoader(ClassLoader parent, URL[] urls)
     {
         this(parent, urls, Collections.<String>emptySet());
     }
 
-    public PluginClassLoader(ClassLoader parent, URL[] urls, Set<String> overrides)
+    public ModuleClassLoader(ClassLoader parent, URL[] urls, Set<String> overrides)
     {
         super(urls, parent, overrides);
     }

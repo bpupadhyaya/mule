@@ -5,10 +5,9 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.launcher;
+package org.mule.module.classloader;
 
 import static org.junit.Assert.assertFalse;
-import org.mule.module.classloader.FineGrainedControlClassLoader;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.MediumTest;
 
@@ -19,22 +18,21 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 @MediumTest
-public class SynchronizedClassLoaderTestCase extends AbstractMuleTestCase
+public class SynchronizedFineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
 {
 
     private final CountDownLatch onExclusionZone = new CountDownLatch(2);
     private final CountDownLatch onTestComplete = new CountDownLatch(1);
 
     @Test
-    public void synchronizesLoadClassInFineGrainedControlClassLoader() throws Exception
+    public void synchronizesClassLoading() throws Exception
     {
-        doLoadClassSynchronizationTest(new FineGrainedControlClassLoader(new URL[] {}, new TestClassLoader()));
+        doLoadClassSynchronizationTest(createClassLoader());
     }
 
-    @Test
-    public void synchronizesLoadClassInMuleApplicationClassLoader() throws Exception
+    protected ClassLoader createClassLoader()
     {
-        doLoadClassSynchronizationTest(new MuleApplicationClassLoader("test", new TestClassLoader(), null));
+        return new FineGrainedControlClassLoader(new URL[] {}, new TestClassLoader());
     }
 
     private void doLoadClassSynchronizationTest(ClassLoader classLoader) throws InterruptedException
@@ -85,7 +83,7 @@ public class SynchronizedClassLoaderTestCase extends AbstractMuleTestCase
         }
     }
 
-    private class TestClassLoader extends ClassLoader
+    public class TestClassLoader extends ClassLoader
     {
 
         @Override

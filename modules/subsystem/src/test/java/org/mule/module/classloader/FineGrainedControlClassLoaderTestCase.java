@@ -4,15 +4,14 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.launcher;
+package org.mule.module.classloader;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.mule.module.classloader.FineGrainedControlClassLoader;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
+import org.mule.util.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -21,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
-import org.mule.util.ClassUtils;
 
 @SmallTest
 public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase

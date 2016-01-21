@@ -17,9 +17,11 @@ import java.util.Set;
 /**
  * Contains all information needed to create and use an mule plugin.
  */
-public class PluginDescriptor
+public class ModuleDescriptor
 {
 
+    //TODO(pablo.kraan): modules should have different descriptors depending on the type (app, connector, mule plugin, etc)
+    //Maybe those plugins should have a different descriptor factory.
     private String name;
 
     private String className;

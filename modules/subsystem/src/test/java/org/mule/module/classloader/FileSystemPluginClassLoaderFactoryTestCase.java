@@ -9,7 +9,7 @@ package org.mule.module.classloader;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import org.mule.module.factory.PluginDescriptor;
+import org.mule.module.factory.ModuleDescriptor;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -31,19 +31,19 @@ public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTest
     public TemporaryFolder pluginFolder = new TemporaryFolder();
 
     private FileSystemPluginClassLoaderFactory factory = new FileSystemPluginClassLoaderFactory();
-    private PluginDescriptor descriptor;
+    private ModuleDescriptor descriptor;
 
     @Before
     public void setUp() throws Exception
     {
-        descriptor = new PluginDescriptor();
+        descriptor = new ModuleDescriptor();
         descriptor.setRootFolder(pluginFolder.getRoot());
     }
 
     @Test
     public void createsEmptyClassLoader() throws Exception
     {
-        PluginClassLoader classLoader = factory.create(descriptor);
+        ModuleClassLoader classLoader = factory.create(descriptor);
         assertThat(classLoader.getURLs(), equalTo(new URL[0]));
     }
 
@@ -60,7 +60,7 @@ public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTest
     {
         File classesFolder = pluginFolder.newFolder(FileSystemPluginClassLoaderFactory.CLASSES_DIR);
 
-        PluginClassLoader classLoader = factory.create(descriptor);
+        ModuleClassLoader classLoader = factory.create(descriptor);
         assertThat(classLoader.getURLs(), equalTo(new URL[] {classesFolder.toURI().toURL()}));
     }
 
@@ -71,7 +71,7 @@ public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTest
         File jarFile = new File(libFolder, "dummy.jar");
         jarFile.createNewFile();
 
-        PluginClassLoader classLoader = factory.create(descriptor);
+        ModuleClassLoader classLoader = factory.create(descriptor);
         assertThat(classLoader.getURLs(), equalTo(new URL[] {jarFile.toURI().toURL()}));
     }
 
@@ -82,7 +82,7 @@ public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTest
         File jarFile = new File(libFolder, "dummy.txt");
         jarFile.createNewFile();
 
-        PluginClassLoader classLoader = factory.create(descriptor);
+        ModuleClassLoader classLoader = factory.create(descriptor);
         assertThat(classLoader.getURLs(), equalTo(new URL[] {}));
     }
 
@@ -92,7 +92,7 @@ public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTest
         Set<String> loaderOverrides = new HashSet<String>();
         loaderOverrides.add("com.dummy");
         descriptor.setLoaderOverride(loaderOverrides);
-        PluginClassLoader pluginClassLoader = factory.create(descriptor);
+        ModuleClassLoader pluginClassLoader = factory.create(descriptor);
         pluginClassLoader.isOverridden("com.dummy");
     }
 
@@ -102,7 +102,7 @@ public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTest
         Set<String> loaderOverrides = new HashSet<String>();
         loaderOverrides.add("-com.dummy");
         descriptor.setLoaderOverride(loaderOverrides);
-        PluginClassLoader pluginClassLoader = factory.create(descriptor);
+        ModuleClassLoader pluginClassLoader = factory.create(descriptor);
         pluginClassLoader.isBlocked("-com.dummy");
     }
 }

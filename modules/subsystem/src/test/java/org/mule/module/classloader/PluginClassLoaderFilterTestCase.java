@@ -9,7 +9,7 @@ package org.mule.module.classloader;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import org.mule.module.factory.PluginDescriptor;
+import org.mule.module.factory.ModuleDescriptor;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -27,8 +27,8 @@ public class PluginClassLoaderFilterTestCase extends AbstractMuleTestCase
     public static final String CLASS_PREFIX = "java.lang";
     public static final List<String> PREFIX_NAMES = Collections.singletonList(CLASS_PREFIX);
 
-    private final PluginDescriptor descriptor = new PluginDescriptor();
-    private PluginClassLoaderFilter filter = new PluginClassLoaderFilter(descriptor);
+    private final ModuleDescriptor descriptor = new ModuleDescriptor();
+    private ModuleClassLoaderFilter filter = new ModuleClassLoaderFilter(descriptor);
 
     @Test
     public void filtersClassWhenClassAndPrefixAreNotExported() throws Exception

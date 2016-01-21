@@ -42,7 +42,7 @@ public class ClassLoaderInjectorInvocationHandlerTestCase extends AbstractMuleTe
     @Test
     public void usesPluginClassLoaderOnMethodDelegation() throws Exception
     {
-        final ClassLoader classLoader = new PluginClassLoader(Thread.currentThread().getContextClassLoader(), new URL[0]);
+        final ClassLoader classLoader = new ModuleClassLoader(Thread.currentThread().getContextClassLoader(), new URL[0]);
         TestDelegate delegate = mock(TestDelegate.class);
         doAnswer(new Answer()
         {
@@ -66,7 +66,7 @@ public class ClassLoaderInjectorInvocationHandlerTestCase extends AbstractMuleTe
         ClassLoader originalClassLoader = getContextClassLoader();
 
         TestDelegate delegate = mock(TestDelegate.class);
-        ClassLoader classLoader = new PluginClassLoader(Thread.currentThread().getContextClassLoader(), new URL[0]);
+        ClassLoader classLoader = new ModuleClassLoader(Thread.currentThread().getContextClassLoader(), new URL[0]);
 
         ClassLoaderInjectorInvocationHandler.createProxy(delegate, classLoader, new Class<?>[] {TestDelegate.class});
 
