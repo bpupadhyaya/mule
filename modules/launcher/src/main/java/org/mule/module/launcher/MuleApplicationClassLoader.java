@@ -6,7 +6,6 @@
  */
 package org.mule.module.launcher;
 
-import org.mule.api.config.MuleProperties;
 import org.mule.module.launcher.application.ApplicationClassLoader;
 import org.mule.module.launcher.artifact.AbstractArtifactClassLoader;
 import org.mule.module.launcher.nativelib.NativeLibraryFinder;
@@ -44,12 +43,9 @@ public class MuleApplicationClassLoader extends AbstractArtifactClassLoader impl
     //TODO(pablo.kraan): CCL - is this constant required?
     public static final URL[] CLASSPATH_EMPTY = new URL[0];
 
-    private String appName;
-
-    private File appDir;
-    private File classesDir;
-    private File libDir;
-    private NativeLibraryFinder nativeLibraryFinder;
+    private final String appName;
+    private final File classesDir;
+    private final NativeLibraryFinder nativeLibraryFinder;
 
     public MuleApplicationClassLoader(String appName, ClassLoader parentCl, NativeLibraryFinder nativeLibraryFinder, URL[] urls)
     {
@@ -61,35 +57,8 @@ public class MuleApplicationClassLoader extends AbstractArtifactClassLoader impl
         super(parentCl, urls, loaderOverrides);
         this.appName = appName;
         this.nativeLibraryFinder = nativeLibraryFinder;
-        //
-        //try
-        //{
-        //    appDir = MuleFoldersUtil.getAppFolder(appName);
-        //    classesDir = new File(appDir, PATH_CLASSES);
-        //    addURL(classesDir.toURI().toURL());
-        //
-        //    libDir = new File(appDir, PATH_LIBRARY);
-        //    addJars(appName, libDir, true);
-        //
-        //    // Add per-app mule modules (if any)
-        //    File libs = MuleFoldersUtil.getMuleLibFolder();
-        //    File muleLibs = new File(libs, PATH_MULE);
-        //    File perAppLibs = new File(muleLibs, PATH_PER_APP);
-        //    addJars(appName, perAppLibs, false);
-        //}
-        //catch (IOException e)
-        //{
-        //    if (logger.isDebugEnabled())
-        //    {
-        //        logger.debug(String.format("[%s]", appName), e);
-        //    }
-        //}
 
-
-        final String muleHome = System.getProperty(MuleProperties.MULE_HOME_DIRECTORY_PROPERTY);
-        String appPath = String.format("%s/apps/%s", muleHome, appName);
-        appDir = new File(appPath);
-        classesDir = new File(appDir, PATH_CLASSES);
+        classesDir = new File(MuleFoldersUtil.getAppFolder(appName), PATH_CLASSES);
     }
 
     @Override
