@@ -105,6 +105,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     private static final ArtifactDescriptor incompleteAppDescriptor = new ArtifactDescriptor("incompleteApp", "/incompleteApp.zip", "/incompleteApp", "incompleteApp.zip", null);
     private static final ArtifactDescriptor waitAppDescriptor = new ArtifactDescriptor("wait-app", "/wait-app.zip", "/wait-app", "wait-app.zip", "mule-config.xml");
     private static final ArtifactDescriptor sharedPluginLibAppDescriptor = new ArtifactDescriptor("shared-plugin-lib-app", "/shared-plugin-lib-app.zip", "/shared-plugin-lib-app", "shared-plugin-lib-app.zip", "mule-config.xml");
+    private static final ArtifactDescriptor dummyAppForDomainWithLib = new ArtifactDescriptor("dummy-app-for-domain", "/dummy-app-for-domain.zip", "/dummy-app-for-domain", null, null);
 
     //Domain constants
     private static final ArtifactDescriptor brokenDomainDescriptor = new ArtifactDescriptor("brokenDomain", "/broken-domain.zip", null, "brokenDomain.zip", "/broken-config.xml");
@@ -119,6 +120,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     private static final ArtifactDescriptor httpSharedDomainBundle = new ArtifactDescriptor("http-shared-domain", "/http-shared-domain.zip", null, null, null);
     private static final ArtifactDescriptor waitDomainDescriptor = new ArtifactDescriptor("wait-domain", "/wait-domain.zip", "/wait-domain", "wait-domain.zip", "mule-domain-config.xml");
     private static final ArtifactDescriptor externaLibAppDescriptor = new ArtifactDescriptor("externalLib", "/externalLib.zip", "/externalLib", null, null);
+    private static final ArtifactDescriptor dummyDomainWithLibBundleDescriptor = new ArtifactDescriptor("dummy-domain-with-lib-bundle", "/dummy-domain-with-lib-bundle.zip", "/dummy-domain-with-lib-bundle", null, "mule-domain-config.xml");
 
     private static final ArtifactDescriptor sharedHttpDomainDescriptor = new ArtifactDescriptor("shared-http-domain", "/shared-http-domain.zip", "/shared-http-domain", "shared-http-domain.zip", "mule-domain-config.xml");
     private static final ArtifactDescriptor sharedHttpDomainBundleDescriptor = new ArtifactDescriptor("shared-http-domain", "/shared-http-domain-bundle.zip", "/shared-http-domain", "shared-http-domain.zip", "mule-domain-config.xml");
@@ -1416,6 +1418,29 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
         assertAppsDir(NONE, new String[] {dummyAppDescriptor.id}, true);
 
         final Application app = findApp(dummyAppDescriptor.id, 1);
+        assertNotNull(app);
+    }
+
+
+    @Test
+    public void deploysDomainBundleWithLibrayAfterStartup() throws Exception
+    {
+        deploymentService.start();
+
+        addPackedDomainFromResource(dummyDomainWithLibBundleDescriptor.zipPath);
+
+        assertDeploymentSuccess(domainDeploymentListener, dummyDomainWithLibBundleDescriptor.id);
+
+        assertDomainDir(NONE, new String[] {dummyDomainWithLibBundleDescriptor.id}, true);
+
+        final Domain domain = findADomain(dummyDomainWithLibBundleDescriptor.id, 1);
+        assertNotNull(domain);
+        assertNull(domain.getMuleContext());
+
+        assertDeploymentSuccess(applicationDeploymentListener, dummyAppForDomainWithLib.id);
+        assertAppsDir(NONE, new String[] {dummyAppForDomainWithLib.id}, true);
+
+        final Application app = findApp(dummyAppForDomainWithLib.id, 1);
         assertNotNull(app);
     }
 
