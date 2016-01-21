@@ -169,6 +169,11 @@
             <artifactId>mule-module-launcher</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-subsystem</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Include all Mule Transports -->
         <dependency>

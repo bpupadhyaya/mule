@@ -146,6 +146,7 @@
 /mule-standalone-${productVersion}/lib/mule/mule-module-spring-extras-${productVersion}.jar
 /mule-standalone-${productVersion}/lib/mule/mule-module-spring-security-${productVersion}.jar
 /mule-standalone-${productVersion}/lib/mule/mule-module-sockets-${productVersion}.jar
+/mule-standalone-${productVersion}/lib/mule/mule-module-subsystem-${productVersion}.jar
 /mule-standalone-${productVersion}/lib/mule/mule-module-tls-${productVersion}.jar
 /mule-standalone-${productVersion}/lib/mule/mule-module-tomcat-${productVersion}.jar
 /mule-standalone-${productVersion}/lib/mule/mule-module-validation-${productVersion}.jar
