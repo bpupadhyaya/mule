@@ -61,7 +61,6 @@ public class PluginDescriptorParser
             FileUtils.unzip(new File(pluginsDir, pluginZip), tmpDir);
             final PluginDescriptor pd = new PluginDescriptor();
             pd.setName(pluginName);
-            pd.setAppDescriptor(appDescriptor);
 
             final File pluginPropsFile = new File(tmpDir, "plugin.properties");
             if (pluginPropsFile.exists())
