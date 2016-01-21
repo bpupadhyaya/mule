@@ -104,7 +104,7 @@ public class ResourceReleaserTestCase extends AbstractMuleTestCase
 
         public TestMuleApplicationClassLoader(ClassLoader parentCl)
         {
-            super("APP-NAME", parentCl, null);
+            super("APP-NAME", parentCl, null, CLASSPATH_EMPTY);
         }
 
         @Override

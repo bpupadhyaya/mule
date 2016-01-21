@@ -18,6 +18,7 @@ import java.util.Set;
 
 public class ApplicationDescriptor
 {
+    //TODO(pablo.kraan): CCL - All descriptors should share a class hierarchy
     public static final String DEFAULT_CONFIGURATION_RESOURCE = "mule-config.xml";
     public static final String DEFAULT_APP_PROPERTIES_RESOURCE = "mule-app.properties";
 

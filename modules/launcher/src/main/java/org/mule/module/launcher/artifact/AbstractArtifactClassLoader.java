@@ -6,8 +6,8 @@
  */
 package org.mule.module.launcher.artifact;
 
+import org.mule.module.classloader.ModuleClassLoader;
 import org.mule.module.launcher.DirectoryResourceLocator;
-import org.mule.module.classloader.FineGrainedControlClassLoader;
 import org.mule.module.launcher.LocalResourceLocator;
 import org.mule.util.IOUtils;
 
@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Abstract implementation of the ArtifactClassLoader interface, that manages shutdown listeners.
  */
-public abstract class AbstractArtifactClassLoader extends FineGrainedControlClassLoader implements ArtifactClassLoader
+public abstract class AbstractArtifactClassLoader extends ModuleClassLoader implements ArtifactClassLoader
 {
 
     private static final String DEFAULT_RESOURCE_RELEASER_CLASS_LOCATION = "/org/mule/module/launcher/artifact/DefaultResourceReleaser.class";
@@ -37,14 +37,14 @@ public abstract class AbstractArtifactClassLoader extends FineGrainedControlClas
 
     private String resourceReleaserClassLocation = DEFAULT_RESOURCE_RELEASER_CLASS_LOCATION;
 
-    public AbstractArtifactClassLoader(URL[] urls, ClassLoader parent)
+    public AbstractArtifactClassLoader(ClassLoader parent, URL[] urls)
     {
-        this(urls, parent, Collections.<String>emptySet());
+        this(parent, urls, Collections.<String>emptySet());
     }
 
-    public AbstractArtifactClassLoader(URL[] urls, ClassLoader parent, Set<String> overrides)
+    public AbstractArtifactClassLoader(ClassLoader parent, URL[] urls, Set<String> overrides)
     {
-        super(urls, parent, overrides);
+        super(parent, urls, overrides);
     }
 
     @Override

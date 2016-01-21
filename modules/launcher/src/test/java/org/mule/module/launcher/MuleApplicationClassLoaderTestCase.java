@@ -18,6 +18,8 @@ import org.mule.util.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -69,15 +71,21 @@ public class MuleApplicationClassLoaderTestCase extends AbstractMuleTestCase
         FileUtils.copyFile(srcJarFile, jarFile, false);
 
         // Add isolated resources in classes dir
-        FileUtils.stringToFile(new File(classesDir, RESOURCE_IN_CLASSES_AND_JAR).getAbsolutePath(), "Some text");
-        FileUtils.stringToFile(new File(classesDir, RESOURCE_JUST_IN_CLASSES).getAbsolutePath(), "Some text");
+        File resourceInClassesAndJar = new File(classesDir, RESOURCE_IN_CLASSES_AND_JAR);
+        FileUtils.stringToFile(resourceInClassesAndJar.getAbsolutePath(), "Some text");
+        File resourceInClasses = new File(classesDir, RESOURCE_JUST_IN_CLASSES);
+        FileUtils.stringToFile(resourceInClasses.getAbsolutePath(), "Some text");
 
         // Add isolated resources in domain dir
         FileUtils.stringToFile(new File(domainDir, RESOURCE_JUST_IN_DOMAIN).getAbsolutePath(), "Some text");
 
         // Create app class loader
         domainCL = new MuleSharedDomainClassLoader(DOMAIN_NAME, Thread.currentThread().getContextClassLoader());
-        appCL = new MuleApplicationClassLoader(APP_NAME, domainCL, null);
+        List<URL> urls = new ArrayList<>();
+        urls.add(classesDir.toURI().toURL());
+        urls.add(jarFile.toURI().toURL());
+
+        appCL = new MuleApplicationClassLoader(APP_NAME, domainCL, null, urls.toArray(new URL[0]));
     }
 
     private File createDirectory(String format, Object... args)

@@ -23,6 +23,7 @@ import java.util.Collection;
 public class MuleSharedDomainClassLoader extends AbstractArtifactClassLoader implements ArtifactClassLoader
 {
 
+    //TODO(pablo.kraan): CCL - check classloader creation to inject propert overrides
     public static final String DOMAIN_LIBRARY_FOLDER = "lib";
     public static final String OLD_DOMAIN_LIBRARY_FOLDER = DOMAIN_LIBRARY_FOLDER + File.separator + "shared";
 
@@ -33,7 +34,7 @@ public class MuleSharedDomainClassLoader extends AbstractArtifactClassLoader imp
     @SuppressWarnings("unchecked")
     public MuleSharedDomainClassLoader(String domain, ClassLoader parent)
     {
-        super(new URL[0], parent);
+        super(parent, new URL[0]);
         try
         {
             if (domain == null)

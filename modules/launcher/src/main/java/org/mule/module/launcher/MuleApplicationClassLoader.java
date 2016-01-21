@@ -6,17 +6,14 @@
  */
 package org.mule.module.launcher;
 
+import org.mule.api.config.MuleProperties;
 import org.mule.module.launcher.application.ApplicationClassLoader;
 import org.mule.module.launcher.artifact.AbstractArtifactClassLoader;
 import org.mule.module.launcher.nativelib.NativeLibraryFinder;
-import org.mule.util.FileUtils;
-import org.mule.util.SystemUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Set;
@@ -44,7 +41,8 @@ public class MuleApplicationClassLoader extends AbstractArtifactClassLoader impl
      */
     public static final String PATH_PER_APP = "per-app";
 
-    protected static final URL[] CLASSPATH_EMPTY = new URL[0];
+    //TODO(pablo.kraan): CCL - is this constant required?
+    public static final URL[] CLASSPATH_EMPTY = new URL[0];
 
     private String appName;
 
@@ -53,79 +51,45 @@ public class MuleApplicationClassLoader extends AbstractArtifactClassLoader impl
     private File libDir;
     private NativeLibraryFinder nativeLibraryFinder;
 
-    public MuleApplicationClassLoader(String appName, ClassLoader parentCl, NativeLibraryFinder nativeLibraryFinder)
+    public MuleApplicationClassLoader(String appName, ClassLoader parentCl, NativeLibraryFinder nativeLibraryFinder, URL[] urls)
     {
-        this(appName, parentCl, Collections.<String>emptySet(), nativeLibraryFinder);
+        this(appName, parentCl, Collections.<String>emptySet(), nativeLibraryFinder, urls);
     }
 
-    public MuleApplicationClassLoader(String appName, ClassLoader parentCl, Set<String> loaderOverrides, NativeLibraryFinder nativeLibraryFinder)
+    public MuleApplicationClassLoader(String appName, ClassLoader parentCl, Set<String> loaderOverrides, NativeLibraryFinder nativeLibraryFinder, URL[] urls)
     {
-        super(CLASSPATH_EMPTY, parentCl, loaderOverrides);
+        super(parentCl, urls, loaderOverrides);
         this.appName = appName;
         this.nativeLibraryFinder = nativeLibraryFinder;
+        //
+        //try
+        //{
+        //    appDir = MuleFoldersUtil.getAppFolder(appName);
+        //    classesDir = new File(appDir, PATH_CLASSES);
+        //    addURL(classesDir.toURI().toURL());
+        //
+        //    libDir = new File(appDir, PATH_LIBRARY);
+        //    addJars(appName, libDir, true);
+        //
+        //    // Add per-app mule modules (if any)
+        //    File libs = MuleFoldersUtil.getMuleLibFolder();
+        //    File muleLibs = new File(libs, PATH_MULE);
+        //    File perAppLibs = new File(muleLibs, PATH_PER_APP);
+        //    addJars(appName, perAppLibs, false);
+        //}
+        //catch (IOException e)
+        //{
+        //    if (logger.isDebugEnabled())
+        //    {
+        //        logger.debug(String.format("[%s]", appName), e);
+        //    }
+        //}
 
-        try
-        {
-            appDir = MuleFoldersUtil.getAppFolder(appName);
-            classesDir = new File(appDir, PATH_CLASSES);
-            addURL(classesDir.toURI().toURL());
 
-            libDir = new File(appDir, PATH_LIBRARY);
-            addJars(appName, libDir, true);
-
-            // Add per-app mule modules (if any)
-            File libs = MuleFoldersUtil.getMuleLibFolder();
-            File muleLibs = new File(libs, PATH_MULE);
-            File perAppLibs = new File(muleLibs, PATH_PER_APP);
-            addJars(appName, perAppLibs, false);
-        }
-        catch (IOException e)
-        {
-            if (logger.isDebugEnabled())
-            {
-                logger.debug(String.format("[%s]", appName), e);
-            }
-        }
-    }
-
-    /**
-     * Add jars from the supplied directory to the class path
-     */
-    private void addJars(String appName, File dir, boolean verbose) throws MalformedURLException
-    {
-        if (dir.exists() && dir.canRead())
-        {
-            @SuppressWarnings("unchecked")
-            Collection<File> jars = FileUtils.listFiles(dir, new String[]{"jar"}, false);
-
-            if (!jars.isEmpty() && logger.isInfoEnabled())
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.append(String.format("[%s] Loading the following jars:%n", appName));
-                sb.append("=============================").append(SystemUtils.LINE_SEPARATOR);
-
-                for (File jar : jars)
-                {
-                    sb.append(jar.toURI().toURL()).append(SystemUtils.LINE_SEPARATOR);
-                }
-
-                sb.append("=============================").append(SystemUtils.LINE_SEPARATOR);
-
-                if (verbose)
-                {
-                    logger.info(sb.toString());
-                }
-                else
-                {
-                    logger.debug(sb.toString());
-                }
-            }
-
-            for (File jar : jars)
-            {
-                addURL(jar.toURI().toURL());
-            }
-        }
+        final String muleHome = System.getProperty(MuleProperties.MULE_HOME_DIRECTORY_PROPERTY);
+        String appPath = String.format("%s/apps/%s", muleHome, appName);
+        appDir = new File(appPath);
+        classesDir = new File(appDir, PATH_CLASSES);
     }
 
     @Override

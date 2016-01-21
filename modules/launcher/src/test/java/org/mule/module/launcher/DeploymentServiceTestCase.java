@@ -118,6 +118,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     private static final ArtifactDescriptor invalidDomainBundle = new ArtifactDescriptor("invalid-domain-bundle", "/invalid-domain-bundle.zip", null, null, null);
     private static final ArtifactDescriptor httpSharedDomainBundle = new ArtifactDescriptor("http-shared-domain", "/http-shared-domain.zip", null, null, null);
     private static final ArtifactDescriptor waitDomainDescriptor = new ArtifactDescriptor("wait-domain", "/wait-domain.zip", "/wait-domain", "wait-domain.zip", "mule-domain-config.xml");
+    private static final ArtifactDescriptor externaLibAppDescriptor = new ArtifactDescriptor("externalLib", "/externalLib.zip", "/externalLib", null, null);
 
     private static final ArtifactDescriptor sharedHttpDomainDescriptor = new ArtifactDescriptor("shared-http-domain", "/shared-http-domain.zip", "/shared-http-domain", "shared-http-domain.zip", "mule-domain-config.xml");
     private static final ArtifactDescriptor sharedHttpDomainBundleDescriptor = new ArtifactDescriptor("shared-http-domain", "/shared-http-domain-bundle.zip", "/shared-http-domain", "shared-http-domain.zip", "mule-domain-config.xml");
@@ -193,6 +194,16 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
 
         // mule-app.properties from the zip archive must have loaded properly
         assertEquals("mule-app.properties should have been loaded.", "someValue", registry.get("myCustomProp"));
+    }
+
+    @Test
+    public void deploysAppZipWithExternalLibsOnStartup() throws Exception
+    {
+        addPackedAppFromResource(externaLibAppDescriptor.zipPath);
+
+        deploymentService.start();
+
+        assertDeploymentSuccess(applicationDeploymentListener, externaLibAppDescriptor.id);
     }
 
     @Test

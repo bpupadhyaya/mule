@@ -24,13 +24,13 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 @SmallTest
-public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTestCase
+public class FileSystemModuleClassLoaderFactoryTestCase extends AbstractMuleTestCase
 {
 
     @Rule
     public TemporaryFolder pluginFolder = new TemporaryFolder();
 
-    private FileSystemPluginClassLoaderFactory factory = new FileSystemPluginClassLoaderFactory();
+    private FileSystemModuleClassLoaderFactory factory = new FileSystemModuleClassLoaderFactory();
     private ModuleDescriptor descriptor;
 
     @Before
@@ -58,7 +58,7 @@ public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTest
     @Test
     public void addsClassesFolderToClassLoader() throws Exception
     {
-        File classesFolder = pluginFolder.newFolder(FileSystemPluginClassLoaderFactory.CLASSES_DIR);
+        File classesFolder = pluginFolder.newFolder(FileSystemModuleClassLoaderFactory.CLASSES_DIR);
 
         ModuleClassLoader classLoader = factory.create(descriptor);
         assertThat(classLoader.getURLs(), equalTo(new URL[] {classesFolder.toURI().toURL()}));
@@ -67,7 +67,7 @@ public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTest
     @Test
     public void addJarsFromLibFolderToClassLoader() throws Exception
     {
-        File libFolder = pluginFolder.newFolder(FileSystemPluginClassLoaderFactory.LIB_DIR);
+        File libFolder = pluginFolder.newFolder(FileSystemModuleClassLoaderFactory.LIB_DIR);
         File jarFile = new File(libFolder, "dummy.jar");
         jarFile.createNewFile();
 
@@ -78,7 +78,7 @@ public class FileSystemPluginClassLoaderFactoryTestCase extends AbstractMuleTest
     @Test
     public void ignoresNonJarsFilesFromLibFolder() throws Exception
     {
-        File libFolder = pluginFolder.newFolder(FileSystemPluginClassLoaderFactory.LIB_DIR);
+        File libFolder = pluginFolder.newFolder(FileSystemModuleClassLoaderFactory.LIB_DIR);
         File jarFile = new File(libFolder, "dummy.txt");
         jarFile.createNewFile();
 
