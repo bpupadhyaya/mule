@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.mule.module.classloader.FineGrainedControlClassLoader;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -32,7 +33,7 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
         Set<String> overrides = new HashSet<String>(1);
         overrides.add("-org.mycompany.MyClass");
         FineGrainedControlClassLoader classLoader = new FineGrainedControlClassLoader(new URL[0], null,
-            overrides);
+                                                                                      overrides);
         assertTrue(classLoader.isBlocked("org.mycompany.MyClass"));
         assertFalse(classLoader.isBlocked("MyClass"));
         assertFalse(classLoader.isBlocked("org.mycompany.MyClassFactory"));

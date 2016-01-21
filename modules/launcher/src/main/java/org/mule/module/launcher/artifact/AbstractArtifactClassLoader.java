@@ -7,7 +7,7 @@
 package org.mule.module.launcher.artifact;
 
 import org.mule.module.launcher.DirectoryResourceLocator;
-import org.mule.module.launcher.FineGrainedControlClassLoader;
+import org.mule.module.classloader.FineGrainedControlClassLoader;
 import org.mule.module.launcher.LocalResourceLocator;
 import org.mule.util.IOUtils;
 

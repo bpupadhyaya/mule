@@ -6,7 +6,7 @@
  */
 package org.mule.module.launcher.artifact;
 
-import org.mule.module.launcher.DisposableClassLoader;
+import org.mule.module.classloader.DisposableClassLoader;
 import org.mule.module.launcher.LocalResourceLocator;
 
 import java.net.URL;

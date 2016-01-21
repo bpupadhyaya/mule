@@ -27,7 +27,7 @@ import org.mule.module.launcher.DeploymentInitException;
 import org.mule.module.launcher.DeploymentListener;
 import org.mule.module.launcher.DeploymentStartException;
 import org.mule.module.launcher.DeploymentStopException;
-import org.mule.module.launcher.DisposableClassLoader;
+import org.mule.module.classloader.DisposableClassLoader;
 import org.mule.module.launcher.InstallException;
 import org.mule.module.launcher.MuleDeploymentService;
 import org.mule.module.launcher.artifact.ArtifactClassLoader;

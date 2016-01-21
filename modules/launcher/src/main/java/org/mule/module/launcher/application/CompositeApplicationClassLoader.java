@@ -6,7 +6,7 @@
  */
 package org.mule.module.launcher.application;
 
-import org.mule.module.launcher.DisposableClassLoader;
+import org.mule.module.classloader.DisposableClassLoader;
 import org.mule.module.launcher.MuleApplicationClassLoader;
 import org.mule.module.launcher.artifact.ArtifactClassLoader;
 import org.mule.module.launcher.artifact.ShutdownListener;

@@ -9,7 +9,7 @@ package org.mule.module.launcher.application;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import org.mule.module.launcher.DisposableClassLoader;
+import org.mule.module.classloader.DisposableClassLoader;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 

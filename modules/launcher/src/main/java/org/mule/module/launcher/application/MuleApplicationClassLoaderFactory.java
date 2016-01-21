@@ -6,7 +6,7 @@
  */
 package org.mule.module.launcher.application;
 
-import org.mule.module.launcher.GoodCitizenClassLoader;
+import org.mule.module.classloader.GoodCitizenClassLoader;
 import org.mule.module.launcher.MuleApplicationClassLoader;
 import org.mule.module.launcher.nativelib.NativeLibraryFinderFactory;
 import org.mule.module.launcher.artifact.ArtifactClassLoader;

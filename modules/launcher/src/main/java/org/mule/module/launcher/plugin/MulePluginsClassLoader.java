@@ -6,7 +6,7 @@
  */
 package org.mule.module.launcher.plugin;
 
-import org.mule.module.launcher.FineGrainedControlClassLoader;
+import org.mule.module.classloader.FineGrainedControlClassLoader;
 
 import java.net.URL;
 import java.util.Arrays;
