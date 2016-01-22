@@ -86,4 +86,14 @@ public class PluginClassLoaderFilterTestCase extends AbstractMuleTestCase
 
         assertThat(filter.accepts(CLASS_NAME), equalTo(true));
     }
+
+    @Test
+    public void filtersClassWhenPrefixExportedAndPrefixBlocked() throws Exception
+    {
+        LoaderExport loaderExport = new LoaderExport(Collections.singleton("java.lang.foo"), PREFIX_NAMES);
+
+        descriptor.setLoaderExport(loaderExport);
+
+        assertThat(filter.accepts(CLASS_NAME), equalTo(false));
+    }
 }

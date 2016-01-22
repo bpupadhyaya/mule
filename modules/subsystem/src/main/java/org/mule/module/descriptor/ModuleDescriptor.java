@@ -17,7 +17,6 @@ public class ModuleDescriptor
     //Maybe those plugins should have a different descriptor factory.
     private String name;
     private File rootFolder;
-    //TODO(pablo.kraan): check if loaderOverride and loaderExport classes can be unified
     private LoaderExport loaderExport = new LoaderExport(Collections.EMPTY_SET, Collections.EMPTY_SET);
     private LoaderOverride loaderOverride = LoaderOverride.NULL_LOADER_OVERRIDE;
 
