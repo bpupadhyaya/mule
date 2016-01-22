@@ -14,7 +14,10 @@ import org.mule.util.StringUtils;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -78,8 +81,26 @@ public class PluginDescriptorParser
                 }
             }
 
-            PluginClasspath cp = PluginClasspath.from(tmpDir);
-            pd.setClasspath(cp);
+            try
+            {
+                pd.setRuntimeClassesDir(new File(tmpDir, "classes").toURI().toURL());
+                final File libDir = new File(tmpDir, "lib");
+                if (libDir.exists())
+                {
+                    final File[] jars = libDir.listFiles((FilenameFilter) new SuffixFileFilter(".jar"));
+                    URL[] urls = new URL[jars.length];
+                    for (int i = 0; i < jars.length; i++)
+                    {
+                        urls[i] = jars[i].toURI().toURL();
+                    }
+                    pd.setRuntimeLibs(urls);
+                }
+            }
+            catch (MalformedURLException e)
+            {
+                throw new IllegalArgumentException("Failed to getDomainClassLoader plugin classpath " + tmpDir);
+            }
+
             pds.add(pd);
         }
 

@@ -6,6 +6,7 @@
  */
 package org.mule.module.launcher.plugin;
 
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +14,8 @@ public class PluginDescriptor
 {
     private Set<String> loaderOverride = new HashSet<String>();
     private String name;
-    private PluginClasspath classpath = new PluginClasspath();
+    private URL runtimeClassesDir;
+    private URL[] runtimeLibs;
 
     public Set<String> getLoaderOverride()
     {
@@ -35,13 +37,23 @@ public class PluginDescriptor
         this.name = name;
     }
 
-    public PluginClasspath getClasspath()
+    public URL getRuntimeClassesDir()
     {
-        return classpath;
+        return runtimeClassesDir;
     }
 
-    public void setClasspath(PluginClasspath classpath)
+    public void setRuntimeClassesDir(URL runtimeClassesDir)
     {
-        this.classpath = classpath;
+        this.runtimeClassesDir = runtimeClassesDir;
+    }
+
+    public URL[] getRuntimeLibs()
+    {
+        return runtimeLibs;
+    }
+
+    public void setRuntimeLibs(URL[] runtimeLibs)
+    {
+        this.runtimeLibs = runtimeLibs;
     }
 }

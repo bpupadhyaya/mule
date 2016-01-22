@@ -26,8 +26,9 @@ public class MulePluginsClassLoader extends FineGrainedControlClassLoader
         super(new URL[0], parent);
         for (PluginDescriptor plugin : plugins)
         {
-            final URL[] pluginUrls = plugin.getClasspath().toURLs();
-            for (URL pluginUrl : pluginUrls)
+            addURL(plugin.getRuntimeClassesDir());
+
+            for (URL pluginUrl : plugin.getRuntimeLibs())
             {
                 addURL(pluginUrl);
             }
