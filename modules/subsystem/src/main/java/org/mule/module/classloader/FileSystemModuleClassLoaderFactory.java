@@ -7,7 +7,7 @@
 
 package org.mule.module.classloader;
 
-import org.mule.module.factory.ModuleDescriptor;
+import org.mule.module.factory.PluginDescriptor;
 
 import java.io.File;
 import java.net.URL;
@@ -32,7 +32,7 @@ public class FileSystemModuleClassLoaderFactory extends AbstractModuleClassLoade
 {
 
     @Override
-    public ModuleClassLoader create(ModuleDescriptor descriptor)
+    public ModuleClassLoader create(PluginDescriptor descriptor)
     {
         //TODO(pablo.kraan): CCL - this method must be pushed up as abstract into  AbstractModuleClassLoaderFactory
         File rootFolder = descriptor.getRootFolder();

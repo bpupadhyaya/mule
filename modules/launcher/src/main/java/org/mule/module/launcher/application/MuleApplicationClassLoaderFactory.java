@@ -9,14 +9,13 @@ package org.mule.module.launcher.application;
 import org.mule.api.config.MuleProperties;
 import org.mule.module.classloader.AbstractModuleClassLoaderFactory;
 import org.mule.module.classloader.GoodCitizenClassLoader;
-import org.mule.module.factory.ModuleDescriptor;
+import org.mule.module.factory.PluginDescriptor;
 import org.mule.module.launcher.MuleApplicationClassLoader;
 import org.mule.module.launcher.artifact.ArtifactClassLoader;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
 import org.mule.module.launcher.domain.DomainClassLoaderRepository;
 import org.mule.module.launcher.nativelib.NativeLibraryFinderFactory;
 import org.mule.module.launcher.plugin.MulePluginsClassLoader;
-import org.mule.module.launcher.plugin.PluginDescriptor;
 
 import java.io.File;
 import java.net.URL;
@@ -47,7 +46,7 @@ public class MuleApplicationClassLoaderFactory extends AbstractModuleClassLoader
 
         //TODO(pablo.kraan): CCL - use MuleFolderUtils
         final String muleHome = System.getProperty(MuleProperties.MULE_HOME_DIRECTORY_PROPERTY);
-        String appPath = String.format("%s/apps/%s", muleHome, descriptor.getAppName());
+        String appPath = String.format("%s/apps/%s", muleHome, descriptor.getName());
         final File appDir = new File(appPath);
         final File classesDir = new File(appDir, MuleApplicationClassLoader.PATH_CLASSES);
         List<URL> urls = new LinkedList<URL>();
@@ -62,7 +61,7 @@ public class MuleApplicationClassLoaderFactory extends AbstractModuleClassLoader
         File perAppLibs = new File(muleLibs, MuleApplicationClassLoader.PATH_PER_APP);
         loadJarsFromFolder(urls, perAppLibs);
 
-        return new MuleApplicationClassLoader(descriptor.getAppName(), parent, descriptor.getLoaderOverride(), nativeLibraryFinderFactory.create(descriptor.getAppName()), urls.toArray(new URL[0]));
+        return new MuleApplicationClassLoader(descriptor.getName(), parent, descriptor.getLoaderOverride(), nativeLibraryFinderFactory.create(descriptor.getName()), urls.toArray(new URL[0]));
     }
 
     private ClassLoader getParentClassLoader(ApplicationDescriptor descriptor)
@@ -77,7 +76,7 @@ public class MuleApplicationClassLoaderFactory extends AbstractModuleClassLoader
         {
             parent = domainClassLoaderRepository.getDomainClassLoader(domain).getClassLoader();
         }
-        final Set<PluginDescriptor> plugins = descriptor.getPlugins();
+        final Set<org.mule.module.launcher.plugin.PluginDescriptor> plugins = descriptor.getPlugins();
         if (!plugins.isEmpty())
         {
             // Re-assigns parent if there are shared plugin libraries
@@ -94,7 +93,7 @@ public class MuleApplicationClassLoaderFactory extends AbstractModuleClassLoader
     }
 
     @Override
-    public ClassLoader create(ModuleDescriptor descriptor)
+    public ClassLoader create(PluginDescriptor descriptor)
     {
         //TODO(pablo.kraan): CCL -unify create methods after all the descriptors share the same base class
         return null;

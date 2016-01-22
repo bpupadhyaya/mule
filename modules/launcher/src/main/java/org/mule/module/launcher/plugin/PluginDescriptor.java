@@ -6,36 +6,14 @@
  */
 package org.mule.module.launcher.plugin;
 
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
+import org.mule.module.factory.ModuleDescriptor;
 
-public class PluginDescriptor
+import java.net.URL;
+
+public class PluginDescriptor extends ModuleDescriptor
 {
-    private Set<String> loaderOverride = new HashSet<String>();
-    private String name;
     private URL runtimeClassesDir;
     private URL[] runtimeLibs;
-
-    public Set<String> getLoaderOverride()
-    {
-        return loaderOverride;
-    }
-
-    public void setLoaderOverride(Set<String> loaderOverride)
-    {
-        this.loaderOverride = loaderOverride;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
 
     public URL getRuntimeClassesDir()
     {

@@ -7,7 +7,7 @@
 
 package org.mule.module.classloader;
 
-import org.mule.module.factory.ModuleDescriptor;
+import org.mule.module.factory.PluginDescriptor;
 
 /**
  * Create instances of { @link PluginClassLoader}
@@ -21,5 +21,5 @@ public interface ModuleClassLoaderFactory
      * @param descriptor defines the plugin which will use the classloader. Not null.
      * @return a not null classloader
      */
-    ClassLoader create(ModuleDescriptor descriptor);
+    ClassLoader create(PluginDescriptor descriptor);
 }

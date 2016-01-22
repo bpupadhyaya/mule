@@ -9,17 +9,11 @@ package org.mule.module.launcher.plugin;
 import org.mule.module.classloader.FineGrainedControlClassLoader;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
 public class MulePluginsClassLoader extends FineGrainedControlClassLoader
 {
-
-    public MulePluginsClassLoader(ClassLoader parent, PluginDescriptor... plugins)
-    {
-        this(parent, Arrays.asList(plugins));
-    }
 
     public MulePluginsClassLoader(ClassLoader parent, Collection<PluginDescriptor> plugins)
     {
@@ -33,7 +27,7 @@ public class MulePluginsClassLoader extends FineGrainedControlClassLoader
                 addURL(pluginUrl);
             }
 
-            final Set<String> override = plugin.getLoaderOverride();
+            final Set<String> override = plugin.getLoaderOverrides();
             processOverrides(override);
         }
     }

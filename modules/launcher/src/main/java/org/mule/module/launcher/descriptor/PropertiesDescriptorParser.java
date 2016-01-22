@@ -39,7 +39,6 @@ public class PropertiesDescriptorParser implements DescriptorParser
         d.setEncoding(p.getProperty(PROPERTY_ENCODING));
         d.setConfigurationBuilder(p.getProperty(PROPERTY_CONFIG_BUILDER));
         d.setDomain(p.getProperty(PROPERTY_DOMAIN));
-        d.setPackagesToScan(p.getProperty(PROPERTY_SCAN_PACKAGES));
 
         final String resProps = p.getProperty(PROPERTY_CONFIG_RESOURCES);
         String[] urls;

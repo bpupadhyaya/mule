@@ -9,7 +9,7 @@ package org.mule.module.classloader;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import org.mule.module.factory.ModuleDescriptor;
+import org.mule.module.factory.PluginDescriptor;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -31,12 +31,12 @@ public class FileSystemModuleClassLoaderFactoryTestCase extends AbstractMuleTest
     public TemporaryFolder pluginFolder = new TemporaryFolder();
 
     private FileSystemModuleClassLoaderFactory factory = new FileSystemModuleClassLoaderFactory();
-    private ModuleDescriptor descriptor;
+    private PluginDescriptor descriptor;
 
     @Before
     public void setUp() throws Exception
     {
-        descriptor = new ModuleDescriptor();
+        descriptor = new PluginDescriptor();
         descriptor.setRootFolder(pluginFolder.getRoot());
     }
 

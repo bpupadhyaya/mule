@@ -9,7 +9,7 @@ package org.mule.module.classloader;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import org.mule.module.factory.ModuleDescriptor;
+import org.mule.module.factory.PluginDescriptor;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -27,7 +27,7 @@ public class PluginClassLoaderFilterTestCase extends AbstractMuleTestCase
     public static final String CLASS_PREFIX = "java.lang";
     public static final List<String> PREFIX_NAMES = Collections.singletonList(CLASS_PREFIX);
 
-    private final ModuleDescriptor descriptor = new ModuleDescriptor();
+    private final PluginDescriptor descriptor = new PluginDescriptor();
     private ModuleClassLoaderFilter filter = new ModuleClassLoaderFilter(descriptor);
 
     @Test

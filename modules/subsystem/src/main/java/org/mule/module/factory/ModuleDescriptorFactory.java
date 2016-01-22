@@ -10,7 +10,7 @@ package org.mule.module.factory;
 import java.io.File;
 
 /**
- * Defines a way to create a {@link ModuleDescriptor} from a folder.
+ * Defines a way to create a {@link PluginDescriptor} from a folder.
  */
 public interface ModuleDescriptorFactory
 {
@@ -23,6 +23,6 @@ public interface ModuleDescriptorFactory
      * @throws InvalidPluginException if the factory is not able to create a
      *         descriptor from the folder.
      */
-    ModuleDescriptor create(File pluginFolder) throws InvalidPluginException;
+    PluginDescriptor create(File pluginFolder) throws InvalidPluginException;
 
 }

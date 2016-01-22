@@ -109,7 +109,7 @@ public class DefaultAppBloodhound implements AppBloodhound
 
             desc = descriptorParser.parse(descriptorFile, appName);
             // app name is external to the deployment descriptor
-            desc.setAppName(appName);
+            desc.setName(appName);
         }
 
         // get a ref to an optional app props file (right next to the descriptor)
@@ -145,7 +145,7 @@ public class DefaultAppBloodhound implements AppBloodhound
     public void setApplicationProperties(ApplicationDescriptor desc, File appPropsFile) throws IOException
     {
         // ugh, no straightforward way to convert a HashTable to a map
-        Map<String, String> m = new HashMap<String, String>();
+        Map<String, String> m = new HashMap<>();
 
         if (appPropsFile.exists() && appPropsFile.canRead())
         {

@@ -6,6 +6,7 @@
  */
 package org.mule.module.launcher.descriptor;
 
+import org.mule.module.factory.ModuleDescriptor;
 import org.mule.module.launcher.plugin.PluginDescriptor;
 
 import java.io.File;
@@ -16,9 +17,9 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class ApplicationDescriptor
+public class ApplicationDescriptor extends ModuleDescriptor
 {
-    //TODO(pablo.kraan): CCL - All descriptors should share a class hierarchy
+
     public static final String DEFAULT_CONFIGURATION_RESOURCE = "mule-config.xml";
     public static final String DEFAULT_APP_PROPERTIES_RESOURCE = "mule-app.properties";
 
@@ -29,11 +30,9 @@ public class ApplicationDescriptor
     public static final String CLASSNAME_SPRING_CONFIG_BUILDER = "org.mule.config.spring.SpringXmlConfigurationBuilder";
 
 
-    private String appName;
     private String encoding;
     private String configurationBuilder;
     private String domain;
-    private String packagesToScan;
     private String[] configResources = new String[] {DEFAULT_CONFIGURATION_RESOURCE};
     private String[] absoluteResourcePaths;
     private File[] configResourcesFile;
@@ -45,16 +44,6 @@ public class ApplicationDescriptor
 
     private Set<PluginDescriptor> plugins = new HashSet<PluginDescriptor>(0);
     private URL[] sharedPluginLibs = new URL[0];
-
-    public String getAppName()
-    {
-        return appName;
-    }
-
-    public void setAppName(String appName)
-    {
-        this.appName = appName;
-    }
 
     public String getEncoding()
     {
@@ -172,15 +161,4 @@ public class ApplicationDescriptor
     {
         this.plugins = plugins;
     }
-
-    public String getPackagesToScan()
-    {
-        return packagesToScan;
-    }
-
-    public void setPackagesToScan(String packages)
-    {
-        this.packagesToScan = packages;
-    }
-
 }
