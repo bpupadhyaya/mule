@@ -15,6 +15,7 @@ import java.io.File;
 public interface ModuleDescriptorFactory
 {
 
+    //TODO(pablo.kraan): CCL - why is this class in CE if its used only on EE?
     /**
      * Creates a plugin descriptor from a plugin folder.
      *
