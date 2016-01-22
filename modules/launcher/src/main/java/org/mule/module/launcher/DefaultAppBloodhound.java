@@ -10,9 +10,9 @@ import org.mule.api.MuleRuntimeException;
 import org.mule.config.PreferredObjectSelector;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
-import org.mule.module.launcher.descriptor.DescriptorParser;
+import org.mule.module.launcher.descriptor.ApplicationDescriptorFactory;
 import org.mule.module.launcher.descriptor.EmptyApplicationDescriptor;
-import org.mule.module.launcher.descriptor.PropertiesDescriptorParser;
+import org.mule.module.launcher.descriptor.PropertiesApplicationDescriptorFactory;
 import org.mule.module.launcher.plugin.PluginDescriptor;
 import org.mule.module.launcher.plugin.PluginDescriptorParser;
 import org.mule.module.reboot.MuleContainerBootstrapUtils;
@@ -45,20 +45,20 @@ public class DefaultAppBloodhound implements AppBloodhound
 {
 
     // file extension -> parser implementation
-    protected Map<String, DescriptorParser> parserRegistry = new HashMap<String, DescriptorParser>();
+    protected Map<String, ApplicationDescriptorFactory> parserRegistry = new HashMap<String, ApplicationDescriptorFactory>();
     public static final String SYSTEM_PROPERTY_OVERRIDE = "-O";
 
     public DefaultAppBloodhound()
     {
         // defaults first
-        parserRegistry.put("properties", new PropertiesDescriptorParser());
+        parserRegistry.put("properties", new PropertiesApplicationDescriptorFactory());
 
-        final Iterator<DescriptorParser> it = ServiceRegistry.lookupProviders(DescriptorParser.class);
+        final Iterator<ApplicationDescriptorFactory> it = ServiceRegistry.lookupProviders(ApplicationDescriptorFactory.class);
 
         MultiMap overrides = new MultiValueMap();
         while (it.hasNext())
         {
-            final DescriptorParser parser = it.next();
+            final ApplicationDescriptorFactory parser = it.next();
             overrides.put(parser.getSupportedFormat(), parser);
         }
         mergeParserOverrides(overrides);
@@ -97,9 +97,9 @@ public class DefaultAppBloodhound implements AppBloodhound
             // lookup the implementation by extension
             final File descriptorFile = deployFiles.iterator().next();
             final String ext = FilenameUtils.getExtension(descriptorFile.getName());
-            final DescriptorParser descriptorParser = parserRegistry.get(ext);
+            final ApplicationDescriptorFactory applicationDescriptorFactory = parserRegistry.get(ext);
 
-            if (descriptorParser == null)
+            if (applicationDescriptorFactory == null)
             {
                 // TODO need some kind of an InvalidAppFormatException
                 throw new MuleRuntimeException(
@@ -107,7 +107,7 @@ public class DefaultAppBloodhound implements AppBloodhound
                                 String.format("Unsupported deployment descriptor format for app '%s': %s", appName, ext)));
             }
 
-            desc = descriptorParser.parse(descriptorFile, appName);
+            desc = applicationDescriptorFactory.parse(descriptorFile, appName);
             // app name is external to the deployment descriptor
             desc.setName(appName);
         }
@@ -176,12 +176,12 @@ public class DefaultAppBloodhound implements AppBloodhound
      */
     protected void mergeParserOverrides(MultiMap overrides)
     {
-        PreferredObjectSelector<DescriptorParser> selector = new PreferredObjectSelector<DescriptorParser>();
+        PreferredObjectSelector<ApplicationDescriptorFactory> selector = new PreferredObjectSelector<ApplicationDescriptorFactory>();
 
-        for (Map.Entry<String, DescriptorParser> entry : parserRegistry.entrySet())
+        for (Map.Entry<String, ApplicationDescriptorFactory> entry : parserRegistry.entrySet())
         {
             @SuppressWarnings("unchecked")
-            final Collection<DescriptorParser> candidates = (Collection<DescriptorParser>) overrides.get(entry.getKey());
+            final Collection<ApplicationDescriptorFactory> candidates = (Collection<ApplicationDescriptorFactory>) overrides.get(entry.getKey());
 
             if (candidates != null)
             {

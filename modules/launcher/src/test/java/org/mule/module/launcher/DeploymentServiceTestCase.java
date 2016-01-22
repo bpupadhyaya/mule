@@ -106,6 +106,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     private static final ArtifactDescriptor waitAppDescriptor = new ArtifactDescriptor("wait-app", "/wait-app.zip", "/wait-app", "wait-app.zip", "mule-config.xml");
     private static final ArtifactDescriptor sharedPluginLibAppDescriptor = new ArtifactDescriptor("shared-plugin-lib-app", "/shared-plugin-lib-app.zip", "/shared-plugin-lib-app", "shared-plugin-lib-app.zip", "mule-config.xml");
     private static final ArtifactDescriptor dummyAppForDomainWithLib = new ArtifactDescriptor("dummy-app-for-domain", "/dummy-app-for-domain.zip", "/dummy-app-for-domain", null, null);
+    private static final ArtifactDescriptor dummyAppWithPluginDescriptor = new ArtifactDescriptor("dummyWithEchoPlugin", "/dummyWithEchoPlugin.zip", "/dummyWithEchoPlugin", null, null);
 
     //Domain constants
     private static final ArtifactDescriptor brokenDomainDescriptor = new ArtifactDescriptor("brokenDomain", "/broken-domain.zip", null, "brokenDomain.zip", "/broken-config.xml");
@@ -206,6 +207,16 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
         deploymentService.start();
 
         assertDeploymentSuccess(applicationDeploymentListener, externaLibAppDescriptor.id);
+    }
+
+    @Test
+    public void deploysAppZipWithPluginOnStartup() throws Exception
+    {
+        addPackedAppFromResource(dummyAppWithPluginDescriptor.zipPath);
+
+        deploymentService.start();
+
+        assertDeploymentSuccess(applicationDeploymentListener, dummyAppWithPluginDescriptor.id);
     }
 
     @Test

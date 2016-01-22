@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
 
-public class PropertiesDescriptorParser implements DescriptorParser
+public class PropertiesApplicationDescriptorFactory implements ApplicationDescriptorFactory
 {
     protected static final String PROPERTY_ENCODING = "encoding";
     protected static final String PROPERTY_CONFIG_BUILDER = "config.builder";

@@ -28,7 +28,7 @@ import java.util.List;
  * classLoader will use that to override default class loading order
  * </p>
  */
-public class FileSystemModuleClassLoaderFactory extends AbstractModuleClassLoaderFactory
+public class FileSystemModuleClassLoaderFactory extends AbstractModuleClassLoaderFactory implements ModuleClassLoaderFactory
 {
 
     @Override

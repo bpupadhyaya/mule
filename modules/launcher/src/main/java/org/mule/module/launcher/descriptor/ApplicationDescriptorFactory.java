@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  *
  */
-public interface DescriptorParser
+public interface ApplicationDescriptorFactory
 {
     ApplicationDescriptor parse(File descriptor, String applicationName) throws IOException;
 

@@ -8,7 +8,7 @@ package org.mule.module.launcher;
 
 import org.mule.config.Preferred;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
-import org.mule.module.launcher.descriptor.DescriptorParser;
+import org.mule.module.launcher.descriptor.ApplicationDescriptorFactory;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @SmallTest
-public class DescriptorParserTestCase extends AbstractMuleTestCase
+public class ApplicationDescriptorFactoryTestCase extends AbstractMuleTestCase
 {
 
     @Test
@@ -32,14 +32,14 @@ public class DescriptorParserTestCase extends AbstractMuleTestCase
     {
         DefaultAppBloodhound bh = new DefaultAppBloodhound();
         MultiMap overrides = new MultiValueMap();
-        overrides.put("properties", new TestDescriptorParserDefault());
+        overrides.put("properties", new TestApplicationDescriptorFactoryDefault());
 
         // test with default annotation values
         bh.mergeParserOverrides(overrides);
         assertEquals(1, bh.parserRegistry.size());
-        DescriptorParser result = bh.parserRegistry.get("properties");
+        ApplicationDescriptorFactory result = bh.parserRegistry.get("properties");
         assertNotNull(result);
-        assertTrue("@Preferred implementation ignored", result instanceof TestDescriptorParserDefault);
+        assertTrue("@Preferred implementation ignored", result instanceof TestApplicationDescriptorFactoryDefault);
     }
 
     @Test
@@ -47,15 +47,15 @@ public class DescriptorParserTestCase extends AbstractMuleTestCase
     {
         DefaultAppBloodhound bh = new DefaultAppBloodhound();
         MultiMap overrides = new MultiValueMap();
-        overrides.put("properties", new TestDescriptorParserDefault());
-        overrides.put("properties", new TestDescriptorParserPreferred());
+        overrides.put("properties", new TestApplicationDescriptorFactoryDefault());
+        overrides.put("properties", new TestApplicationDescriptorFactoryPreferred());
 
         // test with weigh attribute (we have 3 candidates now)
         bh.mergeParserOverrides(overrides);
         assertEquals(1, bh.parserRegistry.size());
-        DescriptorParser result = bh.parserRegistry.get("properties");
+        ApplicationDescriptorFactory result = bh.parserRegistry.get("properties");
         assertNotNull(result);
-        assertTrue("@Preferred implementation ignored", result instanceof TestDescriptorParserPreferred);
+        assertTrue("@Preferred implementation ignored", result instanceof TestApplicationDescriptorFactoryPreferred);
     }
 
     @Test
@@ -63,14 +63,14 @@ public class DescriptorParserTestCase extends AbstractMuleTestCase
     {
         DefaultAppBloodhound bh = new DefaultAppBloodhound();
         MultiMap overrides = new MultiValueMap();
-        overrides.put("properties", new TestDescriptorParserNoAnnotation());
+        overrides.put("properties", new TestApplicationDescriptorFactoryNoAnnotation());
 
         // test with weigh attribute (we have 3 candidates now)
         bh.mergeParserOverrides(overrides);
         assertEquals(1, bh.parserRegistry.size());
-        DescriptorParser result = bh.parserRegistry.get("properties");
+        ApplicationDescriptorFactory result = bh.parserRegistry.get("properties");
         assertNotNull(result);
-        assertTrue("@Preferred implementation ignored", result instanceof TestDescriptorParserNoAnnotation);
+        assertTrue("@Preferred implementation ignored", result instanceof TestApplicationDescriptorFactoryNoAnnotation);
     }
 
     @Test
@@ -78,15 +78,15 @@ public class DescriptorParserTestCase extends AbstractMuleTestCase
     {
         DefaultAppBloodhound bh = new DefaultAppBloodhound();
         MultiMap overrides = new MultiValueMap();
-        overrides.put("properties", new TestDescriptorParserNoAnnotation());
-        overrides.put("properties", new TestDescriptorParserDefault());
+        overrides.put("properties", new TestApplicationDescriptorFactoryNoAnnotation());
+        overrides.put("properties", new TestApplicationDescriptorFactoryDefault());
 
         // test with weigh attribute (we have 3 candidates now)
         bh.mergeParserOverrides(overrides);
         assertEquals(1, bh.parserRegistry.size());
-        DescriptorParser result = bh.parserRegistry.get("properties");
+        ApplicationDescriptorFactory result = bh.parserRegistry.get("properties");
         assertNotNull(result);
-        assertTrue("@Preferred implementation ignored", result instanceof TestDescriptorParserDefault);
+        assertTrue("@Preferred implementation ignored", result instanceof TestApplicationDescriptorFactoryDefault);
     }
 
 
@@ -94,7 +94,7 @@ public class DescriptorParserTestCase extends AbstractMuleTestCase
      * Test parser with annotation default
      */
     @Preferred()
-    class TestDescriptorParserDefault implements DescriptorParser
+    class TestApplicationDescriptorFactoryDefault implements ApplicationDescriptorFactory
     {
 
         @Override
@@ -113,7 +113,7 @@ public class DescriptorParserTestCase extends AbstractMuleTestCase
      * Test parser with weigh annotation
      */
     @Preferred(weight = 10)
-    class TestDescriptorParserPreferred implements DescriptorParser
+    class TestApplicationDescriptorFactoryPreferred implements ApplicationDescriptorFactory
     {
 
         @Override
@@ -130,7 +130,7 @@ public class DescriptorParserTestCase extends AbstractMuleTestCase
     }
 
 
-    class TestDescriptorParserNoAnnotation implements DescriptorParser
+    class TestApplicationDescriptorFactoryNoAnnotation implements ApplicationDescriptorFactory
     {
 
         @Override

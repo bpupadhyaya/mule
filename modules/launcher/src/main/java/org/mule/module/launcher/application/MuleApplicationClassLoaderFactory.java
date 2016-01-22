@@ -9,7 +9,6 @@ package org.mule.module.launcher.application;
 import org.mule.api.config.MuleProperties;
 import org.mule.module.classloader.AbstractModuleClassLoaderFactory;
 import org.mule.module.classloader.GoodCitizenClassLoader;
-import org.mule.module.factory.PluginDescriptor;
 import org.mule.module.launcher.MuleApplicationClassLoader;
 import org.mule.module.launcher.artifact.ArtifactClassLoader;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
@@ -90,12 +89,5 @@ public class MuleApplicationClassLoaderFactory extends AbstractModuleClassLoader
             parent = new MulePluginsClassLoader(parent, plugins);
         }
         return parent;
-    }
-
-    @Override
-    public ClassLoader create(PluginDescriptor descriptor)
-    {
-        //TODO(pablo.kraan): CCL -unify create methods after all the descriptors share the same base class
-        return null;
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-public abstract class AbstractModuleClassLoaderFactory implements ModuleClassLoaderFactory
+public abstract class AbstractModuleClassLoaderFactory
 {
 
     public static final String CLASSES_DIR = "classes";
