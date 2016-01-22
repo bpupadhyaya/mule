@@ -6,6 +6,8 @@
  */
 package org.mule.module.launcher.plugin;
 
+import org.mule.module.descriptor.LoaderExport;
+import org.mule.module.descriptor.LoaderExportParser;
 import org.mule.module.descriptor.LoaderOverrideParser;
 import org.mule.module.launcher.MuleFoldersUtil;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
@@ -31,6 +33,7 @@ public class PluginDescriptorParser
 {
 
     protected static final String PROPERTY_LOADER_OVERRIDE = "loader.override";
+    public static final String PROPERTY_LOADER_EXPORTED = "loader.export";
 
     private ApplicationDescriptor appDescriptor;
     private File appDir;
@@ -76,6 +79,14 @@ public class PluginDescriptorParser
                 if (StringUtils.isNotBlank(overrideString))
                 {
                     pd.setLoaderOverride(new LoaderOverrideParser().parse(overrideString));
+                }
+
+                String exportedClasses = props.getProperty(PROPERTY_LOADER_EXPORTED);
+                if (StringUtils.isNotBlank(exportedClasses))
+                {
+                    LoaderExport loaderExport = new LoaderExportParser().parse(exportedClasses);
+
+                    pd.setLoaderExport(loaderExport);
                 }
             }
 
