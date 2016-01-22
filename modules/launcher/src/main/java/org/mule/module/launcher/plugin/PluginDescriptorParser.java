@@ -66,8 +66,7 @@ public class PluginDescriptorParser
                                          appDescriptor.getName() + "/plugins/" + pluginName);
             // TODO fix unzip impl to not stumble over existing dirs
             FileUtils.unzip(new File(pluginsDir, pluginZip), tmpDir);
-            final PluginDescriptor pd = new PluginDescriptor();
-            pd.setName(pluginName);
+            final PluginDescriptor pd = new PluginDescriptor(pluginName);
 
             final File pluginPropsFile = new File(tmpDir, "plugin.properties");
             if (pluginPropsFile.exists())

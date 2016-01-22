@@ -20,6 +20,11 @@ public class PluginDescriptor extends ModuleDescriptor
     private Map<String, String> customProperties = new HashMap<String, String>();
     private boolean enabled = true;
 
+    public PluginDescriptor(String name)
+    {
+        super(name);
+    }
+
     public String getClassName()
     {
         return className;

@@ -28,7 +28,7 @@ public class PluginClassLoaderFilterTestCase extends AbstractMuleTestCase
     public static final String CLASS_PREFIX = "java.lang";
     public static final Set<String> PREFIX_NAMES = Collections.singleton(CLASS_PREFIX);
 
-    private final PluginDescriptor descriptor = new PluginDescriptor();
+    private final PluginDescriptor descriptor = new PluginDescriptor("test");
     private ModuleClassLoaderFilter filter = new ModuleClassLoaderFilter(descriptor);
 
     @Test

@@ -45,6 +45,11 @@ public class ApplicationDescriptor extends ModuleDescriptor
     private Set<PluginDescriptor> plugins = new HashSet<PluginDescriptor>(0);
     private URL[] sharedPluginLibs = new URL[0];
 
+    public ApplicationDescriptor(String name)
+    {
+        super(name);
+    }
+
     public String getEncoding()
     {
         return encoding;

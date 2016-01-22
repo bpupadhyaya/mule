@@ -10,18 +10,22 @@ package org.mule.module.descriptor;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- *
- */
 public class LoaderExportParser
 {
 
     public LoaderExport parse(String exportedClasses)
     {
+        final String[] split = exportedClasses.split(",");
+
+        return parse(split);
+    }
+
+    public LoaderExport parse(String[] split)
+    {
         Set<String> exportedPrefixes = new HashSet<>();
         Set<String> blockedPrefixes = new HashSet<>();
 
-        for (String exported : exportedClasses.split(","))
+        for (String exported : split)
         {
             if (exported.startsWith("-"))
             {

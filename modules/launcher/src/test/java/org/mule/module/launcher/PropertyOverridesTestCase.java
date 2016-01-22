@@ -8,8 +8,11 @@ package org.mule.module.launcher;
 
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
 import org.mule.tck.junit4.AbstractMuleTestCase;
+import org.mule.util.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,10 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.mule.util.IOUtils;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * Test the overriding of app properties by system properties
@@ -49,7 +48,7 @@ public class PropertyOverridesTestCase extends AbstractMuleTestCase
         IOUtils.copy(input, output);
         input.close();
         output.close();
-        ApplicationDescriptor descriptor = new ApplicationDescriptor();
+        ApplicationDescriptor descriptor = new ApplicationDescriptor("test");
         DefaultAppBloodhound dab = new DefaultAppBloodhound();
         dab.setApplicationProperties(descriptor, tempProps);
         Map<String, String>appProps = descriptor.getAppProperties();
@@ -63,7 +62,7 @@ public class PropertyOverridesTestCase extends AbstractMuleTestCase
         try
         {
             setSystemProperties();
-            descriptor = new ApplicationDescriptor();
+            descriptor = new ApplicationDescriptor("test");
             dab.setApplicationProperties(descriptor, tempProps);
             appProps = descriptor.getAppProperties();
             assertEquals("state", appProps.get("texas"));
@@ -74,7 +73,7 @@ public class PropertyOverridesTestCase extends AbstractMuleTestCase
             assertEquals("ipaas", appProps.get("mule.ion"));
             assertEquals("evenCooler", appProps.get("mule.mmc"));
 
-            descriptor = new ApplicationDescriptor();
+            descriptor = new ApplicationDescriptor("test");
             dab.setApplicationProperties(descriptor, new File("nonexistent.nonexistent"));
             appProps = descriptor.getAppProperties();
             assertNull(appProps.get("texas"));

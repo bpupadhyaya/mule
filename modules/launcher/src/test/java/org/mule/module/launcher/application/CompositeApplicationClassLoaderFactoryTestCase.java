@@ -31,7 +31,7 @@ public class CompositeApplicationClassLoaderFactoryTestCase extends AbstractMule
     private final ApplicationClassLoaderFactory applicationClassLoaderFactory = mock(ApplicationClassLoaderFactory.class, RETURNS_DEEP_STUBS.get());
     private final PluginClassLoaderManager pluginClassLoaderManager = mock(PluginClassLoaderManager.class);
     private final CompositeApplicationClassLoaderFactory pluginAwareClassLoaderFactory = new CompositeApplicationClassLoaderFactory(applicationClassLoaderFactory, pluginClassLoaderManager);
-    private final ApplicationDescriptor appDescriptor = new ApplicationDescriptor();
+    private final ApplicationDescriptor appDescriptor = new ApplicationDescriptor("test");
 
     @Test
     public void createsDefaultApplicationClassLoaderWhenNoPluginInstalled() throws Exception

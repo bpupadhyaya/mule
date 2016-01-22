@@ -15,6 +15,11 @@ public class PluginDescriptor extends ModuleDescriptor
     private URL runtimeClassesDir;
     private URL[] runtimeLibs;
 
+    public PluginDescriptor(String name)
+    {
+        super(name);
+    }
+
     public URL getRuntimeClassesDir()
     {
         return runtimeClassesDir;

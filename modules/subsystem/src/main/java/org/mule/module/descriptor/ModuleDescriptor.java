@@ -20,6 +20,10 @@ public class ModuleDescriptor
     private LoaderExport loaderExport = new LoaderExport(Collections.EMPTY_SET, Collections.EMPTY_SET);
     private LoaderOverride loaderOverride = LoaderOverride.NULL_LOADER_OVERRIDE;
 
+    public ModuleDescriptor(String name)
+    {
+        this.name = name;
+    }
 
     public String getName()
     {
@@ -28,6 +32,7 @@ public class ModuleDescriptor
 
     public void setName(String name)
     {
+        //TODO(pablo.kraan): CCL - this method is used on the case of Application. Try to remove it
         this.name = name;
     }
 

@@ -33,7 +33,7 @@ public class PropertiesApplicationDescriptorFactory implements ApplicationDescri
     {
         final Properties p = PropertiesUtils.loadProperties(new FileInputStream(descriptor));
 
-        ApplicationDescriptor d = new ApplicationDescriptor();
+        ApplicationDescriptor d = new ApplicationDescriptor(applicationName);
         d.setEncoding(p.getProperty(PROPERTY_ENCODING));
         d.setConfigurationBuilder(p.getProperty(PROPERTY_CONFIG_BUILDER));
         d.setDomain(p.getProperty(PROPERTY_DOMAIN));

@@ -37,7 +37,7 @@ public class FileSystemModuleClassLoaderFactoryTestCase extends AbstractMuleTest
     @Before
     public void setUp() throws Exception
     {
-        descriptor = new PluginDescriptor();
+        descriptor = new PluginDescriptor("test");
         descriptor.setRootFolder(pluginFolder.getRoot());
     }
 

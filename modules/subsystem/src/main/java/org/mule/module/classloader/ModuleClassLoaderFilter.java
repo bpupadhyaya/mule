@@ -7,10 +7,8 @@
 
 package org.mule.module.classloader;
 
-import org.mule.module.descriptor.PluginDescriptor;
 import org.mule.module.descriptor.ModuleDescriptor;
-
-import java.util.List;
+import org.mule.module.descriptor.PluginDescriptor;
 
 /**
  * Filters classes and resources using a {@link PluginDescriptor} describing
@@ -34,6 +32,10 @@ public class ModuleClassLoaderFilter implements ClassLoaderFilter
     @Override
     public boolean accepts(String name)
     {
-        return descriptor.getLoaderExport().isExported(name);
+        final boolean exported = descriptor.getLoaderExport().isExported(name);
+        //TODO(pablo.kraan): CCL - add a property to enable logging
+        //TODO(pablo.kraan): CCL - add same logging on loaderOverride
+        System.out.println("LoaderExport Module: " + descriptor.getName() + " resource: " + name + " exported: " + exported);
+        return exported;
     }
 }
