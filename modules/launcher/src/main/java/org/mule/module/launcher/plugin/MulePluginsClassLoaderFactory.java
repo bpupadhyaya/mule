@@ -34,7 +34,7 @@ public class MulePluginsClassLoaderFactory
 
             System.arraycopy(plugin.getRuntimeLibs(), 0, urls, 1, plugin.getRuntimeLibs().length);
 
-            classLoaders.add(new ModuleClassLoader(parent, urls, plugin.getLoaderOverrides()));
+            classLoaders.add(new ModuleClassLoader(parent, urls, plugin.getLoaderOverride()));
         }
 
         return new CompositeClassLoader(classLoaders);

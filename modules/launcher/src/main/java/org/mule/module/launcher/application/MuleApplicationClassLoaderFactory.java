@@ -60,7 +60,7 @@ public class MuleApplicationClassLoaderFactory extends AbstractModuleClassLoader
         File perAppLibs = new File(muleLibs, MuleApplicationClassLoader.PATH_PER_APP);
         loadJarsFromFolder(urls, perAppLibs);
 
-        return new MuleApplicationClassLoader(descriptor.getName(), parent, descriptor.getLoaderOverride(), nativeLibraryFinderFactory.create(descriptor.getName()), urls.toArray(new URL[0]));
+        return new MuleApplicationClassLoader(descriptor.getName(), parent, nativeLibraryFinderFactory.create(descriptor.getName()), urls.toArray(new URL[0]), descriptor.getLoaderOverride());
     }
 
     private ClassLoader getParentClassLoader(ApplicationDescriptor descriptor)

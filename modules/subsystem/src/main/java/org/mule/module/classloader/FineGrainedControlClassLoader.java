@@ -6,12 +6,9 @@
  */
 package org.mule.module.classloader;
 
-import org.mule.util.StringUtils;
+import org.mule.module.descriptor.LoaderOverride;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * TODO document overrides, blocked, systemPackages and syntax for specifying those.
@@ -21,53 +18,17 @@ public class FineGrainedControlClassLoader extends GoodCitizenClassLoader
 
     protected String appName;
 
-    // Finished with '.' so that we can use startsWith to verify
-    protected String[] systemPackages = {
-            "java.",
-            "javax.",
-            "org.mule.",
-            "com.mulesoft.",
-            "com.mulesource."
-    };
-
-    protected Set<String> overrides = new HashSet<String>();
-    protected Set<String> blocked = new HashSet<String>();
+    protected final LoaderOverride loaderOverride;
 
     public FineGrainedControlClassLoader(URL[] urls, ClassLoader parent)
     {
-        this(urls, parent, Collections.<String>emptySet());
+        this(urls, parent, LoaderOverride.NULL_LOADER_OVERRIDE);
     }
 
-    public FineGrainedControlClassLoader(URL[] urls, ClassLoader parent, Set<String> overrides)
+    public FineGrainedControlClassLoader(URL[] urls, ClassLoader parent, LoaderOverride loaderOverride)
     {
         super(urls, parent);
-        processOverrides(overrides);
-    }
-
-    protected void processOverrides(Set<String> overrides)
-    {
-        if (overrides != null && !overrides.isEmpty())
-        {
-            for (String override : overrides)
-            {
-                override = StringUtils.defaultString(override).trim();
-                // 'blocked' package definitions come with a '-' prefix
-                if (override.startsWith("-"))
-                {
-                    override = override.substring(1);
-                    this.blocked.add(override);
-                }
-                this.overrides.add(override);
-
-                for (String systemPackage : systemPackages)
-                {
-                    if (override.startsWith(systemPackage))
-                    {
-                        throw new IllegalArgumentException("Can't override a system package. Offending value: " + override);
-                    }
-                }
-            }
-        }
+        this.loaderOverride = loaderOverride;
     }
 
     @Override
@@ -79,33 +40,23 @@ public class FineGrainedControlClassLoader extends GoodCitizenClassLoader
         {
             return result;
         }
-        boolean overrideMatch = isOverridden(name);
-
-
-        if (overrideMatch)
+        if (loaderOverride.isBlocked(name))
         {
-            boolean blockedMatch = isBlocked(name);
-
-            if (blockedMatch)
+            // load this class from the child ONLY, don't attempt parent, let CNFE exception propagate
+            result = findClass(name);
+        }
+        else if (loaderOverride.isOverridden(name))
+        {
+            // load this class from the child
+            try
             {
-                // load this class from the child ONLY, don't attempt parent, let CNFE exception propagate
                 result = findClass(name);
             }
-            else
+            catch (ClassNotFoundException e)
             {
-                // load this class from the child
-                try
-                {
-                    result = findClass(name);
-                }
-                catch (ClassNotFoundException e)
-                {
-                    // let it fail with CNFE
-                    result = findParentClass(name);
-                }
+                // let it fail with CNFE
+                result = findParentClass(name);
             }
-
-
         }
         else
         {
@@ -128,33 +79,10 @@ public class FineGrainedControlClassLoader extends GoodCitizenClassLoader
         return result;
     }
 
-    public boolean isOverridden(String name)
+    public LoaderOverride getLoaderOverride()
     {
-        // find a match
-        boolean overrideMatch = false;
-        for (String override : overrides)
-        {
-            if (name.equals(override) || name.startsWith(override + "."))
-            {
-                overrideMatch = true;
-                break;
-            }
-        }
-        return overrideMatch;
-    }
-
-    public boolean isBlocked(String name)
-    {
-        boolean blockedMatch = false;
-        for (String b : blocked)
-        {
-            if (name.equals(b) || name.startsWith(b + "."))
-            {
-                blockedMatch = true;
-                break;
-            }
-        }
-        return blockedMatch;
+        //TODO(pablo.kraan): I don' like this getter, looks like is only used for testing purposes
+        return loaderOverride;
     }
 
     protected Class<?> findParentClass(String name) throws ClassNotFoundException

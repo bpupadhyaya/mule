@@ -7,9 +7,7 @@
 
 package org.mule.module.descriptor;
 
-import org.mule.util.StringUtils;
-
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -17,47 +15,15 @@ import java.util.Set;
  */
 public class LoaderOverride
 {
-    // Finished with '.' so that we can use startsWith to verify
-    protected String[] systemPackages = {
-            "java.",
-            "javax.",
-            "org.mule.",
-            "com.mulesoft.",
-            "com.mulesource."
-    };
+    public static final LoaderOverride NULL_LOADER_OVERRIDE = new LoaderOverride(Collections.EMPTY_SET, Collections.EMPTY_SET);
 
-    protected Set<String> overrides = new HashSet<String>();
-    protected Set<String> blocked = new HashSet<String>();
+    private final Set<String> overrides;
+    private final Set<String> blocked;
 
-    public LoaderOverride(Set<String> rules)
+    public LoaderOverride(Set<String> overrides, Set<String> blocked)
     {
-        processOverrides(rules);
-    }
-
-    protected void processOverrides(Set<String> overrides)
-    {
-        if (overrides != null && !overrides.isEmpty())
-        {
-            for (String override : overrides)
-            {
-                override = StringUtils.defaultString(override).trim();
-                // 'blocked' package definitions come with a '-' prefix
-                if (override.startsWith("-"))
-                {
-                    override = override.substring(1);
-                    this.blocked.add(override);
-                }
-                this.overrides.add(override);
-
-                for (String systemPackage : systemPackages)
-                {
-                    if (override.startsWith(systemPackage))
-                    {
-                        throw new IllegalArgumentException("Can't override a system package. Offending value: " + override);
-                    }
-                }
-            }
-        }
+        this.overrides = overrides;
+        this.blocked = blocked;
     }
 
     public boolean isOverridden(String name)
@@ -88,5 +54,4 @@ public class LoaderOverride
         }
         return blockedMatch;
     }
-
 }

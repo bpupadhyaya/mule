@@ -6,6 +6,7 @@
  */
 package org.mule.module.launcher.descriptor;
 
+import org.mule.module.descriptor.LoaderOverrideParser;
 import org.mule.module.reboot.MuleContainerBootstrapUtils;
 import org.mule.util.PropertiesUtils;
 import org.mule.util.StringUtils;
@@ -13,10 +14,7 @@ import org.mule.util.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
 
@@ -62,10 +60,7 @@ public class PropertiesApplicationDescriptorFactory implements ApplicationDescri
         final String overrideString = p.getProperty(PROPERTY_LOADER_OVERRIDE);
         if (StringUtils.isNotBlank(overrideString))
         {
-            Set<String> values = new HashSet<String>();
-            final String[] overrides = overrideString.split(",");
-            Collections.addAll(values, overrides);
-            d.setLoaderOverride(values);
+            d.setLoaderOverride(new LoaderOverrideParser().parse(overrideString));
         }
 
         return d;

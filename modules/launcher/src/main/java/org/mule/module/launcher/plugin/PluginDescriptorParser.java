@@ -6,6 +6,7 @@
  */
 package org.mule.module.launcher.plugin;
 
+import org.mule.module.descriptor.LoaderOverrideParser;
 import org.mule.module.launcher.MuleFoldersUtil;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
 import org.mule.module.reboot.MuleContainerBootstrapUtils;
@@ -74,10 +75,7 @@ public class PluginDescriptorParser
                 final String overrideString = props.getProperty(PROPERTY_LOADER_OVERRIDE);
                 if (StringUtils.isNotBlank(overrideString))
                 {
-                    Set<String> values = new HashSet<>();
-                    final String[] overrides = overrideString.split(",");
-                    Collections.addAll(values, overrides);
-                    pd.setLoaderOverride(values);
+                    pd.setLoaderOverride(new LoaderOverrideParser().parse(overrideString));
                 }
             }
 

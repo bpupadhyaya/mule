@@ -132,16 +132,6 @@ public class ApplicationDescriptor extends ModuleDescriptor
         this.redeploymentEnabled = redeploymentEnabled;
     }
 
-    public Set<String> getLoaderOverride()
-    {
-        return loaderOverride;
-    }
-
-    public void setLoaderOverride(Set<String> loaderOverride)
-    {
-        this.loaderOverride = loaderOverride;
-    }
-
     public Set<PluginDescriptor> getPlugins()
     {
         return plugins;

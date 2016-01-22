@@ -7,9 +7,9 @@
 
 package org.mule.module.classloader;
 
+import org.mule.module.descriptor.LoaderOverride;
+
 import java.net.URL;
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * Defines a class loader to be used inside an mule plugin.
@@ -17,14 +17,13 @@ import java.util.Set;
 public class ModuleClassLoader extends FineGrainedControlClassLoader
 {
 
-    //TODO(pablo.kraan): CCL - check classloader creation to inject proper overrides
     public ModuleClassLoader(ClassLoader parent, URL[] urls)
     {
-        this(parent, urls, Collections.<String>emptySet());
+        this(parent, urls, LoaderOverride.NULL_LOADER_OVERRIDE);
     }
 
-    public ModuleClassLoader(ClassLoader parent, URL[] urls, Set<String> overrides)
+    public ModuleClassLoader(ClassLoader parent, URL[] urls, LoaderOverride loaderOverride)
     {
-        super(urls, parent, overrides);
+        super(urls, parent, loaderOverride);
     }
 }

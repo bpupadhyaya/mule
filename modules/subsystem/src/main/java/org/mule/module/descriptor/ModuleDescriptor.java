@@ -9,8 +9,6 @@ package org.mule.module.descriptor;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 public class ModuleDescriptor
 {
@@ -19,8 +17,10 @@ public class ModuleDescriptor
     //Maybe those plugins should have a different descriptor factory.
     private String name;
     private File rootFolder;
-    private Set<String> loaderOverrides = Collections.emptySet();
+    //TODO(pablo.kraan): check if loaderOverride and loaderExport classes can be unified
     private LoaderExport loaderExport = new LoaderExport(Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+    private LoaderOverride loaderOverride = LoaderOverride.NULL_LOADER_OVERRIDE;
+
 
     public String getName()
     {
@@ -47,21 +47,6 @@ public class ModuleDescriptor
         this.rootFolder = rootFolder;
     }
 
-    public void setLoaderOverride(Set<String> loaderOverrides)
-    {
-        if (loaderOverrides == null)
-        {
-            throw new IllegalArgumentException("Loader overrides cannot be null");
-        }
-
-        this.loaderOverrides = Collections.unmodifiableSet(loaderOverrides);
-    }
-
-    public Set<String> getLoaderOverrides()
-    {
-        return loaderOverrides;
-    }
-
     public LoaderExport getLoaderExport()
     {
         return loaderExport;
@@ -69,6 +54,26 @@ public class ModuleDescriptor
 
     public void setLoaderExport(LoaderExport loaderExport)
     {
+        if (loaderExport == null)
+        {
+            throw new IllegalArgumentException("Loader export cannot be null");
+        }
+
         this.loaderExport = loaderExport;
+    }
+
+    public LoaderOverride getLoaderOverride()
+    {
+        return loaderOverride;
+    }
+
+    public void setLoaderOverride(LoaderOverride loaderOverride)
+    {
+        if (loaderOverride == null)
+        {
+            throw new IllegalArgumentException("Loader override cannot be null");
+        }
+
+        this.loaderOverride = loaderOverride;
     }
 }

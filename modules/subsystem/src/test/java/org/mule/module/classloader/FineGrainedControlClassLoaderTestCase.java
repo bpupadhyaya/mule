@@ -7,8 +7,7 @@
 package org.mule.module.classloader;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.mule.module.descriptor.LoaderOverride;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 import org.mule.util.ClassUtils;
@@ -16,84 +15,13 @@ import org.mule.util.ClassUtils;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
 
 import org.junit.Test;
 
 @SmallTest
 public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
 {
-
-    @Test
-    public void isBlockedFQClassName() throws Exception
-    {
-        Set<String> overrides = new HashSet<String>(1);
-        overrides.add("-org.mycompany.MyClass");
-        FineGrainedControlClassLoader classLoader = new FineGrainedControlClassLoader(new URL[0], null,
-                                                                                      overrides);
-        assertTrue(classLoader.isBlocked("org.mycompany.MyClass"));
-        assertFalse(classLoader.isBlocked("MyClass"));
-        assertFalse(classLoader.isBlocked("org.mycompany.MyClassFactory"));
-    }
-
-    @Test
-    public void isBlockedNotFQClassName() throws Exception
-    {
-        Set<String> overrides = new HashSet<String>(1);
-        overrides.add("-MyClass");
-        FineGrainedControlClassLoader classLoader = new FineGrainedControlClassLoader(new URL[0], null,
-            overrides);
-        assertTrue(classLoader.isBlocked("MyClass"));
-        assertFalse(classLoader.isBlocked("MyClassFactory"));
-        assertFalse(classLoader.isBlocked("org.mycompany.MyClass"));
-    }
-
-    @Test
-    public void isBlockedPackageName() throws Exception
-    {
-        Set<String> overrides = new HashSet<String>(1);
-        overrides.add("-org.mycompany");
-        FineGrainedControlClassLoader classLoader = new FineGrainedControlClassLoader(new URL[0], null,
-            overrides);
-        assertTrue(classLoader.isBlocked("org.mycompany.MyClass"));
-        assertTrue(classLoader.isBlocked("org.mycompany.somepackage.MyClass"));
-    }
-
-    @Test
-    public void isOverriddenFQClassName() throws Exception
-    {
-        Set<String> overrides = new HashSet<String>(1);
-        overrides.add("org.mycompany.MyClass");
-        FineGrainedControlClassLoader classLoader = new FineGrainedControlClassLoader(new URL[0], null,
-            overrides);
-        assertTrue(classLoader.isOverridden("org.mycompany.MyClass"));
-        assertFalse(classLoader.isOverridden("MyClass"));
-        assertFalse(classLoader.isOverridden("org.mycompany.MyClassFactory"));
-    }
-
-    @Test
-    public void isOverriddenNotFQClassName() throws Exception
-    {
-        Set<String> overrides = new HashSet<String>(1);
-        overrides.add("MyClass");
-        FineGrainedControlClassLoader classLoader = new FineGrainedControlClassLoader(new URL[0], null,
-            overrides);
-        assertTrue(classLoader.isOverridden("MyClass"));
-        assertFalse(classLoader.isOverridden("MyClassFactory"));
-        assertFalse(classLoader.isOverridden("org.mycompany.MyClass"));
-    }
-
-    @Test
-    public void isOverriddenPackageName() throws Exception
-    {
-        Set<String> overrides = new HashSet<String>(1);
-        overrides.add("org.mycompany");
-        FineGrainedControlClassLoader classLoader = new FineGrainedControlClassLoader(new URL[0], null,
-            overrides);
-        assertTrue(classLoader.isOverridden("org.mycompany.MyClass"));
-        assertTrue(classLoader.isOverridden("org.mycompany.somepackage.MyClass"));
-    }
 
     @Test
     public void parentFirst() throws Exception
@@ -109,9 +37,9 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
     {
         URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
 
-        Set<String> overrides = new HashSet<String>();
-        overrides.add("mypackage");
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, overrides);
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.singleton("mypackage"), Collections.EMPTY_SET);
+
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride);
 
         assertEquals("Bye", callHi(ext));
     }
@@ -121,9 +49,9 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
     {
         URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
 
-        Set<String> overrides = new HashSet<String>();
-        overrides.add("mypackage");
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, overrides);
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.singleton("mypackage"), Collections.EMPTY_SET);
+
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, loaderOverride);
         assertEquals("Hello", callHi(ext));
     }
 
@@ -132,9 +60,9 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
     {
         URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
 
-        Set<String> overrides = new HashSet<String>();
-        overrides.add("-mypackage");
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, overrides);
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("mypackage"));
+
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, loaderOverride);
         callHi(ext);
     }
 
@@ -143,26 +71,10 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
     {
         URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
 
-        Set<String> overrides = new HashSet<String>();
-        overrides.add("-mypackage");
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, overrides);
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("mypackage"));
+
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride);
         assertEquals("Bye", callHi(ext));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void illegalOverride()
-    {
-        Set<String> overrides = new HashSet<String>();
-        overrides.add("org.mule.module.reboot.MuleContainerBootstrap");
-        new FineGrainedControlClassLoader(new URL[0], null, overrides);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void illegalBlock()
-    {
-        Set<String> overrides = new HashSet<String>();
-        overrides.add("-java.util.Collections");
-        new FineGrainedControlClassLoader(new URL[0], null, overrides);
     }
 
     private URL hello()

@@ -7,6 +7,7 @@
 package org.mule.module.launcher.artifact;
 
 import org.mule.module.classloader.ModuleClassLoader;
+import org.mule.module.descriptor.LoaderOverride;
 import org.mule.module.launcher.DirectoryResourceLocator;
 import org.mule.module.launcher.LocalResourceLocator;
 import org.mule.util.IOUtils;
@@ -14,9 +15,7 @@ import org.mule.util.IOUtils;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,12 +38,12 @@ public abstract class AbstractArtifactClassLoader extends ModuleClassLoader impl
 
     public AbstractArtifactClassLoader(ClassLoader parent, URL[] urls)
     {
-        this(parent, urls, Collections.<String>emptySet());
+        this(parent, urls, LoaderOverride.NULL_LOADER_OVERRIDE);
     }
 
-    public AbstractArtifactClassLoader(ClassLoader parent, URL[] urls, Set<String> overrides)
+    public AbstractArtifactClassLoader(ClassLoader parent, URL[] urls, LoaderOverride loaderOverride)
     {
-        super(parent, urls, overrides);
+        super(parent, urls, loaderOverride);
     }
 
     @Override

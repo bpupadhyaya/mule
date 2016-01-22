@@ -7,16 +7,17 @@
 
 package org.mule.module.classloader;
 
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import org.mule.module.descriptor.LoaderOverride;
 import org.mule.module.descriptor.PluginDescriptor;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -87,22 +88,13 @@ public class FileSystemModuleClassLoaderFactoryTestCase extends AbstractMuleTest
     }
 
     @Test
-    public void addsClassLoaderOverride() throws Exception
+    public void configuresLoaderOverride() throws Exception
     {
-        Set<String> loaderOverrides = new HashSet<String>();
-        loaderOverrides.add("com.dummy");
-        descriptor.setLoaderOverride(loaderOverrides);
-        ModuleClassLoader pluginClassLoader = factory.create(descriptor);
-        pluginClassLoader.isOverridden("com.dummy");
-    }
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("com.dummy"));
+        descriptor.setLoaderOverride(loaderOverride);
 
-    @Test
-    public void addsClassLoaderBlocking() throws Exception
-    {
-        Set<String> loaderOverrides = new HashSet<String>();
-        loaderOverrides.add("-com.dummy");
-        descriptor.setLoaderOverride(loaderOverrides);
-        ModuleClassLoader pluginClassLoader = factory.create(descriptor);
-        pluginClassLoader.isBlocked("-com.dummy");
+        ModuleClassLoader moduleClassLoader = factory.create(descriptor);
+
+        assertThat(moduleClassLoader.getLoaderOverride(), is(loaderOverride));
     }
 }
