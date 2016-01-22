@@ -7,9 +7,7 @@
 
 package org.mule.module.factory;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,32 +32,6 @@ public class PluginDescriptor extends ModuleDescriptor
             throw new IllegalArgumentException("Cannot set a null value on className");
         }
         this.className = className;
-    }
-
-    public void setExportedPrefixNames(List<String> exported)
-    {
-        this.exportedPrefixNames = Collections.unmodifiableList(exported);
-    }
-
-    /**
-     * @return an immutable list of exported class prefix names
-     */
-    public List<String> getExportedPrefixNames()
-    {
-        return exportedPrefixNames;
-    }
-
-    public void setBlockedPrefixNames(List<String> blocked)
-    {
-        this.blockedPrefixNames = Collections.unmodifiableList(blocked);
-    }
-
-    /**
-     * @return an immutable list of blocked class prefix names
-     */
-    public List<String> getBlockedPrefixNames()
-    {
-        return blockedPrefixNames;
     }
 
     public void addCustomProperty(String name, String value)

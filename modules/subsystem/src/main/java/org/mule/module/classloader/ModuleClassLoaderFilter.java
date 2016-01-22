@@ -7,6 +7,7 @@
 
 package org.mule.module.classloader;
 
+import org.mule.module.factory.ModuleDescriptor;
 import org.mule.module.factory.PluginDescriptor;
 
 import java.util.List;
@@ -23,9 +24,9 @@ import java.util.List;
 public class ModuleClassLoaderFilter implements ClassLoaderFilter
 {
 
-    private final PluginDescriptor descriptor;
+    private final ModuleDescriptor descriptor;
 
-    public ModuleClassLoaderFilter(PluginDescriptor descriptor)
+    public ModuleClassLoaderFilter(ModuleDescriptor descriptor)
     {
         this.descriptor = descriptor;
     }

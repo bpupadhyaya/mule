@@ -20,23 +20,23 @@ import java.util.Enumeration;
 
 import org.junit.Test;
 
-public class FilteringPluginClassLoaderTestCase extends AbstractMuleTestCase
+public class FilteringModuleClassLoaderTestCase extends AbstractMuleTestCase
 {
 
     public static final String CLASS_NAME = "java.lang.Object";
     public static final String RESOURCE_NAME = "dummy.txt";
     public static final String PLUGIN_NAME = "DUMMY_PLUGIN";
 
-    private FilteringPluginClassLoader filteringPluginClassLoader;
+    private FilteringModuleClassLoader filteringModuleClassLoader;
 
     @Test(expected = ClassNotFoundException.class)
     public void throwClassNotFoundErrorWhenClassIsNotExported() throws ClassNotFoundException
     {
         ClassLoaderFilter filter = mock(ClassLoaderFilter.class);
         when(filter.accepts(CLASS_NAME)).thenReturn(false);
-        filteringPluginClassLoader = new FilteringPluginClassLoader(PLUGIN_NAME, null, filter);
+        filteringModuleClassLoader = new FilteringModuleClassLoader(PLUGIN_NAME, null, filter);
 
-        filteringPluginClassLoader.loadClass(CLASS_NAME);
+        filteringModuleClassLoader.loadClass(CLASS_NAME);
     }
 
     @Test
@@ -49,8 +49,8 @@ public class FilteringPluginClassLoaderTestCase extends AbstractMuleTestCase
         ClassLoaderFilter filter = mock(ClassLoaderFilter.class);
         when(filter.accepts(CLASS_NAME)).thenReturn(true);
 
-        filteringPluginClassLoader = new FilteringPluginClassLoader(PLUGIN_NAME, classLoader, filter);
-        Class<?> aClass = filteringPluginClassLoader.loadClass(CLASS_NAME);
+        filteringModuleClassLoader = new FilteringModuleClassLoader(PLUGIN_NAME, classLoader, filter);
+        Class<?> aClass = filteringModuleClassLoader.loadClass(CLASS_NAME);
         assertThat(aClass, equalTo(expectedClass));
     }
 
@@ -59,9 +59,9 @@ public class FilteringPluginClassLoaderTestCase extends AbstractMuleTestCase
     {
         ClassLoaderFilter filter = mock(ClassLoaderFilter.class);
         when(filter.accepts(RESOURCE_NAME)).thenReturn(false);
-        filteringPluginClassLoader = new FilteringPluginClassLoader(PLUGIN_NAME, null, filter);
+        filteringModuleClassLoader = new FilteringModuleClassLoader(PLUGIN_NAME, null, filter);
 
-        URL resource = filteringPluginClassLoader.getResource(RESOURCE_NAME);
+        URL resource = filteringModuleClassLoader.getResource(RESOURCE_NAME);
         assertThat(resource, equalTo(null));
     }
 
@@ -74,9 +74,9 @@ public class FilteringPluginClassLoaderTestCase extends AbstractMuleTestCase
 
         ClassLoaderFilter filter = mock(ClassLoaderFilter.class);
         when(filter.accepts(RESOURCE_NAME)).thenReturn(true);
-        filteringPluginClassLoader = new FilteringPluginClassLoader(PLUGIN_NAME, classLoader, filter);
+        filteringModuleClassLoader = new FilteringModuleClassLoader(PLUGIN_NAME, classLoader, filter);
 
-        URL resource = filteringPluginClassLoader.getResource(RESOURCE_NAME);
+        URL resource = filteringModuleClassLoader.getResource(RESOURCE_NAME);
         assertThat(resource, equalTo(expectedResource));
     }
 
@@ -90,9 +90,9 @@ public class FilteringPluginClassLoaderTestCase extends AbstractMuleTestCase
         ClassLoaderFilter filter = mock(ClassLoaderFilter.class);
         when(filter.accepts(RESOURCE_NAME)).thenReturn(false);
 
-        filteringPluginClassLoader = new FilteringPluginClassLoader(PLUGIN_NAME, classLoader, filter);
+        filteringModuleClassLoader = new FilteringModuleClassLoader(PLUGIN_NAME, classLoader, filter);
 
-        Enumeration<URL> resources = filteringPluginClassLoader.getResources(RESOURCE_NAME);
+        Enumeration<URL> resources = filteringModuleClassLoader.getResources(RESOURCE_NAME);
         assertThat(resources, EnumerationMatcher.equalTo(Collections.EMPTY_LIST));
     }
 
@@ -106,9 +106,9 @@ public class FilteringPluginClassLoaderTestCase extends AbstractMuleTestCase
         ClassLoaderFilter filter = mock(ClassLoaderFilter.class);
         when(filter.accepts(RESOURCE_NAME)).thenReturn(true);
 
-        filteringPluginClassLoader = new FilteringPluginClassLoader(PLUGIN_NAME, classLoader, filter);
+        filteringModuleClassLoader = new FilteringModuleClassLoader(PLUGIN_NAME, classLoader, filter);
 
-        Enumeration<URL> resources = filteringPluginClassLoader.getResources(RESOURCE_NAME);
+        Enumeration<URL> resources = filteringModuleClassLoader.getResources(RESOURCE_NAME);
         assertThat(resources, EnumerationMatcher.equalTo(Collections.singletonList(resource)));
     }
 }

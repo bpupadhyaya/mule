@@ -18,21 +18,21 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Defines a {@link ClassLoader} that filter which classes and resources can
- * be resolved based on a {@link com.mulesoft.mule.plugin.factory.PluginDescriptor}
+ * be resolved based on a {@link org.mule.module.factory.ModuleDescriptor}
  */
-public class FilteringPluginClassLoader extends ClassLoader
+public class FilteringModuleClassLoader extends ClassLoader
 {
 
-    protected static final Log logger = LogFactory.getLog(FilteringPluginClassLoader.class);
+    protected static final Log logger = LogFactory.getLog(FilteringModuleClassLoader.class);
 
-    private String pluginName;
+    private String moduleName;
     private final ClassLoader pluginClassLoader;
     private final ClassLoaderFilter filter;
 
-    public FilteringPluginClassLoader(String pluginName, ClassLoader pluginClassLoader, ClassLoaderFilter filter)
+    public FilteringModuleClassLoader(String moduleName, ClassLoader moduleClassLoader, ClassLoaderFilter filter)
     {
-        this.pluginName = pluginName;
-        this.pluginClassLoader = pluginClassLoader;
+        this.moduleName = moduleName;
+        this.pluginClassLoader = moduleClassLoader;
         this.filter = filter;
     }
 
@@ -91,7 +91,7 @@ public class FilteringPluginClassLoader extends ClassLoader
     public String toString()
     {
         return String.format("%s[%s]@%s", getClass().getName(),
-                             pluginName,
+                             moduleName,
                              Integer.toHexString(System.identityHashCode(this)));
     }
 }
