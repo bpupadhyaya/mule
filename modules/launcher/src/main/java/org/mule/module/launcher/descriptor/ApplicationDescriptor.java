@@ -39,9 +39,6 @@ public class ApplicationDescriptor extends ModuleDescriptor
     private Map<String, String> appProperties = new HashMap<String, String>();
 
     private boolean redeploymentEnabled = true;
-
-    private Set<String> loaderOverride = new HashSet<String>();
-
     private Set<PluginDescriptor> plugins = new HashSet<PluginDescriptor>(0);
     private URL[] sharedPluginLibs = new URL[0];
 
