@@ -14,7 +14,7 @@ import org.mule.module.launcher.artifact.ArtifactClassLoader;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
 import org.mule.module.launcher.domain.DomainClassLoaderRepository;
 import org.mule.module.launcher.nativelib.NativeLibraryFinderFactory;
-import org.mule.module.launcher.plugin.MulePluginsClassLoader;
+import org.mule.module.launcher.plugin.MulePluginsClassLoaderFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -86,7 +86,7 @@ public class MuleApplicationClassLoaderFactory extends AbstractModuleClassLoader
             }
 
             // re-assign parent ref if any plugins deployed, will be used by the MuleAppCL
-            parent = new MulePluginsClassLoader(parent, plugins);
+            parent = new MulePluginsClassLoaderFactory().create(parent, plugins);
         }
         return parent;
     }
