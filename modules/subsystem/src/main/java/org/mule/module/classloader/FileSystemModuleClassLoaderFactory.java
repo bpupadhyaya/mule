@@ -7,7 +7,7 @@
 
 package org.mule.module.classloader;
 
-import org.mule.module.factory.PluginDescriptor;
+import org.mule.module.descriptor.PluginDescriptor;
 
 import java.io.File;
 import java.net.URL;

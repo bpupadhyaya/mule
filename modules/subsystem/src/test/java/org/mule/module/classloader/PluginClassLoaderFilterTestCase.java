@@ -9,7 +9,8 @@ package org.mule.module.classloader;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import org.mule.module.factory.PluginDescriptor;
+import org.mule.module.descriptor.LoaderExport;
+import org.mule.module.descriptor.PluginDescriptor;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -39,38 +40,50 @@ public class PluginClassLoaderFilterTestCase extends AbstractMuleTestCase
     @Test
     public void acceptsClassWhenClassExported() throws Exception
     {
-        descriptor.setExportedPrefixNames(CLASS_NAMES);
+        LoaderExport loaderExport = new LoaderExport(CLASS_NAMES, Collections.EMPTY_LIST);
+
+        descriptor.setLoaderExport(loaderExport);
+
         assertThat(filter.accepts(CLASS_NAME), equalTo(true));
     }
 
     @Test
     public void acceptsClassWhenPrefixExported() throws Exception
     {
-        descriptor.setExportedPrefixNames(PREFIX_NAMES);
+        LoaderExport loaderExport = new LoaderExport(PREFIX_NAMES, Collections.EMPTY_LIST);
+
+        descriptor.setLoaderExport(loaderExport);
+
         assertThat(filter.accepts(CLASS_NAME), equalTo(true));
     }
 
     @Test
     public void filtersClassWhenClassBlocked() throws Exception
     {
-        descriptor.setExportedPrefixNames(CLASS_NAMES);
-        descriptor.setBlockedPrefixNames(CLASS_NAMES);
+        LoaderExport loaderExport = new LoaderExport(CLASS_NAMES, CLASS_NAMES);
+
+        descriptor.setLoaderExport(loaderExport);
+
         assertThat(filter.accepts(CLASS_NAME), equalTo(false));
     }
 
     @Test
     public void filtersClassWhenPrefixBlocked() throws Exception
     {
-        descriptor.setExportedPrefixNames(PREFIX_NAMES);
-        descriptor.setBlockedPrefixNames(PREFIX_NAMES);
+        LoaderExport loaderExport = new LoaderExport(PREFIX_NAMES, PREFIX_NAMES);
+
+        descriptor.setLoaderExport(loaderExport);
+
         assertThat(filter.accepts(CLASS_NAME), equalTo(false));
     }
 
     @Test
     public void acceptsClassWhenClassExportedAndPrefixBlocked() throws Exception
     {
-        descriptor.setExportedPrefixNames(CLASS_NAMES);
-        descriptor.setBlockedPrefixNames(PREFIX_NAMES);
+        LoaderExport loaderExport = new LoaderExport(CLASS_NAMES, PREFIX_NAMES);
+
+        descriptor.setLoaderExport(loaderExport);
+
         assertThat(filter.accepts(CLASS_NAME), equalTo(true));
     }
 }

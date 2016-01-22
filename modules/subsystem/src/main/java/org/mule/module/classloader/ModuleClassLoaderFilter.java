@@ -7,8 +7,8 @@
 
 package org.mule.module.classloader;
 
-import org.mule.module.factory.ModuleDescriptor;
-import org.mule.module.factory.PluginDescriptor;
+import org.mule.module.descriptor.PluginDescriptor;
+import org.mule.module.descriptor.ModuleDescriptor;
 
 import java.util.List;
 
@@ -34,39 +34,6 @@ public class ModuleClassLoaderFilter implements ClassLoaderFilter
     @Override
     public boolean accepts(String name)
     {
-        return !isBlockedClass(name) && isExportedClass(name) || !isBlockedPrefix(name) && isExportedPrefix(name);
-    }
-
-    private boolean isBlockedPrefix(String name)
-    {
-        return hasListedPrefix(name, descriptor.getBlockedPrefixNames());
-    }
-
-    private boolean isBlockedClass(String name)
-    {
-        return descriptor.getBlockedPrefixNames().contains(name);
-    }
-
-    private boolean isExportedClass(String name)
-    {
-        return descriptor.getExportedPrefixNames().contains(name);
-    }
-
-    private boolean isExportedPrefix(String name)
-    {
-        return hasListedPrefix(name, descriptor.getExportedPrefixNames());
-    }
-
-    private boolean hasListedPrefix(String name, List<String> classes)
-    {
-        for (String exported : classes)
-        {
-            if (name.startsWith(exported))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return descriptor.getLoaderExport().isExported(name);
     }
 }

@@ -6,7 +6,7 @@
  */
 package org.mule.module.launcher.plugin;
 
-import org.mule.module.factory.ModuleDescriptor;
+import org.mule.module.descriptor.ModuleDescriptor;
 
 import java.net.URL;
 

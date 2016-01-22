@@ -85,16 +85,17 @@ public class PluginDescriptorParser
             {
                 pd.setRuntimeClassesDir(new File(tmpDir, "classes").toURI().toURL());
                 final File libDir = new File(tmpDir, "lib");
+                URL[] urls = new URL[0];
                 if (libDir.exists())
                 {
                     final File[] jars = libDir.listFiles((FilenameFilter) new SuffixFileFilter(".jar"));
-                    URL[] urls = new URL[jars.length];
+                    urls = new URL[jars.length];
                     for (int i = 0; i < jars.length; i++)
                     {
                         urls[i] = jars[i].toURI().toURL();
                     }
-                    pd.setRuntimeLibs(urls);
                 }
+                pd.setRuntimeLibs(urls);
             }
             catch (MalformedURLException e)
             {

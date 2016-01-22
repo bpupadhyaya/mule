@@ -236,7 +236,6 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
         Flow mainFlow = (Flow) application.getMuleContext().getRegistry().lookupFlowConstruct("main");
         DefaultMuleMessage muleMessage = new DefaultMuleMessage(TEST_MESSAGE, application.getMuleContext());
 
-        //TODO(pablo.kraan): CCL - will fail if plugins are not correctly isolated
         mainFlow.process(new DefaultMuleEvent(muleMessage, MessageExchangePattern.REQUEST_RESPONSE, mainFlow));
     }
 

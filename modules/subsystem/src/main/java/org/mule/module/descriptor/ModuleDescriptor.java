@@ -5,7 +5,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.factory;
+package org.mule.module.descriptor;
 
 import java.io.File;
 import java.util.Collections;
@@ -20,8 +20,7 @@ public class ModuleDescriptor
     private String name;
     private File rootFolder;
     private Set<String> loaderOverrides = Collections.emptySet();
-    protected List<String> exportedPrefixNames = Collections.EMPTY_LIST;
-    protected List<String> blockedPrefixNames = Collections.EMPTY_LIST;
+    private LoaderExport loaderExport = new LoaderExport(Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 
     public String getName()
     {
@@ -63,29 +62,13 @@ public class ModuleDescriptor
         return loaderOverrides;
     }
 
-    public void setExportedPrefixNames(List<String> exported)
+    public LoaderExport getLoaderExport()
     {
-        this.exportedPrefixNames = Collections.unmodifiableList(exported);
+        return loaderExport;
     }
 
-    /**
-     * @return an immutable list of exported class prefix names
-     */
-    public List<String> getExportedPrefixNames()
+    public void setLoaderExport(LoaderExport loaderExport)
     {
-        return exportedPrefixNames;
-    }
-
-    public void setBlockedPrefixNames(List<String> blocked)
-    {
-        this.blockedPrefixNames = Collections.unmodifiableList(blocked);
-    }
-
-    /**
-     * @return an immutable list of blocked class prefix names
-     */
-    public List<String> getBlockedPrefixNames()
-    {
-        return blockedPrefixNames;
+        this.loaderExport = loaderExport;
     }
 }

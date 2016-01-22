@@ -5,13 +5,15 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.classloader;
+package org.mule.module.descriptor;
 
-public enum LoaderRule
+/**
+ *
+ */
+public enum ExportRule
 {
-    DEFAULT,
 
-    OVERRIDE,
+    EXPORT,
 
-    BLOCK,
+    BLOCK
 }

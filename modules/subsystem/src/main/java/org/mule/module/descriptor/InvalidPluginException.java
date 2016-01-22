@@ -5,7 +5,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.factory;
+package org.mule.module.descriptor;
 
 /**
  * Thrown to indicate any error related to errors in the structure of a plugin

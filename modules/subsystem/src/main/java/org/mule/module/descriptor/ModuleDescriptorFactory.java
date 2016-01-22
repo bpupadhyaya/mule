@@ -5,7 +5,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.factory;
+package org.mule.module.descriptor;
 
 import java.io.File;
 

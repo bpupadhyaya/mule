@@ -7,6 +7,8 @@
 
 package org.mule.module.classloader;
 
+import org.mule.module.descriptor.ModuleDescriptor;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -18,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Defines a {@link ClassLoader} that filter which classes and resources can
- * be resolved based on a {@link org.mule.module.factory.ModuleDescriptor}
+ * be resolved based on a {@link ModuleDescriptor}
  */
 public class FilteringModuleClassLoader extends ClassLoader
 {

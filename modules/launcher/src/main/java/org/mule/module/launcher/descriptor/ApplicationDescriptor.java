@@ -6,7 +6,7 @@
  */
 package org.mule.module.launcher.descriptor;
 
-import org.mule.module.factory.ModuleDescriptor;
+import org.mule.module.descriptor.ModuleDescriptor;
 import org.mule.module.launcher.plugin.PluginDescriptor;
 
 import java.io.File;

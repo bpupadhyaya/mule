@@ -9,7 +9,7 @@ package org.mule.module.classloader;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import org.mule.module.factory.PluginDescriptor;
+import org.mule.module.descriptor.PluginDescriptor;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
