@@ -18,7 +18,7 @@ public class ModuleDescriptor
     private String name;
     private File rootFolder;
     //TODO(pablo.kraan): check if loaderOverride and loaderExport classes can be unified
-    private LoaderExport loaderExport = new LoaderExport(Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+    private LoaderExport loaderExport = new LoaderExport(Collections.EMPTY_SET, Collections.EMPTY_SET);
     private LoaderOverride loaderOverride = LoaderOverride.NULL_LOADER_OVERRIDE;
 
 

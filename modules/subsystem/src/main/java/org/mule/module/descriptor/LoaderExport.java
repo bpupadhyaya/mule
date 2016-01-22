@@ -7,8 +7,8 @@
 
 package org.mule.module.descriptor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -16,13 +16,13 @@ import java.util.List;
 public class LoaderExport
 {
 
-    private final List<String> exportedPrefixNames;
-    private final List<String> blockedPrefixNames;
+    private final Set<String> exportedPrefixNames;
+    private final Set<String> blockedPrefixNames;
 
-    public LoaderExport(List<String> exportedPrefixNames, List<String> blockedPrefixNames)
+    public LoaderExport(Set<String> exportedPrefixNames, Set<String> blockedPrefixNames)
     {
-        this.exportedPrefixNames = new ArrayList<>(exportedPrefixNames);
-        this.blockedPrefixNames = new ArrayList<>(blockedPrefixNames);
+        this.exportedPrefixNames = new HashSet<>(exportedPrefixNames);
+        this.blockedPrefixNames = new HashSet<>(blockedPrefixNames);
     }
 
     public boolean isExported(String name)
@@ -30,12 +30,12 @@ public class LoaderExport
         return !isBlockedClass(name) && isExportedClass(name) || !isBlockedPrefix(name) && isExportedPrefix(name);
     }
 
-    public List<String> getExportedPrefixNames()
+    public Set<String> getExportedPrefixNames()
     {
         return exportedPrefixNames;
     }
 
-    public List<String> getBlockedPrefixNames()
+    public Set<String> getBlockedPrefixNames()
     {
         return blockedPrefixNames;
     }
@@ -60,7 +60,7 @@ public class LoaderExport
         return hasListedPrefix(name, exportedPrefixNames);
     }
 
-    private boolean hasListedPrefix(String name, List<String> classes)
+    private boolean hasListedPrefix(String name, Set<String> classes)
     {
         for (String exported : classes)
         {
