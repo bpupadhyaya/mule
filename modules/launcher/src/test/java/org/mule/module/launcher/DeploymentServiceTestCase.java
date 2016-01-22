@@ -111,6 +111,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     private static final ArtifactDescriptor dummyAppForDomainWithLib = new ArtifactDescriptor("dummy-app-for-domain", "/dummy-app-for-domain.zip", "/dummy-app-for-domain", null, null);
     private static final ArtifactDescriptor dummyAppWithPluginDescriptor = new ArtifactDescriptor("dummyWithEchoPlugin", "/dummyWithEchoPlugin.zip", "/dummyWithEchoPlugin", null, null);
     private static final ArtifactDescriptor dummyMultiPluginLibVersionAppDescriptor = new ArtifactDescriptor("multiPluginLibVersion", "/multiPluginLibVersion.zip", "/multiPluginLibVersion", null, null);
+    private static final ArtifactDescriptor dummyAppWithSelfishPluginDescriptor = new ArtifactDescriptor("dummyWithSelfishPlugin", "/dummyWithSelfishPlugin.zip", "/dummyWithSelfishPlugin", null, null);
 
     //Domain constants
     private static final ArtifactDescriptor brokenDomainDescriptor = new ArtifactDescriptor("brokenDomain", "/broken-domain.zip", null, "brokenDomain.zip", "/broken-config.xml");
@@ -221,6 +222,16 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
         deploymentService.start();
 
         assertDeploymentSuccess(applicationDeploymentListener, dummyAppWithPluginDescriptor.id);
+    }
+
+    @Test
+    public void failsToDeployAppZipWithPluginAndNoExportedClassOnStartup() throws Exception
+    {
+        addPackedAppFromResource(dummyAppWithSelfishPluginDescriptor.zipPath);
+
+        deploymentService.start();
+
+        assertDeploymentFailure(applicationDeploymentListener, dummyAppWithSelfishPluginDescriptor.id);
     }
 
     @Test
