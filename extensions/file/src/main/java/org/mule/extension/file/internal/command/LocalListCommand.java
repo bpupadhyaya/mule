@@ -58,13 +58,14 @@ public final class LocalListCommand extends LocalFileCommand implements ListComm
     {
         for (File child : parent.listFiles())
         {
-            FileAttributes payload = new LocalFileAttributes(child.toPath());
+            Path path = child.toPath();
+            FileAttributes payload = new LocalFileAttributes(path);
             if (!matcher.test(payload))
             {
                 continue;
             }
 
-            accumulator.add(payload);
+            accumulator.add(fileSystem.read(path.toString(), false));
             if (child.isDirectory() && recursive)
             {
                 doList(child, accumulator, recursive, matcher);

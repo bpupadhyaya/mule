@@ -6,6 +6,9 @@
  */
 package org.mule.extension.ftp.internal;
 
+import static org.mule.config.i18n.MessageFactory.createStaticMessage;
+import org.mule.api.MuleContext;
+import org.mule.api.MuleRuntimeException;
 import org.mule.api.connection.ConnectionException;
 import org.mule.api.connection.ConnectionHandler;
 import org.mule.api.connector.ConnectionManager;
@@ -15,6 +18,7 @@ import org.mule.module.extension.file.api.PathLock;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Supplier;
 
 /**
  * An {@link AbstractFileInputStream} implementation which obtains a
@@ -26,7 +30,7 @@ import java.io.InputStream;
  *
  * @since 4.0
  */
-final class FtpInputStream extends AbstractFileInputStream
+public final class FtpInputStream extends AbstractFileInputStream
 {
 
     private final ConnectionHandler<FtpFileSystem> connectionHandler;
@@ -38,20 +42,30 @@ final class FtpInputStream extends AbstractFileInputStream
      * Instances returned by this method <b>MUST</b> be closed or fully consumed.
      *
      * @param ftpConnector the {@link FtpConnector} through which the file is to be obtained
-     * @param filePayload  a {@link FileAttributes} referencing the file which contents are to be fetched
+     * @param attributes   a {@link FileAttributes} referencing the file which contents are to be fetched
      * @param lock         the {@link PathLock} to be used
      * @return a new {@link FtpInputStream}
      * @throws ConnectionException if a connection could not be established
      */
-    public static FtpInputStream newInstance(FtpConnector ftpConnector, FtpFileAttributes filePayload, PathLock lock) throws ConnectionException
+    public static FtpInputStream newInstance(FtpConnector ftpConnector, FtpFileAttributes attributes, PathLock lock) throws ConnectionException
     {
-        ConnectionHandler<FtpFileSystem> connection = ftpConnector.getConnectionManager().getConnection(ftpConnector);
-        return new FtpInputStream(connection.getConnection().retrieveFileContent(filePayload), connection, lock);
+        ConnectionHandler<FtpFileSystem> connectionHandler = ftpConnector.getConnectionManager().getConnection(ftpConnector);
+        Supplier<InputStream> factory = () -> {
+            try
+            {
+                return connectionHandler.getConnection().retrieveFileContent(attributes);
+            }
+            catch (ConnectionException e)
+            {
+                throw new MuleRuntimeException(createStaticMessage("Could not obtain connection to fetch file " + attributes.getPath()), e);
+            }
+        };
+        return new FtpInputStream(factory, connectionHandler, lock, ftpConnector.getMuleContext());
     }
 
-    private FtpInputStream(InputStream inputStream, ConnectionHandler<FtpFileSystem> connectionHandler, PathLock lock) throws ConnectionException
+    private FtpInputStream(Supplier<InputStream> streamFactory, ConnectionHandler<FtpFileSystem> connectionHandler, PathLock lock, MuleContext muleContext) throws ConnectionException
     {
-        super(inputStream, lock);
+        super(streamFactory, lock, muleContext);
         this.connectionHandler = connectionHandler;
         this.ftpFileSystem = connectionHandler.getConnection();
     }

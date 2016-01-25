@@ -8,9 +8,8 @@ package org.mule.module.extension.file.api;
 
 import static java.lang.String.format;
 import org.mule.api.MuleEvent;
+import org.mule.api.metadata.DataType;
 import org.mule.api.temporary.MuleMessage;
-import org.mule.extension.api.runtime.ContentMetadata;
-import org.mule.extension.api.runtime.ContentType;
 import org.mule.module.extension.file.api.command.CopyCommand;
 import org.mule.module.extension.file.api.command.CreateDirectoryCommand;
 import org.mule.module.extension.file.api.command.DeleteCommand;
@@ -19,6 +18,7 @@ import org.mule.module.extension.file.api.command.MoveCommand;
 import org.mule.module.extension.file.api.command.ReadCommand;
 import org.mule.module.extension.file.api.command.RenameCommand;
 import org.mule.module.extension.file.api.command.WriteCommand;
+import org.mule.transformer.types.DataTypeFactory;
 
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -89,9 +89,9 @@ public abstract class AbstractFileSystem implements FileSystem
      * {@inheritDoc}
      */
     @Override
-    public FileAttributes read(String filePath, boolean lock, ContentMetadata contentMetadata)
+    public MuleMessage<InputStream, FileAttributes> read(String filePath, boolean lock)
     {
-        return getReadCommand().read(filePath, lock, contentMetadata);
+        return getReadCommand().read(filePath, lock);
     }
 
     /**
@@ -167,19 +167,10 @@ public abstract class AbstractFileSystem implements FileSystem
      * {@inheritDoc}
      */
     @Override
-    public void updateContentMetadata(FileAttributes fileAttributes, ContentMetadata contentMetadata)
+    public DataType<InputStream> getDataType(FileAttributes fileAttributes)
     {
-        if (!contentMetadata.isOutputModifiable())
-        {
-            return;
-        }
-
         String presumedMimeType = mimetypesFileTypeMap.getContentType(fileAttributes.getPath());
-        ContentType outputContentType = contentMetadata.getOutputContentType();
-        if (presumedMimeType != null)
-        {
-            contentMetadata.setOutputContentType(new ContentType(outputContentType.getEncoding(), presumedMimeType));
-        }
+        return DataTypeFactory.create(InputStream.class, presumedMimeType);
     }
 
     /**

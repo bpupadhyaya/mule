@@ -6,11 +6,15 @@
  */
 package org.mule.extension.file.internal.command;
 
-import org.mule.extension.api.runtime.ContentMetadata;
+import org.mule.DefaultMuleMessage;
+import org.mule.api.temporary.MuleMessage;
 import org.mule.extension.file.api.FileConnector;
+import org.mule.extension.file.api.FileInputStream;
 import org.mule.extension.file.api.LocalFileAttributes;
 import org.mule.extension.file.api.LocalFileSystem;
 import org.mule.module.extension.file.api.FileAttributes;
+import org.mule.module.extension.file.api.NullPathLock;
+import org.mule.module.extension.file.api.PathLock;
 import org.mule.module.extension.file.api.command.ReadCommand;
 
 import java.nio.file.Files;
@@ -36,7 +40,8 @@ public final class LocalReadCommand extends LocalFileCommand implements ReadComm
      * {@inheritDoc}
      */
     @Override
-    public FileAttributes read(String filePath, boolean lock, ContentMetadata contentMetadata)
+    //TODO: MULE-8946 DefaultMuleMessage should contain the proper generics
+    public MuleMessage read(String filePath, boolean lock)
     {
         Path path = resolveExistingPath(filePath);
         if (Files.isDirectory(path))
@@ -44,18 +49,20 @@ public final class LocalReadCommand extends LocalFileCommand implements ReadComm
             throw cannotReadDirectoryException(path);
         }
 
-        FileAttributes fileAttributes;
+        PathLock pathLock;
         if (lock)
         {
-            fileAttributes = new LocalFileAttributes(path, fileSystem.lock(path));
+            pathLock = fileSystem.lock(path);
         }
         else
         {
             fileSystem.verifyNotLocked(path);
-            fileAttributes = new LocalFileAttributes(path);
+            pathLock = new NullPathLock();
         }
 
-        fileSystem.updateContentMetadata(fileAttributes, contentMetadata);
-        return fileAttributes;
+        FileAttributes fileAttributes = new LocalFileAttributes(path);
+        return new DefaultMuleMessage(new FileInputStream(path, pathLock, config.getMuleContext()),
+                                      fileSystem.getDataType(fileAttributes),
+                                      fileAttributes);
     }
 }

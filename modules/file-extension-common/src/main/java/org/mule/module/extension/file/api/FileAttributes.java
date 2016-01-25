@@ -64,9 +64,4 @@ public interface FileAttributes extends Serializable
      * @return The file's name
      */
     String getName();
-
-    /**
-     * @return Whether the file is locked.
-     */
-    boolean isLocked();
 }

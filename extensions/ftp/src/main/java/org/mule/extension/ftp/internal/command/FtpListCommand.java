@@ -7,6 +7,7 @@
 package org.mule.extension.ftp.internal.command;
 
 import static java.lang.String.format;
+import org.mule.api.temporary.MuleMessage;
 import org.mule.extension.ftp.internal.FtpConnector;
 import org.mule.extension.ftp.internal.FtpFileAttributes;
 import org.mule.extension.ftp.internal.FtpFileSystem;
@@ -15,6 +16,7 @@ import org.mule.module.extension.file.api.command.ListCommand;
 import org.mule.util.ArrayUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -48,7 +50,7 @@ public final class FtpListCommand extends FtpCommand implements ListCommand
      * {@inheritDoc}
      */
     @Override
-    public List<FileAttributes> list(String directoryPath, boolean recursive, Predicate<FileAttributes> matcher)
+    public List<MuleMessage<InputStream, FileAttributes>> list(String directoryPath, boolean recursive, Predicate<FileAttributes> matcher)
     {
         FileAttributes fileAttributes = getExistingFile(directoryPath);
         Path path = Paths.get(fileAttributes.getPath());
@@ -63,7 +65,7 @@ public final class FtpListCommand extends FtpCommand implements ListCommand
             throw exception(format("Could not change working directory to '%s' while trying to list that directory", path));
         }
 
-        List<FileAttributes> accumulator = new LinkedList<>();
+        List<MuleMessage<InputStream, FileAttributes>> accumulator = new LinkedList<>();
         try
         {
             doList(path, accumulator, recursive, matcher);
@@ -83,7 +85,7 @@ public final class FtpListCommand extends FtpCommand implements ListCommand
         return accumulator;
     }
 
-    private void doList(Path path, List<FileAttributes> accumulator, boolean recursive, Predicate<FileAttributes> matcher) throws IOException
+    private void doList(Path path, List<MuleMessage<InputStream, FileAttributes>> accumulator, boolean recursive, Predicate<FileAttributes> matcher) throws IOException
     {
         FTPListParseEngine engine = client.initiateListParsing();
         while (engine.hasNext())
@@ -96,19 +98,20 @@ public final class FtpListCommand extends FtpCommand implements ListCommand
 
             for (FTPFile file : files)
             {
-                FileAttributes payload = new FtpFileAttributes(path.resolve(file.getName()), file, config);
+                final Path filePath = path.resolve(file.getName());
+                FileAttributes attributes = new FtpFileAttributes(filePath, file);
 
-                if (isVirtualDirectory(payload.getName()) || !matcher.test(payload))
+                if (isVirtualDirectory(attributes.getName()) || !matcher.test(attributes))
                 {
                     continue;
                 }
 
-                accumulator.add(payload);
+                accumulator.add(fileSystem.read(filePath.toString(), false));
 
-                if (payload.isDirectory() && recursive)
+                if (attributes.isDirectory() && recursive)
                 {
-                    Path recursionPath = path.resolve(payload.getName());
-                    if (!client.changeWorkingDirectory(payload.getName()))
+                    Path recursionPath = path.resolve(attributes.getName());
+                    if (!client.changeWorkingDirectory(attributes.getName()))
                     {
                         throw exception(format("Could not change working directory to '%s' while performing recursion on list operation", recursionPath));
                     }

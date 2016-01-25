@@ -6,11 +6,8 @@
  */
 package org.mule.extension.ftp.internal;
 
-import org.mule.module.extension.file.api.PathLock;
 import org.mule.module.extension.file.api.AbstractFileAttributes;
-import org.mule.module.extension.file.api.NullPathLock;
 
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 
@@ -27,37 +24,17 @@ public final class FtpFileAttributes extends AbstractFileAttributes
 {
 
     private final FTPFile ftpFile;
-    private final FtpConnector ftpConnector;
 
     /**
      * Creates a new instance
      *
      * @param path         the file's {@link Path}
      * @param ftpFile      the {@link FTPFile} which represents the file on the FTP server
-     * @param ftpConnector the configuring {@link FtpConnector}
      */
-    public FtpFileAttributes(Path path, FTPFile ftpFile, FtpConnector ftpConnector)
+    public FtpFileAttributes(Path path, FTPFile ftpFile)
     {
-        this(path, ftpFile, ftpConnector, new NullPathLock());
-    }
-
-    /**
-     * Creates a new instance which is a shallow copy of the
-     * {@code original}
-     *
-     * @param original the {@link FtpFileAttributes} to copy
-     * @param lock     the {@link PathLock} to use
-     */
-    public FtpFileAttributes(FtpFileAttributes original, PathLock lock)
-    {
-        this(original.path, original.ftpFile, original.ftpConnector, lock);
-    }
-
-    private FtpFileAttributes(Path path, FTPFile ftpFile, FtpConnector ftpConnector, PathLock lock)
-    {
-        super(path, lock);
+        super(path);
         this.ftpFile = ftpFile;
-        this.ftpConnector = ftpConnector;
     }
 
     /**
@@ -130,16 +107,5 @@ public final class FtpFileAttributes extends AbstractFileAttributes
     public boolean isSymbolicLink()
     {
         return ftpFile.isSymbolicLink();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return a {@link FtpInputStream}
-     */
-    @Override
-    protected InputStream doGetContent() throws Exception
-    {
-        return FtpInputStream.newInstance(ftpConnector, this, lock);
     }
 }

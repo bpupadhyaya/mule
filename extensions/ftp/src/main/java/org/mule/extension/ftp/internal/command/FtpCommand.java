@@ -108,7 +108,7 @@ abstract class FtpCommand extends FileCommand<FtpConnector, FtpFileSystem>
 
         if (ftpFile != null)
         {
-            return new FtpFileAttributes(path, ftpFile, config);
+            return new FtpFileAttributes(path, ftpFile);
         }
         else
         {

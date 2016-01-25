@@ -179,4 +179,9 @@ public class FtpConnector implements FileConnectorConfig
     {
         return connectionManager;
     }
+
+    public MuleContext getMuleContext()
+    {
+        return muleContext;
+    }
 }

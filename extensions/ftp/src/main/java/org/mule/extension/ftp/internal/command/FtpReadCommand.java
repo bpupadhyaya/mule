@@ -6,11 +6,15 @@
  */
 package org.mule.extension.ftp.internal.command;
 
-import org.mule.extension.api.runtime.ContentMetadata;
+import org.mule.DefaultMuleMessage;
+import org.mule.api.connection.ConnectionException;
+import org.mule.api.temporary.MuleMessage;
 import org.mule.extension.ftp.internal.FtpConnector;
 import org.mule.extension.ftp.internal.FtpFileAttributes;
 import org.mule.extension.ftp.internal.FtpFileSystem;
-import org.mule.module.extension.file.api.FileAttributes;
+import org.mule.extension.ftp.internal.FtpInputStream;
+import org.mule.module.extension.file.api.NullPathLock;
+import org.mule.module.extension.file.api.PathLock;
 import org.mule.module.extension.file.api.command.ReadCommand;
 
 import java.nio.file.Path;
@@ -38,35 +42,46 @@ public final class FtpReadCommand extends FtpCommand implements ReadCommand
      * {@inheritDoc}
      */
     @Override
-    public FileAttributes read(String filePath, boolean lock, ContentMetadata contentMetadata)
+    //TODO: MULE-8946 DefaultMuleMessage should contain the proper generics
+    public MuleMessage read(String filePath, boolean lock)
     {
-        FtpFileAttributes filePayload = getExistingFile(filePath);
-        if (filePayload.isDirectory())
+        FtpFileAttributes attributes = getExistingFile(filePath);
+        if (attributes.isDirectory())
         {
-            throw cannotReadDirectoryException(Paths.get(filePayload.getPath()));
+            throw cannotReadDirectoryException(Paths.get(attributes.getPath()));
         }
 
         try
         {
-            filePayload = new FtpFileAttributes(resolvePath(filePath), client.listFiles(filePath)[0], config);
+            attributes = new FtpFileAttributes(resolvePath(filePath), client.listFiles(filePath)[0]);
         }
         catch (Exception e)
         {
             throw exception("Found exception while trying to list path " + filePath, e);
         }
 
-        Path path = Paths.get(filePayload.getPath());
+        Path path = Paths.get(attributes.getPath());
 
+        PathLock pathLock;
         if (lock)
         {
-            filePayload = new FtpFileAttributes(filePayload, fileSystem.lock(path));
+            pathLock = fileSystem.lock(path);
         }
         else
         {
             fileSystem.verifyNotLocked(path);
+            pathLock = new NullPathLock();
         }
 
-        fileSystem.updateContentMetadata(filePayload, contentMetadata);
-        return filePayload;
+        try
+        {
+            return new DefaultMuleMessage(FtpInputStream.newInstance(config, attributes, pathLock),
+                                          fileSystem.getDataType(attributes),
+                                          attributes);
+        }
+        catch (ConnectionException e)
+        {
+            throw exception("Could not obtain connection to fetch file " + path, e);
+        }
     }
 }

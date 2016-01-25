@@ -7,7 +7,6 @@
 package org.mule.module.extension.file.api.command;
 
 import org.mule.api.temporary.MuleMessage;
-import org.mule.extension.api.runtime.ContentMetadata;
 import org.mule.module.extension.file.api.FileAttributes;
 import org.mule.module.extension.file.api.FileSystem;
 
@@ -22,14 +21,13 @@ public interface ReadCommand
 {
 
     /**
-     * Reads files under the considerations of {@link FileSystem#read(String, boolean, ContentMetadata)}
+     * Reads files under the considerations of {@link FileSystem#read(String, boolean)}
      *
      * @param filePath        the path of the file you want to read
      * @param lock            whether or not to lock the file
-     * @param contentMetadata a {@link ContentMetadata} to pass mimeType information of the file
      * @return A {@link MuleMessage} with an {@link InputStream} with the file's content as payload
      * and a {@link FileAttributes} object as {@link MuleMessage#getAttributes()}
      * @throws IllegalArgumentException if the file at the given path doesn't exists
      */
-    MuleMessage<InputStream, FileAttributes> read(String filePath, boolean lock, ContentMetadata contentMetadata);
+    MuleMessage<InputStream, FileAttributes> read(String filePath, boolean lock);
 }

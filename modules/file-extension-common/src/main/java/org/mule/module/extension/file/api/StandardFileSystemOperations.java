@@ -52,9 +52,9 @@ public class StandardFileSystemOperations
     @Operation
     //TODO: MULE-9233
     public List<MuleMessage<InputStream, FileAttributes>> list(@Connection FileSystem fileSystem,
-                                  @Optional String directoryPath,
-                                  @Optional(defaultValue = "false") boolean recursive,
-                                  @Optional FilePayloadPredicateBuilder matcher)
+                                                               @Optional String directoryPath,
+                                                               @Optional(defaultValue = "false") boolean recursive,
+                                                               @Optional FilePayloadPredicateBuilder matcher)
     {
         return fileSystem.list(directoryPath, recursive, getPredicate(matcher));
     }
@@ -77,21 +77,19 @@ public class StandardFileSystemOperations
      * the chance to force the output enconding and mimeType through the {@code outputEncoding}
      * and {@code outputMimeType} parameters.
      *
-     * @param fileSystem      a reference to the host {@link FileSystem}
-     * @param path            the path to the file to be read
-     * @param lock            whether or not to lock the file. Defaults to {@code false}
-     * @param contentMetadata a {@link ContentMetadata} to pass mimeType information of the file
+     * @param fileSystem a reference to the host {@link FileSystem}
+     * @param path       the path to the file to be read
+     * @param lock       whether or not to lock the file. Defaults to {@code false}
      * @return the file's content and metadata on a {@link FileAttributes} instance
      * @throws IllegalArgumentException if the file at the given path doesn't exists
      */
     @Operation
     @ContentMetadataParameters
-    public FileAttributes read(@Connection FileSystem fileSystem,
-                               String path,
-                               @Optional(defaultValue = "false") boolean lock,
-                               ContentMetadata contentMetadata)
+    public MuleMessage<InputStream, FileAttributes> read(@Connection FileSystem fileSystem,
+                                                         String path,
+                                                         @Optional(defaultValue = "false") boolean lock)
     {
-        return fileSystem.read(path, lock, contentMetadata);
+        return fileSystem.read(path, lock);
     }
 
     /**

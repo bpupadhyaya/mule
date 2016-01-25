@@ -6,10 +6,17 @@
  */
 package org.mule.module.extension.file.api;
 
+import org.mule.api.MuleContext;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.util.function.Supplier;
 
 import org.apache.commons.io.input.AutoCloseInputStream;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
+import org.springframework.cglib.proxy.MethodProxy;
 
 /**
  * Base class for {@link InputStream} instances returned by connectors
@@ -24,11 +31,55 @@ import org.apache.commons.io.input.AutoCloseInputStream;
 public abstract class AbstractFileInputStream extends AutoCloseInputStream
 {
 
+    private static class StreamSupplier implements Supplier<InputStream>
+    {
+        private volatile InputStream stream;
+        private Supplier<InputStream> delegate;
+
+        private StreamSupplier(Supplier<InputStream> streamFactory)
+        {
+            delegate = () -> {
+                synchronized (this)
+                {
+                    if (stream == null)
+                    {
+                        stream = streamFactory.get();
+                        delegate = () -> stream;
+                    }
+
+                    return stream;
+                }
+            };
+        }
+
+        @Override
+        public InputStream get()
+        {
+            return delegate.get();
+        }
+    }
+
+    private static InputStream createLazyStream(Supplier<InputStream> streamFactory, MuleContext muleContext)
+    {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setClassLoader(muleContext.getExecutionClassLoader());
+        return (InputStream) enhancer.create(InputStream.class, new MethodInterceptor()
+        {
+            private final StreamSupplier streamSupplier = new StreamSupplier(streamFactory);
+
+            @Override
+            public Object intercept(Object proxy, Method method, Object[] arguments, MethodProxy methodProxy) throws Throwable
+            {
+                return methodProxy.invoke(streamSupplier.get(), arguments);
+            }
+        });
+    }
+
     private final PathLock lock;
 
-    public AbstractFileInputStream(InputStream in, PathLock lock)
+    public AbstractFileInputStream(Supplier<InputStream> streamFactory, PathLock lock, MuleContext muleContext)
     {
-        super(in);
+        super(createLazyStream(streamFactory, muleContext));
         this.lock = lock;
     }
 

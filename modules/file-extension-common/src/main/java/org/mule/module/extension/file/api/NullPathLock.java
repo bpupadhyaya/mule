@@ -6,8 +6,6 @@
  */
 package org.mule.module.extension.file.api;
 
-import org.mule.module.extension.file.api.PathLock;
-
 /**
  * Implementation of the Null Object design pattern
  * for the {@link PathLock} interface

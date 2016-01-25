@@ -89,4 +89,9 @@ public class FileConnector implements Initialisable, FileConnectorConfig
     {
         return baseDir;
     }
+
+    public MuleContext getMuleContext()
+    {
+        return muleContext;
+    }
 }
