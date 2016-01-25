@@ -40,34 +40,38 @@ public class FineGrainedControlClassLoader extends GoodCitizenClassLoader
         {
             return result;
         }
-        if (loaderOverride.isBlocked(name))
+        if (loaderOverride.useParentOnly(name))
         {
-            // load this class from the child ONLY, don't attempt parent, let CNFE exception propagate
-            result = findClass(name);
+            result = findParentClass(name);
         }
-        else if (loaderOverride.isOverridden(name))
+        else if (loaderOverride.useParentFirst(name))
         {
-            // load this class from the child
             try
             {
-                result = findClass(name);
+                result = findParentClass(name);
+
             }
             catch (ClassNotFoundException e)
             {
-                // let it fail with CNFE
-                result = findParentClass(name);
+                result = findClass(name);
             }
         }
         else
         {
-            // no overrides, regular parent-first lookup
-            try
-            {
-                result = findParentClass(name);
-            }
-            catch (ClassNotFoundException e)
+            if (loaderOverride.useChildOnly(name))
             {
                 result = findClass(name);
+            }
+            else
+            {
+                try
+                {
+                    result = findClass(name);
+                }
+                catch (ClassNotFoundException e)
+                {
+                    result = findParentClass(name);
+                }
             }
         }
 

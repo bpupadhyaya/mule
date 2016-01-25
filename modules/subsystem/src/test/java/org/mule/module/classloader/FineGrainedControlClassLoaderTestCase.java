@@ -24,57 +24,81 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
 {
 
     @Test
-    public void parentFirst() throws Exception
+    public void usesChildFirstByDefault() throws Exception
     {
         URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
 
         FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent);
-        assertEquals("Hello", callHi(ext));
-    }
-
-    @Test
-    public void childResolvesOverriden() throws Exception
-    {
-        URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
-
-        LoaderOverride loaderOverride = new LoaderOverride(Collections.singleton("mypackage"), Collections.EMPTY_SET);
-
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride);
-
         assertEquals("Bye", callHi(ext));
     }
 
     @Test
-    public void parentResolvesMissingOverride() throws Exception
+    public void usesParentFirstWithOverride() throws Exception
     {
         URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
 
-        LoaderOverride loaderOverride = new LoaderOverride(Collections.singleton("mypackage"), Collections.EMPTY_SET);
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("mypackage"), Collections.EMPTY_SET);
+
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride);
+
+        assertEquals("Hello", callHi(ext));
+    }
+
+    @Test
+    public void usesParentFirstWithMissingOverride() throws Exception
+    {
+        URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
+
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("mypackage"), Collections.EMPTY_SET);
 
         FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, loaderOverride);
         assertEquals("Hello", callHi(ext));
     }
 
-    @Test(expected = ClassNotFoundException.class)
-    public void blockedParentOverride() throws Exception
+    @Test
+    public void usesChildOnlyWithBlockOverride() throws Exception
     {
         URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
 
-        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("mypackage"));
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.singleton("mypackage"));
+
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride);
+        assertEquals("Bye", callHi(ext));
+    }
+
+    @Test(expected = ClassNotFoundException.class)
+    public void usesChildOnlyWithBlockOverrideAndClassIsMissing() throws Exception
+    {
+        URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
+
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.singleton("mypackage"));
 
         FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, loaderOverride);
         callHi(ext);
     }
 
     @Test
-    public void blockedOverrideIsLoadedInChild() throws Exception
+    public void usesParentOnly() throws Exception
     {
         URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
 
-        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("mypackage"));
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.singleton("mypackage"), Collections.EMPTY_SET, Collections.EMPTY_SET);
 
         FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride);
-        assertEquals("Bye", callHi(ext));
+
+        assertEquals("Hello", callHi(ext));
+    }
+
+    @Test(expected = ClassNotFoundException.class)
+    public void usesParentOnlyStillWhenClassNotFound() throws Exception
+    {
+        URLClassLoader parent = new URLClassLoader(new URL[0], Thread.currentThread().getContextClassLoader());
+
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.singleton("mypackage"), Collections.EMPTY_SET, Collections.EMPTY_SET);
+
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] {bye()}, parent, loaderOverride);
+
+        callHi(ext);
     }
 
     private URL hello()

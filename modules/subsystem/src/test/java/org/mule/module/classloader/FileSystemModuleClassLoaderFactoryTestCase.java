@@ -90,7 +90,7 @@ public class FileSystemModuleClassLoaderFactoryTestCase extends AbstractMuleTest
     @Test
     public void configuresLoaderOverride() throws Exception
     {
-        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("com.dummy"));
+        LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.singleton("com.dummy"));
         descriptor.setLoaderOverride(loaderOverride);
 
         ModuleClassLoader moduleClassLoader = factory.create(descriptor);

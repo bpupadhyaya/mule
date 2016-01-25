@@ -11,6 +11,7 @@ import org.mule.module.descriptor.LoaderExportParser;
 import org.mule.module.descriptor.LoaderOverrideParser;
 import org.mule.module.launcher.MuleFoldersUtil;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
+import org.mule.module.launcher.domain.MuleClassLoaderFactory;
 import org.mule.module.reboot.MuleContainerBootstrapUtils;
 import org.mule.util.FileUtils;
 import org.mule.util.StringUtils;
@@ -77,7 +78,7 @@ public class PluginDescriptorParser
                 final String overrideString = props.getProperty(PROPERTY_LOADER_OVERRIDE);
                 if (StringUtils.isNotBlank(overrideString))
                 {
-                    pd.setLoaderOverride(new LoaderOverrideParser().parse(overrideString));
+                    pd.setLoaderOverride(new LoaderOverrideParser(MuleClassLoaderFactory.getMuleExportedResources()).parse(overrideString));
                 }
 
                 String exportedClasses = props.getProperty(PROPERTY_LOADER_EXPORTED);

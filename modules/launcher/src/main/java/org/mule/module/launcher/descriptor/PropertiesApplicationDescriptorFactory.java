@@ -7,6 +7,7 @@
 package org.mule.module.launcher.descriptor;
 
 import org.mule.module.descriptor.LoaderOverrideParser;
+import org.mule.module.launcher.domain.MuleClassLoaderFactory;
 import org.mule.module.reboot.MuleContainerBootstrapUtils;
 import org.mule.util.PropertiesUtils;
 import org.mule.util.StringUtils;
@@ -60,7 +61,7 @@ public class PropertiesApplicationDescriptorFactory implements ApplicationDescri
         final String overrideString = p.getProperty(PROPERTY_LOADER_OVERRIDE);
         if (StringUtils.isNotBlank(overrideString))
         {
-            d.setLoaderOverride(new LoaderOverrideParser().parse(overrideString));
+            d.setLoaderOverride(new LoaderOverrideParser(MuleClassLoaderFactory.getMuleExportedResources()).parse(overrideString));
         }
 
         return d;

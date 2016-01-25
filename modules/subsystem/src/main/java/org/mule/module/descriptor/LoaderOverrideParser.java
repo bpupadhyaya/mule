@@ -28,11 +28,19 @@ public class LoaderOverrideParser
             "com.mulesource."
     };
 
+    private final Set<String> parentOnly;
+
+    public LoaderOverrideParser(Set<String> parentOnly)
+    {
+        //TODO(pablo.kraan): CCL - can parentOnly and system packages be joined?
+        this.parentOnly = parentOnly;
+    }
+
     public LoaderOverride parse(String overrideString)
     {
         //TODO(pablo.kraan): Add tests for this class
-        final Set<String> overridden = new HashSet<>();
-        final Set<String> blocked = new HashSet<>();
+        final Set<String> parentFirst = new HashSet<>();
+        final Set<String> childOnly = new HashSet<>();
 
         Set<String> overrides = new HashSet<>();
         final String[] values = overrideString.split(",");
@@ -40,31 +48,31 @@ public class LoaderOverrideParser
 
         if (overrides != null && !overrides.isEmpty())
         {
-            for (String override : overrides)
+            for (String resource : overrides)
             {
-                override = StringUtils.defaultString(override).trim();
-                // 'blocked' package definitions come with a '-' prefix
-                if (override.startsWith("-"))
+                resource = StringUtils.defaultString(resource).trim();
+                // 'resource' package definitions come with a '-' prefix
+                if (resource.startsWith("-"))
                 {
-                    override = override.substring(1);
-                    blocked.add(override);
+                    resource = resource.substring(1);
+                    childOnly.add(resource);
                 }
                 else
                 {
-                    overridden.add(override);
+                    parentFirst.add(resource);
                 }
 
                 for (String systemPackage : systemPackages)
                 {
-                    if (override.startsWith(systemPackage))
+                    if (resource.startsWith(systemPackage))
                     {
-                        throw new IllegalArgumentException("Can't override a system package. Offending value: " + override);
+                        throw new IllegalArgumentException("Cannot override a system package. Offending value: " + resource);
                     }
                 }
 
             }
         }
 
-        return new LoaderOverride(overridden, blocked);
+        return new LoaderOverride(parentOnly, parentFirst, childOnly);
     }
 }

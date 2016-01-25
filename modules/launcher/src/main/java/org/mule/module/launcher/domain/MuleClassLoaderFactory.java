@@ -13,8 +13,8 @@ import org.mule.module.descriptor.LoaderExport;
 import org.mule.module.descriptor.LoaderExportParser;
 import org.mule.module.descriptor.ModuleDescriptor;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MuleClassLoaderFactory
 {
@@ -35,10 +35,19 @@ public class MuleClassLoaderFactory
 
     public static LoaderExport createMuleLoaderExport()
     {
+        Set<String> loaderExports = getMuleExportedResources();
+
+
+        return new LoaderExportParser().parse(loaderExports.toArray(new String[0]));
+    }
+
+    //TODO(pablo.kraan): CCL - is really ugly to use this method form the outside
+    public static Set<String> getMuleExportedResources()
+    {
         //TODO(pablo.kraan): CCL - loader export should ignore empty strings
         //TODO(pablo.kraan): CCL - loader export should differentiate between classes, packages and folders
         //TODO(pablo.kraan): CCL - filter definition must be extracted into a separated file
-        List<String> loaderExports = new LinkedList<>();
+        Set<String> loaderExports = new HashSet<>();
         loaderExports.add("java.");
         loaderExports.add("javax.");
         loaderExports.add("org.slf4j.");
@@ -84,8 +93,7 @@ public class MuleClassLoaderFactory
         //loaderExports.add("org.mule.construct.");
         //TODO(pablo.kraan): CCL - added as the test needs to access test resources defined there
         //loaderExports.add("org.mule.module.launcher.DeploymentServiceTestCase");
-
-        return new LoaderExportParser().parse(loaderExports.toArray(new String[0]));
+        return loaderExports;
     }
 
 }
