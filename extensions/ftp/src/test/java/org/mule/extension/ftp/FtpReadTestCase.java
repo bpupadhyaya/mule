@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.transformer.types.MimeTypes.JSON;
 import org.mule.api.MuleEvent;
-import org.mule.module.extension.file.api.FilePayload;
+import org.mule.module.extension.file.api.FileAttributes;
 import org.mule.util.IOUtils;
 
 import java.nio.file.Paths;
@@ -46,7 +46,7 @@ public class FtpReadTestCase extends FtpConnectorTestCase
 
         assertThat(response.getMessage().getDataType().getMimeType(), is(JSON));
 
-        FilePayload payload = (FilePayload) response.getMessage().getPayload();
+        FileAttributes payload = (FileAttributes) response.getMessage().getPayload();
         assertThat(payload.isLocked(), is(false));
         assertThat(IOUtils.toString(payload.getContent()), is(HELLO_WORLD));
     }
@@ -77,7 +77,7 @@ public class FtpReadTestCase extends FtpConnectorTestCase
     @Test
     public void readLockReleasedOnContentConsumed() throws Exception
     {
-        FilePayload payload = readWithLock();
+        FileAttributes payload = readWithLock();
         IOUtils.toString(payload.getContent());
 
         assertThat(payload.isLocked(), is(false));
@@ -86,7 +86,7 @@ public class FtpReadTestCase extends FtpConnectorTestCase
     @Test
     public void readLockReleasedOnEarlyClose() throws Exception
     {
-        FilePayload payload = readWithLock();
+        FileAttributes payload = readWithLock();
         payload.close();
 
         assertThat(payload.isLocked(), is(false));
@@ -95,16 +95,16 @@ public class FtpReadTestCase extends FtpConnectorTestCase
     @Test
     public void getProperties() throws Exception
     {
-        FilePayload filePayload = (FilePayload) readHelloWorld().getMessage().getPayload();
+        FileAttributes fileAttributes = (FileAttributes) readHelloWorld().getMessage().getPayload();
         FTPFile file = ftpClient.get(HELLO_PATH);
 
-        assertThat(filePayload.getName(), equalTo(file.getName()));
-        assertThat(filePayload.getPath(), equalTo(Paths.get("/", BASE_DIR, HELLO_PATH).toString()));
-        assertThat(filePayload.getSize(), is(file.getSize()));
-        assertTime(filePayload.getLastModifiedTime(), file.getTimestamp());
-        assertThat(filePayload.isDirectory(), is(false));
-        assertThat(filePayload.isSymbolicLink(), is(false));
-        assertThat(filePayload.isRegularFile(), is(true));
+        assertThat(fileAttributes.getName(), equalTo(file.getName()));
+        assertThat(fileAttributes.getPath(), equalTo(Paths.get("/", BASE_DIR, HELLO_PATH).toString()));
+        assertThat(fileAttributes.getSize(), is(file.getSize()));
+        assertTime(fileAttributes.getLastModifiedTime(), file.getTimestamp());
+        assertThat(fileAttributes.isDirectory(), is(false));
+        assertThat(fileAttributes.isSymbolicLink(), is(false));
+        assertThat(fileAttributes.isRegularFile(), is(true));
     }
 
     private void assertTime(LocalDateTime dateTime, Calendar calendar)
@@ -112,9 +112,9 @@ public class FtpReadTestCase extends FtpConnectorTestCase
         assertThat(dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), is(calendar.toInstant().toEpochMilli()));
     }
 
-    private FilePayload readWithLock() throws Exception
+    private FileAttributes readWithLock() throws Exception
     {
-        FilePayload payload = (FilePayload) runFlow("readWithLock").getMessage().getPayload();
+        FileAttributes payload = (FileAttributes) runFlow("readWithLock").getMessage().getPayload();
         assertThat(payload.isLocked(), is(true));
 
         return payload;

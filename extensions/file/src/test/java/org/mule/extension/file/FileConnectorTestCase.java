@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.rules.ExpectedException.none;
 import org.mule.api.MuleEvent;
 import org.mule.extension.file.api.FileConnector;
-import org.mule.extension.file.api.LocalFilePayload;
+import org.mule.extension.file.api.LocalFileAttributes;
 import org.mule.functional.junit4.ExtensionFunctionalTestCase;
 import org.mule.module.extension.file.api.FileWriteMode;
 import org.mule.tck.junit4.rule.SystemProperty;
@@ -76,9 +76,9 @@ public abstract class FileConnectorTestCase extends ExtensionFunctionalTestCase
         return getPath(HELLO_PATH);
     }
 
-    protected LocalFilePayload readPath(String path) throws Exception
+    protected LocalFileAttributes readPath(String path) throws Exception
     {
-        return (LocalFilePayload) getPath(path).getMessage().getPayload();
+        return (LocalFileAttributes) getPath(path).getMessage().getPayload();
     }
 
     private MuleEvent getPath(String path) throws Exception

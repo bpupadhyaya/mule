@@ -8,9 +8,9 @@ package org.mule.extension.ftp.internal.command;
 
 import static java.lang.String.format;
 import org.mule.extension.ftp.internal.FtpConnector;
-import org.mule.extension.ftp.internal.FtpFilePayload;
+import org.mule.extension.ftp.internal.FtpFileAttributes;
 import org.mule.extension.ftp.internal.FtpFileSystem;
-import org.mule.module.extension.file.api.FilePayload;
+import org.mule.module.extension.file.api.FileAttributes;
 import org.mule.module.extension.file.api.command.ListCommand;
 import org.mule.util.ArrayUtils;
 
@@ -48,12 +48,12 @@ public final class FtpListCommand extends FtpCommand implements ListCommand
      * {@inheritDoc}
      */
     @Override
-    public List<FilePayload> list(String directoryPath, boolean recursive, Predicate<FilePayload> matcher)
+    public List<FileAttributes> list(String directoryPath, boolean recursive, Predicate<FileAttributes> matcher)
     {
-        FilePayload filePayload = getExistingFile(directoryPath);
-        Path path = Paths.get(filePayload.getPath());
+        FileAttributes fileAttributes = getExistingFile(directoryPath);
+        Path path = Paths.get(fileAttributes.getPath());
 
-        if (!filePayload.isDirectory())
+        if (!fileAttributes.isDirectory())
         {
             throw cannotListFileException(path);
         }
@@ -63,7 +63,7 @@ public final class FtpListCommand extends FtpCommand implements ListCommand
             throw exception(format("Could not change working directory to '%s' while trying to list that directory", path));
         }
 
-        List<FilePayload> accumulator = new LinkedList<>();
+        List<FileAttributes> accumulator = new LinkedList<>();
         try
         {
             doList(path, accumulator, recursive, matcher);
@@ -83,7 +83,7 @@ public final class FtpListCommand extends FtpCommand implements ListCommand
         return accumulator;
     }
 
-    private void doList(Path path, List<FilePayload> accumulator, boolean recursive, Predicate<FilePayload> matcher) throws IOException
+    private void doList(Path path, List<FileAttributes> accumulator, boolean recursive, Predicate<FileAttributes> matcher) throws IOException
     {
         FTPListParseEngine engine = client.initiateListParsing();
         while (engine.hasNext())
@@ -96,7 +96,7 @@ public final class FtpListCommand extends FtpCommand implements ListCommand
 
             for (FTPFile file : files)
             {
-                FilePayload payload = new FtpFilePayload(path.resolve(file.getName()), file, config);
+                FileAttributes payload = new FtpFileAttributes(path.resolve(file.getName()), file, config);
 
                 if (isVirtualDirectory(payload.getName()) || !matcher.test(payload))
                 {

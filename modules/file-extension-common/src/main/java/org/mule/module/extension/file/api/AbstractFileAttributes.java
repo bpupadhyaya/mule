@@ -21,25 +21,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for implementations of {@link FilePayload}
+ * Base class for implementations of {@link FileAttributes}
  *
  * @since 4.0
  */
-public abstract class AbstractFilePayload implements FilePayload
+public abstract class AbstractFileAttributes implements FileAttributes
 {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFilePayload.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFileAttributes.class);
 
-    protected final Path path;
-    protected final PathLock lock;
-    protected InputStream content;
+    protected transient final Path path;
+    protected transient final PathLock lock;
 
     /**
      * Creates a new instance
      *
      * @param path a {@link Path} pointing to the represented file
      */
-    protected AbstractFilePayload(Path path)
+    protected AbstractFileAttributes(Path path)
     {
         this(path, new NullPathLock());
     }
@@ -59,7 +58,7 @@ public abstract class AbstractFilePayload implements FilePayload
      * @param path a {@link Path} pointing to the represented file
      * @param lock a {@link PathLock}
      */
-    protected AbstractFilePayload(Path path, PathLock lock)
+    protected AbstractFileAttributes(Path path, PathLock lock)
     {
         this.path = path;
         this.lock = lock;
@@ -81,64 +80,6 @@ public abstract class AbstractFilePayload implements FilePayload
     public String getName()
     {
         return path.getFileName().toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final synchronized InputStream getContent()
-    {
-        if (content == null)
-        {
-            try
-            {
-                content = doGetContent();
-            }
-            catch (Exception e)
-            {
-                throw new MuleRuntimeException(createStaticMessage("Could not open file " + path), e);
-            }
-        }
-
-        return content;
-    }
-
-    protected abstract InputStream doGetContent() throws Exception;
-
-
-    /**
-     * Closes the {@link InputStream} returned by {@link #getContent()}
-     * and releases the {@link #lock} if supplied
-     *
-     * @throws IOException
-     */
-    @Override
-    public final synchronized void close() throws MuleException
-    {
-        try
-        {
-            if (content != null)
-            {
-                closeContentStream(content);
-            }
-        }
-        catch (Exception e)
-        {
-            if (LOGGER.isInfoEnabled())
-            {
-                LOGGER.info("Could not close stream for file " + path.toString(), e);
-            }
-        }
-        finally
-        {
-            lock.release();
-        }
-    }
-
-    protected void closeContentStream(InputStream contentInputStream) throws Exception
-    {
-        contentInputStream.close();
     }
 
     @Override

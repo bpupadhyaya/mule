@@ -6,9 +6,12 @@
  */
 package org.mule.module.extension.file.api.command;
 
+import org.mule.api.temporary.MuleMessage;
 import org.mule.extension.api.runtime.ContentMetadata;
-import org.mule.module.extension.file.api.FilePayload;
+import org.mule.module.extension.file.api.FileAttributes;
 import org.mule.module.extension.file.api.FileSystem;
+
+import java.io.InputStream;
 
 /**
  * Command design pattern for reading files
@@ -24,8 +27,9 @@ public interface ReadCommand
      * @param filePath        the path of the file you want to read
      * @param lock            whether or not to lock the file
      * @param contentMetadata a {@link ContentMetadata} to pass mimeType information of the file
-     * @return the file's content and metadata on a {@link FilePayload} instance
+     * @return A {@link MuleMessage} with an {@link InputStream} with the file's content as payload
+     * and a {@link FileAttributes} object as {@link MuleMessage#getAttributes()}
      * @throws IllegalArgumentException if the file at the given path doesn't exists
      */
-    FilePayload read(String filePath, boolean lock, ContentMetadata contentMetadata);
+    MuleMessage<InputStream, FileAttributes> read(String filePath, boolean lock, ContentMetadata contentMetadata);
 }

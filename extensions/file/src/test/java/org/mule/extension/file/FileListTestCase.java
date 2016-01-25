@@ -13,7 +13,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import org.mule.api.MuleEvent;
-import org.mule.module.extension.file.api.FilePayload;
+import org.mule.module.extension.file.api.FileAttributes;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class FileListTestCase extends FileConnectorTestCase
     @Test
     public void listNotRecursive() throws Exception
     {
-        List<FilePayload> list = doList(".", false);
+        List<FileAttributes> list = doList(".", false);
         assertThat(list, hasSize(6));
         assertThat(assertListedFiles(list), is(true));
     }
@@ -54,7 +54,7 @@ public class FileListTestCase extends FileConnectorTestCase
     @Test
     public void listRecursive() throws Exception
     {
-        List<FilePayload> list = doList(".", true);
+        List<FileAttributes> list = doList(".", true);
         assertThat(list, hasSize(8));
         assertThat(assertListedFiles(list), is(true));
     }
@@ -76,25 +76,25 @@ public class FileListTestCase extends FileConnectorTestCase
     @Test
     public void listWithEmbeddedMatcher() throws Exception
     {
-        List<FilePayload> list = doList("listWithEmbeddedPredicate", ".", false);
+        List<FileAttributes> list = doList("listWithEmbeddedPredicate", ".", false);
         assertThat(list, hasSize(2));
         assertThat(assertListedFiles(list), is(false));
     }
 
     @Test
     public void listWithGlobalMatcher() throws Exception {
-        List<FilePayload> list = doList("listWithGlobalMatcher", ".", true);
+        List<FileAttributes> list = doList("listWithGlobalMatcher", ".", true);
         assertThat(list, hasSize(1));
-        FilePayload file = list.get(0);
+        FileAttributes file = list.get(0);
         assertThat(file.isDirectory(), is(true));
         assertThat(file.getName(), equalTo(SUB_DIRECTORY_NAME));
     }
 
-    private boolean assertListedFiles(List<FilePayload> list) throws IOException
+    private boolean assertListedFiles(List<FileAttributes> list) throws IOException
     {
         boolean directoryWasFound = false;
 
-        for (FilePayload file : list)
+        for (FileAttributes file : list)
         {
             if (file.isDirectory())
             {
@@ -114,18 +114,18 @@ public class FileListTestCase extends FileConnectorTestCase
     }
 
 
-    private List<FilePayload> doList(String path, boolean recursive) throws Exception
+    private List<FileAttributes> doList(String path, boolean recursive) throws Exception
     {
         return doList("list", path, recursive);
     }
 
-    private List<FilePayload> doList(String flowName, String path, boolean recursive) throws Exception
+    private List<FileAttributes> doList(String flowName, String path, boolean recursive) throws Exception
     {
         MuleEvent event = getTestEvent("");
         event.setFlowVariable("path", path);
         event.setFlowVariable("recursive", recursive);
 
-        return (List<FilePayload>) runFlow(flowName, event).getMessage().getPayload();
+        return (List<FileAttributes>) runFlow(flowName, event).getMessage().getPayload();
     }
 
     private void createTestFiles() throws Exception

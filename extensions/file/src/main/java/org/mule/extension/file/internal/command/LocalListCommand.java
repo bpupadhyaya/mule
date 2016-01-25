@@ -6,13 +6,15 @@
  */
 package org.mule.extension.file.internal.command;
 
+import org.mule.api.temporary.MuleMessage;
 import org.mule.extension.file.api.FileConnector;
-import org.mule.extension.file.api.LocalFilePayload;
+import org.mule.extension.file.api.LocalFileAttributes;
 import org.mule.extension.file.api.LocalFileSystem;
-import org.mule.module.extension.file.api.FilePayload;
+import org.mule.module.extension.file.api.FileAttributes;
 import org.mule.module.extension.file.api.command.ListCommand;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -38,7 +40,7 @@ public final class LocalListCommand extends LocalFileCommand implements ListComm
      * {@inheritDoc}
      */
     @Override
-    public List<FilePayload> list(String directoryPath, boolean recursive, Predicate<FilePayload> matcher)
+    public List<MuleMessage<InputStream, FileAttributes>> list(String directoryPath, boolean recursive, Predicate<FileAttributes> matcher)
     {
         Path path = resolveExistingPath(directoryPath);
         if (!Files.isDirectory(path))
@@ -46,17 +48,17 @@ public final class LocalListCommand extends LocalFileCommand implements ListComm
             throw cannotListFileException(path);
         }
 
-        List<FilePayload> accumulator = new LinkedList<>();
+        List<MuleMessage<InputStream, FileAttributes>> accumulator = new LinkedList<>();
         doList(path.toFile(), accumulator, recursive, matcher);
 
         return accumulator;
     }
 
-    private void doList(File parent, List<FilePayload> accumulator, boolean recursive, Predicate<FilePayload> matcher)
+    private void doList(File parent, List<MuleMessage<InputStream, FileAttributes>> accumulator, boolean recursive, Predicate<FileAttributes> matcher)
     {
         for (File child : parent.listFiles())
         {
-            FilePayload payload = new LocalFilePayload(child.toPath());
+            FileAttributes payload = new LocalFileAttributes(child.toPath());
             if (!matcher.test(payload))
             {
                 continue;

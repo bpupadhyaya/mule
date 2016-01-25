@@ -10,7 +10,7 @@ import org.mule.api.connection.ConnectionException;
 import org.mule.api.connection.ConnectionHandler;
 import org.mule.api.connector.ConnectionManager;
 import org.mule.module.extension.file.api.AbstractFileInputStream;
-import org.mule.module.extension.file.api.FilePayload;
+import org.mule.module.extension.file.api.FileAttributes;
 import org.mule.module.extension.file.api.PathLock;
 
 import java.io.IOException;
@@ -38,12 +38,12 @@ final class FtpInputStream extends AbstractFileInputStream
      * Instances returned by this method <b>MUST</b> be closed or fully consumed.
      *
      * @param ftpConnector the {@link FtpConnector} through which the file is to be obtained
-     * @param filePayload  a {@link FilePayload} referencing the file which contents are to be fetched
+     * @param filePayload  a {@link FileAttributes} referencing the file which contents are to be fetched
      * @param lock         the {@link PathLock} to be used
      * @return a new {@link FtpInputStream}
      * @throws ConnectionException if a connection could not be established
      */
-    public static FtpInputStream newInstance(FtpConnector ftpConnector, FtpFilePayload filePayload, PathLock lock) throws ConnectionException
+    public static FtpInputStream newInstance(FtpConnector ftpConnector, FtpFileAttributes filePayload, PathLock lock) throws ConnectionException
     {
         ConnectionHandler<FtpFileSystem> connection = ftpConnector.getConnectionManager().getConnection(ftpConnector);
         return new FtpInputStream(connection.getConnection().retrieveFileContent(filePayload), connection, lock);

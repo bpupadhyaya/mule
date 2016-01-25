@@ -7,6 +7,7 @@
 package org.mule.module.extension.file.api;
 
 import org.mule.api.MuleEvent;
+import org.mule.api.temporary.MuleMessage;
 import org.mule.api.transport.OutputHandler;
 import org.mule.extension.api.runtime.ContentMetadata;
 import org.mule.transport.NullPayload;
@@ -43,11 +44,11 @@ public interface FileSystem
      *
      * @param directoryPath the path to the directory to be listed
      * @param recursive     whether to include the contents of sub-directories
-     * @param matcher       a {@link Predicate} of {@link FilePayload} used to filter the output list
-     * @return a {@link List} of {@link FilePayload}. Might be empty but will never be null
+     * @param matcher       a {@link Predicate} of {@link FileAttributes} used to filter the output list
+     * @return a {@link List} of {@link MuleMessage} which has {@link InputStream}s as payloads and {@link FileAttributes} as attributes
      * @throws IllegalArgumentException if {@code directoryPath} points to a file which doesn't exists or is not a directory
      */
-    List<FilePayload> list(String directoryPath, boolean recursive, Predicate<FilePayload> matcher);
+    List<MuleMessage<InputStream, FileAttributes>> list(String directoryPath, boolean recursive, Predicate<FileAttributes> matcher);
 
     /**
      * Obtains the content and metadata of a file at a given path.
@@ -56,7 +57,7 @@ public interface FileSystem
      * however, the extent of such lock will depend on the implementation.
      * What is guaranteed by passing {@code true} on the {@code lock} argument
      * is that {@code this} instance will not attempt to modify this file
-     * until the {@link InputStream} returned by the {@link FilePayload#getContent()}
+     * until the {@link InputStream} returned by {@link MuleMessage#getPayload()}
      * this method returns is closed or fully consumed. Some implementation might
      * actually perform a file system level locking which goes beyond the extend
      * of {@code this} instance or even mule. For some other file systems that
@@ -70,10 +71,11 @@ public interface FileSystem
      * @param filePath        the path of the file you want to read
      * @param lock            whether or not to lock the file
      * @param contentMetadata a {@link ContentMetadata} to pass mimeType information of the file
-     * @return the file's content and metadata on a {@link FilePayload} instance
+     * @return A {@link MuleMessage} with an {@link InputStream} with the file's content as payload
+     * and a {@link FileAttributes} object as {@link MuleMessage#getAttributes()}
      * @throws IllegalArgumentException if the file at the given path doesn't exists
      */
-    FilePayload read(String filePath, boolean lock, ContentMetadata contentMetadata);
+    List<MuleMessage<InputStream, FileAttributes>> read(String filePath, boolean lock, ContentMetadata contentMetadata);
 
     /**
      * Writes the {@code content} into the file pointed by {@code filePath}.
@@ -229,8 +231,8 @@ public interface FileSystem
      * If the {@code contentMetadata} is modifiable, it updates it
      * with a best guess mimeType derived from the given {@code filePayload}
      *
-     * @param filePayload     a {@link FilePayload}
+     * @param fileAttributes  a {@link FileAttributes}
      * @param contentMetadata the current {@link ContentMetadata}
      */
-    void updateContentMetadata(FilePayload filePayload, ContentMetadata contentMetadata);
+    void updateContentMetadata(FileAttributes fileAttributes, ContentMetadata contentMetadata);
 }

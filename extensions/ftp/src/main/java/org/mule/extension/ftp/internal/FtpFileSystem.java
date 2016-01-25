@@ -191,10 +191,10 @@ public final class FtpFileSystem extends AbstractFileSystem
      * is closed in order for the underlying connection
      * to be closed.
      *
-     * @param filePayload a {@link FtpFilePayload} referencing to a FTP file
+     * @param filePayload a {@link FtpFileAttributes} referencing to a FTP file
      * @return an {@link InputStream}
      */
-    InputStream retrieveFileContent(FtpFilePayload filePayload)
+    InputStream retrieveFileContent(FtpFileAttributes filePayload)
     {
         try
         {

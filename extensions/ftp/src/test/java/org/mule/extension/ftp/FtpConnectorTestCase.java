@@ -10,7 +10,7 @@ import static org.junit.rules.ExpectedException.none;
 import org.mule.api.MuleEvent;
 import org.mule.extension.ftp.internal.FtpConnector;
 import org.mule.functional.junit4.ExtensionFunctionalTestCase;
-import org.mule.module.extension.file.api.FilePayload;
+import org.mule.module.extension.file.api.FileAttributes;
 import org.mule.module.extension.file.api.FileWriteMode;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.infrastructure.client.ftp.FTPTestClient;
@@ -89,9 +89,9 @@ public abstract class FtpConnectorTestCase extends ExtensionFunctionalTestCase
         return getPath(HELLO_PATH);
     }
 
-    protected FilePayload readPath(String path) throws Exception
+    protected FileAttributes readPath(String path) throws Exception
     {
-        return (FilePayload) getPath(path).getMessage().getPayload();
+        return (FileAttributes) getPath(path).getMessage().getPayload();
     }
 
     protected void doWrite(String path, Object content, FileWriteMode mode, boolean createParent) throws Exception

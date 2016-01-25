@@ -8,6 +8,7 @@ package org.mule.module.extension.file.api;
 
 import static java.lang.String.format;
 import org.mule.api.MuleEvent;
+import org.mule.api.temporary.MuleMessage;
 import org.mule.extension.api.runtime.ContentMetadata;
 import org.mule.extension.api.runtime.ContentType;
 import org.mule.module.extension.file.api.command.CopyCommand;
@@ -19,6 +20,7 @@ import org.mule.module.extension.file.api.command.ReadCommand;
 import org.mule.module.extension.file.api.command.RenameCommand;
 import org.mule.module.extension.file.api.command.WriteCommand;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Predicate;
@@ -78,7 +80,7 @@ public abstract class AbstractFileSystem implements FileSystem
      * {@inheritDoc}
      */
     @Override
-    public List<FilePayload> list(String directoryPath, boolean recursive, Predicate<FilePayload> matcher)
+    public List<MuleMessage<InputStream, FileAttributes>> list(String directoryPath, boolean recursive, Predicate<FileAttributes> matcher)
     {
         return getListCommand().list(directoryPath, recursive, matcher);
     }
@@ -87,7 +89,7 @@ public abstract class AbstractFileSystem implements FileSystem
      * {@inheritDoc}
      */
     @Override
-    public FilePayload read(String filePath, boolean lock, ContentMetadata contentMetadata)
+    public FileAttributes read(String filePath, boolean lock, ContentMetadata contentMetadata)
     {
         return getReadCommand().read(filePath, lock, contentMetadata);
     }
@@ -165,14 +167,14 @@ public abstract class AbstractFileSystem implements FileSystem
      * {@inheritDoc}
      */
     @Override
-    public void updateContentMetadata(FilePayload filePayload, ContentMetadata contentMetadata)
+    public void updateContentMetadata(FileAttributes fileAttributes, ContentMetadata contentMetadata)
     {
         if (!contentMetadata.isOutputModifiable())
         {
             return;
         }
 
-        String presumedMimeType = mimetypesFileTypeMap.getContentType(filePayload.getPath());
+        String presumedMimeType = mimetypesFileTypeMap.getContentType(fileAttributes.getPath());
         ContentType outputContentType = contentMetadata.getOutputContentType();
         if (presumedMimeType != null)
         {

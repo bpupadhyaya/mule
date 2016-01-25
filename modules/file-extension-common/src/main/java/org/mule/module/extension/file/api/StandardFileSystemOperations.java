@@ -7,7 +7,7 @@
 package org.mule.module.extension.file.api;
 
 import org.mule.api.MuleEvent;
-import org.mule.api.MuleMessage;
+import org.mule.api.temporary.MuleMessage;
 import org.mule.api.transport.OutputHandler;
 import org.mule.extension.annotation.api.ContentMetadataParameters;
 import org.mule.extension.annotation.api.Operation;
@@ -46,12 +46,12 @@ public class StandardFileSystemOperations
      * @param directoryPath the path to the directory to be listed
      * @param recursive     whether to include the contents of sub-directories. Defaults to {@code false}
      * @param matcher       a matcher used to filter the output list
-     * @return a {@link List} of {@link FilePayload}. Might be empty but will never be null
+     * @return a {@link List} of {@link FileAttributes}. Might be empty but will never be null
      * @throws IllegalArgumentException if {@code directoryPath} points to a file which doesn't exists or is not a directory
      */
     @Operation
     //TODO: MULE-9233
-    public List<FilePayload> list(@Connection FileSystem fileSystem,
+    public List<MuleMessage<InputStream, FileAttributes>> list(@Connection FileSystem fileSystem,
                                   @Optional String directoryPath,
                                   @Optional(defaultValue = "false") boolean recursive,
                                   @Optional FilePayloadPredicateBuilder matcher)
@@ -64,7 +64,7 @@ public class StandardFileSystemOperations
      * <p>
      * If the {@code lock} parameter is set to {@code true}, then a file system
      * level lock will be placed on the file until the {@link InputStream} returned
-     * by the {@link FilePayload#getContent()} this operation returns is closed or
+     * by the {@link FileAttributes#getContent()} this operation returns is closed or
      * fully consumed. Because the lock is actually provided by the host file system,
      * its behavior might change depending on the mounted drive and the operation system
      * on which mule is running. Take that into consideration before blindly relying on this
@@ -81,15 +81,15 @@ public class StandardFileSystemOperations
      * @param path            the path to the file to be read
      * @param lock            whether or not to lock the file. Defaults to {@code false}
      * @param contentMetadata a {@link ContentMetadata} to pass mimeType information of the file
-     * @return the file's content and metadata on a {@link FilePayload} instance
+     * @return the file's content and metadata on a {@link FileAttributes} instance
      * @throws IllegalArgumentException if the file at the given path doesn't exists
      */
     @Operation
     @ContentMetadataParameters
-    public FilePayload read(@Connection FileSystem fileSystem,
-                            String path,
-                            @Optional(defaultValue = "false") boolean lock,
-                            ContentMetadata contentMetadata)
+    public FileAttributes read(@Connection FileSystem fileSystem,
+                               String path,
+                               @Optional(defaultValue = "false") boolean lock,
+                               ContentMetadata contentMetadata)
     {
         return fileSystem.read(path, lock, contentMetadata);
     }
@@ -267,7 +267,7 @@ public class StandardFileSystemOperations
         fileSystem.createDirectory(basePath, directoryName);
     }
 
-    private Predicate<FilePayload> getPredicate(FilePayloadPredicateBuilder builder)
+    private Predicate<FileAttributes> getPredicate(FilePayloadPredicateBuilder builder)
     {
         return builder != null ? builder.build() : new NullFilePayloadPredicate();
     }

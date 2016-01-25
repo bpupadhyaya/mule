@@ -7,7 +7,7 @@
 package org.mule.extension.ftp.internal;
 
 import org.mule.module.extension.file.api.PathLock;
-import org.mule.module.extension.file.api.AbstractFilePayload;
+import org.mule.module.extension.file.api.AbstractFileAttributes;
 import org.mule.module.extension.file.api.NullPathLock;
 
 import java.io.InputStream;
@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
- * Implementation of {@link AbstractFilePayload} for files
+ * Implementation of {@link AbstractFileAttributes} for files
  * read from a FTP server.
  *
  * @since 4.0
  */
 //TODO: MULE-9232
-public final class FtpFilePayload extends AbstractFilePayload
+public final class FtpFileAttributes extends AbstractFileAttributes
 {
 
     private final FTPFile ftpFile;
@@ -36,7 +36,7 @@ public final class FtpFilePayload extends AbstractFilePayload
      * @param ftpFile      the {@link FTPFile} which represents the file on the FTP server
      * @param ftpConnector the configuring {@link FtpConnector}
      */
-    public FtpFilePayload(Path path, FTPFile ftpFile, FtpConnector ftpConnector)
+    public FtpFileAttributes(Path path, FTPFile ftpFile, FtpConnector ftpConnector)
     {
         this(path, ftpFile, ftpConnector, new NullPathLock());
     }
@@ -45,15 +45,15 @@ public final class FtpFilePayload extends AbstractFilePayload
      * Creates a new instance which is a shallow copy of the
      * {@code original}
      *
-     * @param original the {@link FtpFilePayload} to copy
+     * @param original the {@link FtpFileAttributes} to copy
      * @param lock     the {@link PathLock} to use
      */
-    public FtpFilePayload(FtpFilePayload original, PathLock lock)
+    public FtpFileAttributes(FtpFileAttributes original, PathLock lock)
     {
         this(original.path, original.ftpFile, original.ftpConnector, lock);
     }
 
-    private FtpFilePayload(Path path, FTPFile ftpFile, FtpConnector ftpConnector, PathLock lock)
+    private FtpFileAttributes(Path path, FTPFile ftpFile, FtpConnector ftpConnector, PathLock lock)
     {
         super(path, lock);
         this.ftpFile = ftpFile;

@@ -8,9 +8,9 @@ package org.mule.extension.file.internal.command;
 
 import org.mule.extension.api.runtime.ContentMetadata;
 import org.mule.extension.file.api.FileConnector;
-import org.mule.extension.file.api.LocalFilePayload;
+import org.mule.extension.file.api.LocalFileAttributes;
 import org.mule.extension.file.api.LocalFileSystem;
-import org.mule.module.extension.file.api.FilePayload;
+import org.mule.module.extension.file.api.FileAttributes;
 import org.mule.module.extension.file.api.command.ReadCommand;
 
 import java.nio.file.Files;
@@ -36,7 +36,7 @@ public final class LocalReadCommand extends LocalFileCommand implements ReadComm
      * {@inheritDoc}
      */
     @Override
-    public FilePayload read(String filePath, boolean lock, ContentMetadata contentMetadata)
+    public FileAttributes read(String filePath, boolean lock, ContentMetadata contentMetadata)
     {
         Path path = resolveExistingPath(filePath);
         if (Files.isDirectory(path))
@@ -44,18 +44,18 @@ public final class LocalReadCommand extends LocalFileCommand implements ReadComm
             throw cannotReadDirectoryException(path);
         }
 
-        FilePayload filePayload;
+        FileAttributes fileAttributes;
         if (lock)
         {
-            filePayload = new LocalFilePayload(path, fileSystem.lock(path));
+            fileAttributes = new LocalFileAttributes(path, fileSystem.lock(path));
         }
         else
         {
             fileSystem.verifyNotLocked(path);
-            filePayload = new LocalFilePayload(path);
+            fileAttributes = new LocalFileAttributes(path);
         }
 
-        fileSystem.updateContentMetadata(filePayload, contentMetadata);
-        return filePayload;
+        fileSystem.updateContentMetadata(fileAttributes, contentMetadata);
+        return fileAttributes;
     }
 }

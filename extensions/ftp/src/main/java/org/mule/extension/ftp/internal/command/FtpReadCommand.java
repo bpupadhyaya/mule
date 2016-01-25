@@ -8,9 +8,9 @@ package org.mule.extension.ftp.internal.command;
 
 import org.mule.extension.api.runtime.ContentMetadata;
 import org.mule.extension.ftp.internal.FtpConnector;
-import org.mule.extension.ftp.internal.FtpFilePayload;
+import org.mule.extension.ftp.internal.FtpFileAttributes;
 import org.mule.extension.ftp.internal.FtpFileSystem;
-import org.mule.module.extension.file.api.FilePayload;
+import org.mule.module.extension.file.api.FileAttributes;
 import org.mule.module.extension.file.api.command.ReadCommand;
 
 import java.nio.file.Path;
@@ -38,9 +38,9 @@ public final class FtpReadCommand extends FtpCommand implements ReadCommand
      * {@inheritDoc}
      */
     @Override
-    public FilePayload read(String filePath, boolean lock, ContentMetadata contentMetadata)
+    public FileAttributes read(String filePath, boolean lock, ContentMetadata contentMetadata)
     {
-        FtpFilePayload filePayload = getExistingFile(filePath);
+        FtpFileAttributes filePayload = getExistingFile(filePath);
         if (filePayload.isDirectory())
         {
             throw cannotReadDirectoryException(Paths.get(filePayload.getPath()));
@@ -48,7 +48,7 @@ public final class FtpReadCommand extends FtpCommand implements ReadCommand
 
         try
         {
-            filePayload = new FtpFilePayload(resolvePath(filePath), client.listFiles(filePath)[0], config);
+            filePayload = new FtpFileAttributes(resolvePath(filePath), client.listFiles(filePath)[0], config);
         }
         catch (Exception e)
         {
@@ -59,7 +59,7 @@ public final class FtpReadCommand extends FtpCommand implements ReadCommand
 
         if (lock)
         {
-            filePayload = new FtpFilePayload(filePayload, fileSystem.lock(path));
+            filePayload = new FtpFileAttributes(filePayload, fileSystem.lock(path));
         }
         else
         {
