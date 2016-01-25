@@ -6,7 +6,6 @@
  */
 package org.mule.module.launcher.domain;
 
-import static org.mule.module.launcher.domain.MuleClassLoaderFactory.createMuleClassLoader;
 import org.mule.config.i18n.CoreMessages;
 import org.mule.module.launcher.DeploymentException;
 import org.mule.module.launcher.MuleSharedDomainClassLoader;
@@ -23,8 +22,14 @@ import java.util.Map;
 public class MuleDomainClassLoaderRepository implements DomainClassLoaderRepository
 {
 
+    private final ClassLoader muleClassLoader;
     private Map<String, ArtifactClassLoader> domainArtifactClassLoaders = new HashMap<String, ArtifactClassLoader>();
     private ArtifactClassLoader defaultDomainArtifactClassLoader;
+
+    public MuleDomainClassLoaderRepository(ClassLoader muleClassLoader)
+    {
+        this.muleClassLoader = muleClassLoader;
+    }
 
     @Override
     public synchronized ArtifactClassLoader getDomainClassLoader(String domain)
@@ -39,7 +44,7 @@ public class MuleDomainClassLoaderRepository implements DomainClassLoaderReposit
             return domainArtifactClassLoaders.get(domain);
         }
         validateDomain(domain);
-        ArtifactClassLoader classLoader = new MuleSharedDomainClassLoader(domain, createMuleClassLoader());
+        ArtifactClassLoader classLoader = new MuleSharedDomainClassLoader(domain, muleClassLoader);
         classLoader = createClassLoaderUnregisterWrapper(classLoader);
         domainArtifactClassLoaders.put(domain, classLoader);
         return classLoader;
@@ -52,7 +57,7 @@ public class MuleDomainClassLoaderRepository implements DomainClassLoaderReposit
         {
             return defaultDomainArtifactClassLoader;
         }
-        ArtifactClassLoader classLoader = new MuleSharedDomainClassLoader(DomainFactory.DEFAULT_DOMAIN_NAME, createMuleClassLoader());
+        ArtifactClassLoader classLoader = new MuleSharedDomainClassLoader(DomainFactory.DEFAULT_DOMAIN_NAME, muleClassLoader);
         defaultDomainArtifactClassLoader = createClassLoaderUnregisterWrapper(classLoader);
         return defaultDomainArtifactClassLoader;
     }

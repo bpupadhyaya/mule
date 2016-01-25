@@ -29,6 +29,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mule.module.launcher.domain.Domain.DOMAIN_CONFIG_FILE_LOCATION;
+import static org.mule.module.launcher.domain.MuleClassLoaderFactory.createMuleClassLoader;
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.MessageExchangePattern;
@@ -1057,7 +1058,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     {
         addPackedAppFromResource(emptyAppDescriptor.zipPath);
 
-        TestApplicationFactory appFactory = new TestApplicationFactory(new MuleApplicationClassLoaderFactory(new MuleDomainClassLoaderRepository(), new DefaultNativeLibraryFinderFactory()));
+        TestApplicationFactory appFactory = new TestApplicationFactory(new MuleApplicationClassLoaderFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader()), new DefaultNativeLibraryFinderFactory()));
         appFactory.setFailOnStopApplication(true);
 
         deploymentService.setAppFactory(appFactory);
@@ -1079,7 +1080,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     {
         addPackedAppFromResource(emptyAppDescriptor.zipPath);
 
-        TestApplicationFactory appFactory = new TestApplicationFactory(new MuleApplicationClassLoaderFactory(new MuleDomainClassLoaderRepository(), new DefaultNativeLibraryFinderFactory()));
+        TestApplicationFactory appFactory = new TestApplicationFactory(new MuleApplicationClassLoaderFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader()), new DefaultNativeLibraryFinderFactory()));
         appFactory.setFailOnDisposeApplication(true);
         deploymentService.setAppFactory(appFactory);
         deploymentService.start();
@@ -1935,7 +1936,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     {
         addPackedDomainFromResource(emptyDomainDescriptor.zipPath);
 
-        TestDomainFactory testDomainFactory = new TestDomainFactory(new MuleDomainClassLoaderRepository());
+        TestDomainFactory testDomainFactory = new TestDomainFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader()));
         testDomainFactory.setFailOnStopApplication();
 
         deploymentService.setDomainFactory(testDomainFactory);
@@ -1955,7 +1956,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     {
         addPackedDomainFromResource(emptyDomainDescriptor.zipPath);
 
-        TestDomainFactory testDomainFactory = new TestDomainFactory(new MuleDomainClassLoaderRepository());
+        TestDomainFactory testDomainFactory = new TestDomainFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader()));
         testDomainFactory.setFailOnDisposeApplication();
         deploymentService.setDomainFactory(testDomainFactory);
         deploymentService.start();
