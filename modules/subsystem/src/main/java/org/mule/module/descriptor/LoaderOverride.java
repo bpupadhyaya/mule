@@ -56,6 +56,7 @@ public class LoaderOverride
         boolean matched = false;
         for (String override : parentOnly)
         {
+            //TODO(pablo.kraan): CCL - adding a "." breaks matches when the package already ends with ".". Ugly
             if (name.equals(override) || name.startsWith(override + "."))
             {
                 matched = true;

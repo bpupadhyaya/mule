@@ -43,33 +43,37 @@ public class LoaderOverrideParser
         final Set<String> childOnly = new HashSet<>();
 
         Set<String> overrides = new HashSet<>();
-        final String[] values = overrideString.split(",");
-        Collections.addAll(overrides, values);
 
-        if (overrides != null && !overrides.isEmpty())
+        if (!StringUtils.isEmpty(overrideString))
         {
-            for (String resource : overrides)
+            final String[] values = overrideString.split(",");
+            Collections.addAll(overrides, values);
+
+            if (overrides != null && !overrides.isEmpty())
             {
-                resource = StringUtils.defaultString(resource).trim();
-                // 'resource' package definitions come with a '-' prefix
-                if (resource.startsWith("-"))
+                for (String resource : overrides)
                 {
-                    resource = resource.substring(1);
-                    childOnly.add(resource);
-                }
-                else
-                {
-                    parentFirst.add(resource);
-                }
-
-                for (String systemPackage : systemPackages)
-                {
-                    if (resource.startsWith(systemPackage))
+                    resource = StringUtils.defaultString(resource).trim();
+                    // 'resource' package definitions come with a '-' prefix
+                    if (resource.startsWith("-"))
                     {
-                        throw new IllegalArgumentException("Cannot override a system package. Offending value: " + resource);
+                        resource = resource.substring(1);
+                        childOnly.add(resource);
                     }
-                }
+                    else
+                    {
+                        parentFirst.add(resource);
+                    }
 
+                    for (String systemPackage : systemPackages)
+                    {
+                        if (resource.startsWith(systemPackage))
+                        {
+                            throw new IllegalArgumentException("Cannot override a system package. Offending value: " + resource);
+                        }
+                    }
+
+                }
             }
         }
 

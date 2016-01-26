@@ -113,6 +113,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     private static final ArtifactDescriptor dummyAppWithPluginDescriptor = new ArtifactDescriptor("dummyWithEchoPlugin", "/dummyWithEchoPlugin.zip", "/dummyWithEchoPlugin", null, null);
     private static final ArtifactDescriptor dummyMultiPluginLibVersionAppDescriptor = new ArtifactDescriptor("multiPluginLibVersion", "/multiPluginLibVersion.zip", "/multiPluginLibVersion", null, null);
     private static final ArtifactDescriptor dummyAppWithSelfishPluginDescriptor = new ArtifactDescriptor("dummyWithSelfishPlugin", "/dummyWithSelfishPlugin.zip", "/dummyWithSelfishPlugin", null, null);
+    private static final ArtifactDescriptor salesforceAppDescriptor = new ArtifactDescriptor("salesforce-app", "/salesforce-app.zip", "/salesforce-app", null, null);
 
     //Domain constants
     private static final ArtifactDescriptor brokenDomainDescriptor = new ArtifactDescriptor("brokenDomain", "/broken-domain.zip", null, "brokenDomain.zip", "/broken-config.xml");
@@ -203,6 +204,20 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
 
         // mule-app.properties from the zip archive must have loaded properly
         assertEquals("mule-app.properties should have been loaded.", "someValue", registry.get("myCustomProp"));
+    }
+
+    @Test
+    public void deploysSalesforceAppOnStartup() throws Exception
+    {
+        final ArtifactDescriptor appDescriptor = DeploymentServiceTestCase.salesforceAppDescriptor;
+
+        addPackedAppFromResource(appDescriptor.zipPath);
+
+        deploymentService.start();
+
+        assertApplicationDeploymentSuccess(applicationDeploymentListener, appDescriptor.id);
+        assertAppsDir(NONE, new String[] {appDescriptor.id}, true);
+        assertApplicationAnchorFileExists(appDescriptor.id);
     }
 
     @Test
@@ -3106,6 +3121,12 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
         Prober prober = new PollingProber(DEPLOYMENT_TIMEOUT, 100);
         File appFolder = new File(artifactDir, artifactName);
         prober.check(new FileExists(appFolder));
+    }
+
+    @Override
+    public int getTestTimeoutSecs()
+    {
+        return 120000;
     }
 
     /**

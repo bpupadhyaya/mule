@@ -76,10 +76,7 @@ public class PluginDescriptorParser
                 props.load(new FileReader(pluginPropsFile));
 
                 final String overrideString = props.getProperty(PROPERTY_LOADER_OVERRIDE);
-                if (StringUtils.isNotBlank(overrideString))
-                {
-                    pd.setLoaderOverride(new LoaderOverrideParser(MuleClassLoaderFactory.getMuleExportedResources()).parse(overrideString));
-                }
+                pd.setLoaderOverride(new LoaderOverrideParser(MuleClassLoaderFactory.getMuleUniqueResources()).parse(overrideString));
 
                 String exportedClasses = props.getProperty(PROPERTY_LOADER_EXPORTED);
                 if (StringUtils.isNotBlank(exportedClasses))
@@ -89,6 +86,7 @@ public class PluginDescriptorParser
                     pd.setLoaderExport(loaderExport);
                 }
             }
+            //TODO(pablo.kraan): CCL - throw error if not file defined!
 
             try
             {

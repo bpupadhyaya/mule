@@ -31,7 +31,7 @@ public class FileSystemModuleClassLoaderFactoryTestCase extends AbstractMuleTest
     @Rule
     public TemporaryFolder pluginFolder = new TemporaryFolder();
 
-    private FileSystemModuleClassLoaderFactory factory = new FileSystemModuleClassLoaderFactory();
+    private FileSystemModuleClassLoaderFactory factory = new FileSystemModuleClassLoaderFactory(Thread.currentThread().getContextClassLoader());
     private PluginDescriptor descriptor;
 
     @Before

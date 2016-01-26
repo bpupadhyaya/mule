@@ -31,6 +31,13 @@ import java.util.List;
 public class FileSystemModuleClassLoaderFactory extends AbstractModuleClassLoaderFactory implements ModuleClassLoaderFactory
 {
 
+    private final ClassLoader parentClassLoader;
+
+    public FileSystemModuleClassLoaderFactory(ClassLoader parentClassLoader)
+    {
+        this.parentClassLoader = parentClassLoader;
+    }
+
     @Override
     public ModuleClassLoader create(PluginDescriptor descriptor)
     {
@@ -41,9 +48,7 @@ public class FileSystemModuleClassLoaderFactory extends AbstractModuleClassLoade
             throw new IllegalArgumentException("Plugin folder does not exists: " + (rootFolder != null ? rootFolder.getName() : null));
         }
 
-        ClassLoader parentClassLoader = Thread.currentThread().getContextClassLoader();
-        List<URL> urls = new LinkedList<URL>();
-
+        List<URL> urls = new LinkedList<>();
         addDirectoryToClassLoader(urls, new File(rootFolder, CLASSES_DIR));
         loadJarsFromFolder(urls, new File(rootFolder, LIB_DIR));
 

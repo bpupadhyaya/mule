@@ -59,10 +59,7 @@ public class PropertiesApplicationDescriptorFactory implements ApplicationDescri
         d.setRedeploymentEnabled(BooleanUtils.toBoolean(p.getProperty(PROPERTY_REDEPLOYMENT_ENABLED, Boolean.TRUE.toString())));
 
         final String overrideString = p.getProperty(PROPERTY_LOADER_OVERRIDE);
-        if (StringUtils.isNotBlank(overrideString))
-        {
-            d.setLoaderOverride(new LoaderOverrideParser(MuleClassLoaderFactory.getMuleExportedResources()).parse(overrideString));
-        }
+        d.setLoaderOverride(new LoaderOverrideParser(MuleClassLoaderFactory.getMuleUniqueResources()).parse(overrideString));
 
         return d;
     }

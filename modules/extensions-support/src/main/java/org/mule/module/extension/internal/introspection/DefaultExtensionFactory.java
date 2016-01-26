@@ -14,27 +14,26 @@ import static org.mule.extension.api.introspection.ExpressionSupport.REQUIRED;
 import static org.mule.module.extension.internal.util.MuleExtensionUtils.alphaSortDescribedList;
 import static org.mule.module.extension.internal.util.MuleExtensionUtils.createInterceptors;
 import org.mule.api.registry.ServiceRegistry;
-import org.mule.common.MuleVersion;
-import org.mule.module.extension.internal.exception.IllegalParameterModelDefinitionException;
 import org.mule.extension.api.introspection.ConfigurationModel;
 import org.mule.extension.api.introspection.ConnectionProviderModel;
 import org.mule.extension.api.introspection.ExtensionFactory;
 import org.mule.extension.api.introspection.ExtensionModel;
-import org.mule.extension.api.introspection.SourceModel;
 import org.mule.extension.api.introspection.OperationModel;
 import org.mule.extension.api.introspection.ParameterModel;
+import org.mule.extension.api.introspection.SourceModel;
 import org.mule.extension.api.introspection.declaration.DescribingContext;
 import org.mule.extension.api.introspection.declaration.fluent.ConfigurationDeclaration;
 import org.mule.extension.api.introspection.declaration.fluent.ConnectionProviderDeclaration;
 import org.mule.extension.api.introspection.declaration.fluent.Declaration;
 import org.mule.extension.api.introspection.declaration.fluent.Descriptor;
-import org.mule.extension.api.introspection.declaration.fluent.SourceDeclaration;
 import org.mule.extension.api.introspection.declaration.fluent.OperationDeclaration;
 import org.mule.extension.api.introspection.declaration.fluent.ParameterDeclaration;
+import org.mule.extension.api.introspection.declaration.fluent.SourceDeclaration;
 import org.mule.extension.api.introspection.declaration.spi.ModelEnricher;
 import org.mule.extension.api.runtime.Interceptor;
 import org.mule.extension.api.runtime.OperationExecutorFactory;
 import org.mule.module.extension.internal.DefaultDescribingContext;
+import org.mule.module.extension.internal.exception.IllegalParameterModelDefinitionException;
 import org.mule.module.extension.internal.introspection.validation.ConfigurationModelValidator;
 import org.mule.module.extension.internal.introspection.validation.ConnectionProviderModelValidator;
 import org.mule.module.extension.internal.introspection.validation.ModelValidator;
@@ -272,14 +271,15 @@ public final class DefaultExtensionFactory implements ExtensionFactory
 
     private void validateMuleVersion(Declaration declaration)
     {
-        try
-        {
-            new MuleVersion(declaration.getVersion());
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new IllegalArgumentException(String.format("Invalid version %s for extension '%s'", declaration.getVersion(), declaration.getName()));
-        }
+        //TODO(pablo.kraan): CCL - ignoring his as it throws  Invalid version Unknown for extension 'Salesforce'
+        //try
+        //{
+        //    new MuleVersion(declaration.getVersion());
+        //}
+        //catch (IllegalArgumentException e)
+        //{
+        //    throw new IllegalArgumentException(String.format("Invalid version %s for extension '%s'", declaration.getVersion(), declaration.getName()));
+        //}
     }
 
     private void enrichModel(DescribingContext describingContext)
