@@ -94,6 +94,17 @@ public class MuleClassLoaderFactory
         loaderExports.add("org.mule.tck");
         loaderExports.add("org.mule.session");
         loaderExports.add("org.mule.transport");
+        loaderExports.add("org.mule.transformer");
+        loaderExports.add("com.ctc.wstx");
+        loaderExports.add("org.mule.module.ws.functional");
+        loaderExports.add("com.sun.xml");
+        loaderExports.add("com/sun/xml");
+        loaderExports.add("org.mule.module.cxf.PasswordCallback");
+        loaderExports.add("com.sun.org.apache.xerces");
+        loaderExports.add("org.mule.module.oauth2.internal.authorizationcode.state.ResourceOwnerOAuthContext");
+        loaderExports.add("org.mule.module.jaas");
+        loaderExports.add("net.sf.saxon");
+        loaderExports.add("org.apache.xalan");
 
 
         return loaderExports;
