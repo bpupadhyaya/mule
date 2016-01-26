@@ -27,6 +27,7 @@ import org.mule.transformer.types.DataTypeFactory;
 import org.mule.util.UUID;
 
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.HashSet;
@@ -58,6 +59,12 @@ public class OutboundRoutingTestEvent implements MuleEvent
     public MuleMessage getMessage()
     {
         return message;
+    }
+
+    @Override
+    public <Payload, Attributes extends Serializable> org.mule.api.temporary.MuleMessage<Payload, Attributes> getNewMessage()
+    {
+        return (org.mule.api.temporary.MuleMessage<Payload, Attributes>) message;
     }
 
     @Override

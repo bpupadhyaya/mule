@@ -33,6 +33,7 @@ public abstract class AbstractFileInputStream extends AutoCloseInputStream
 
     private static class StreamSupplier implements Supplier<InputStream>
     {
+
         private volatile InputStream stream;
         private Supplier<InputStream> delegate;
 
@@ -105,5 +106,10 @@ public abstract class AbstractFileInputStream extends AutoCloseInputStream
     protected void doClose() throws IOException
     {
         super.close();
+    }
+
+    public boolean isLocked()
+    {
+        return lock.isLocked();
     }
 }

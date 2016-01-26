@@ -31,6 +31,7 @@ import org.mule.message.DefaultExceptionPayload;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
@@ -112,6 +113,12 @@ public class RequestContextTestCase extends AbstractMuleTestCase
         public MuleMessage getMessage()
         {
             return message;
+        }
+
+        @Override
+        public <Payload, Attributes extends Serializable> org.mule.api.temporary.MuleMessage<Payload, Attributes> getNewMessage()
+        {
+            return (org.mule.api.temporary.MuleMessage<Payload, Attributes>) message;
         }
 
         @Override

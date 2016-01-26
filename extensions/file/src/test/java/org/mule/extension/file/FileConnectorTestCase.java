@@ -10,9 +10,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.ExpectedException.none;
 import org.mule.api.MuleEvent;
+import org.mule.api.temporary.MuleMessage;
 import org.mule.extension.file.api.FileConnector;
 import org.mule.extension.file.api.LocalFileAttributes;
 import org.mule.functional.junit4.ExtensionFunctionalTestCase;
+import org.mule.module.extension.file.api.AbstractFileInputStream;
 import org.mule.module.extension.file.api.FileWriteMode;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.util.IOUtils;
@@ -76,9 +78,9 @@ public abstract class FileConnectorTestCase extends ExtensionFunctionalTestCase
         return getPath(HELLO_PATH);
     }
 
-    protected LocalFileAttributes readPath(String path) throws Exception
+    protected MuleMessage<AbstractFileInputStream, LocalFileAttributes> readPath(String path) throws Exception
     {
-        return (LocalFileAttributes) getPath(path).getMessage().getPayload();
+        return getPath(path).getNewMessage();
     }
 
     private MuleEvent getPath(String path) throws Exception
@@ -90,7 +92,7 @@ public abstract class FileConnectorTestCase extends ExtensionFunctionalTestCase
 
     protected String readPathAsString(String path) throws Exception
     {
-        return IOUtils.toString(readPath(path).getContent());
+        return IOUtils.toString(readPath(path).getPayload());
     }
 
     protected void doWrite(String path, Object content, FileWriteMode mode, boolean createParent) throws Exception

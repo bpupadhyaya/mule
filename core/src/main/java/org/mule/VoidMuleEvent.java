@@ -23,6 +23,7 @@ import org.mule.api.transport.ReplyToHandler;
 import org.mule.management.stats.ProcessingTime;
 
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Set;
 
@@ -48,6 +49,12 @@ public class VoidMuleEvent implements MuleEvent
 
     @Override
     public MuleMessage getMessage()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <Payload, Attributes extends Serializable> org.mule.api.temporary.MuleMessage<Payload, Attributes> getNewMessage()
     {
         throw new UnsupportedOperationException();
     }

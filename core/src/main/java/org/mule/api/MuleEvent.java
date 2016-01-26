@@ -45,6 +45,13 @@ public interface MuleEvent extends Serializable
      */
     MuleMessage getMessage();
 
+    /**
+     * Temporary method used to get the same as {@link #getMessage()} but using the new
+     * API and supporting generics. This is a temporal, transitional method which will not
+     * survive the immutability refactor
+     */
+    <Payload, Attributes extends Serializable> org.mule.api.temporary.MuleMessage<Payload, Attributes> getNewMessage();
+
     Credentials getCredentials();
 
     /**

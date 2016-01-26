@@ -578,6 +578,12 @@ public class DefaultMuleEvent implements MuleEvent, ThreadSafeAccess, Deserializ
     }
 
     @Override
+    public <Payload, Attributes extends Serializable> org.mule.api.temporary.MuleMessage<Payload, Attributes> getNewMessage()
+    {
+        return (org.mule.api.temporary.MuleMessage<Payload, Attributes>) message;
+    }
+
+    @Override
     public byte[] getMessageAsBytes() throws DefaultMuleException
     {
         try

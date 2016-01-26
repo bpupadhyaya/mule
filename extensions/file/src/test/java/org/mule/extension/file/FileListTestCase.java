@@ -82,7 +82,8 @@ public class FileListTestCase extends FileConnectorTestCase
     }
 
     @Test
-    public void listWithGlobalMatcher() throws Exception {
+    public void listWithGlobalMatcher() throws Exception
+    {
         List<FileAttributes> list = doList("listWithGlobalMatcher", ".", true);
         assertThat(list, hasSize(1));
         FileAttributes file = list.get(0);
