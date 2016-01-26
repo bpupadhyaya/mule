@@ -13,6 +13,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import org.mule.api.MuleEvent;
+import org.mule.api.temporary.MuleMessage;
+import org.mule.extension.file.api.FileInputStream;
+import org.mule.extension.file.api.LocalFileAttributes;
 import org.mule.module.extension.file.api.FileAttributes;
 
 import java.io.File;
@@ -46,7 +49,7 @@ public class FileListTestCase extends FileConnectorTestCase
     @Test
     public void listNotRecursive() throws Exception
     {
-        List<FileAttributes> list = doList(".", false);
+        List<MuleMessage<FileInputStream, LocalFileAttributes>> list = doList(".", false);
         assertThat(list, hasSize(6));
         assertThat(assertListedFiles(list), is(true));
     }
@@ -54,7 +57,7 @@ public class FileListTestCase extends FileConnectorTestCase
     @Test
     public void listRecursive() throws Exception
     {
-        List<FileAttributes> list = doList(".", true);
+        List<MuleMessage<FileInputStream, LocalFileAttributes>> list = doList(".", true);
         assertThat(list, hasSize(8));
         assertThat(assertListedFiles(list), is(true));
     }
@@ -76,7 +79,7 @@ public class FileListTestCase extends FileConnectorTestCase
     @Test
     public void listWithEmbeddedMatcher() throws Exception
     {
-        List<FileAttributes> list = doList("listWithEmbeddedPredicate", ".", false);
+        List<MuleMessage<FileInputStream, LocalFileAttributes>> list = doList("listWithEmbeddedPredicate", ".", false);
         assertThat(list, hasSize(2));
         assertThat(assertListedFiles(list), is(false));
     }
@@ -84,30 +87,31 @@ public class FileListTestCase extends FileConnectorTestCase
     @Test
     public void listWithGlobalMatcher() throws Exception
     {
-        List<FileAttributes> list = doList("listWithGlobalMatcher", ".", true);
+        List<MuleMessage<FileInputStream, LocalFileAttributes>> list = doList("listWithGlobalMatcher", ".", true);
         assertThat(list, hasSize(1));
-        FileAttributes file = list.get(0);
+        FileAttributes file = list.get(0).getAttributes();
         assertThat(file.isDirectory(), is(true));
         assertThat(file.getName(), equalTo(SUB_DIRECTORY_NAME));
     }
 
-    private boolean assertListedFiles(List<FileAttributes> list) throws IOException
+    private boolean assertListedFiles(List<MuleMessage<FileInputStream, LocalFileAttributes>> list) throws IOException
     {
         boolean directoryWasFound = false;
 
-        for (FileAttributes file : list)
+        for (MuleMessage<FileInputStream, LocalFileAttributes> message : list)
         {
-            if (file.isDirectory())
+            LocalFileAttributes attributes = message.getAttributes();
+            if (attributes.isDirectory())
             {
                 assertThat("two directories found", directoryWasFound, is(false));
                 directoryWasFound = true;
-                assertThat(file.getName(), equalTo(SUB_DIRECTORY_NAME));
+                assertThat(attributes.getName(), equalTo(SUB_DIRECTORY_NAME));
             }
             else
             {
-                assertThat(file.getName(), endsWith(".html"));
-                assertThat(IOUtils.toString(file.getContent()), equalTo(CONTENT));
-                assertThat(file.getSize(), is(new Long(CONTENT.length())));
+                assertThat(attributes.getName(), endsWith(".html"));
+                assertThat(IOUtils.toString(message.getPayload()), equalTo(CONTENT));
+                assertThat(attributes.getSize(), is(new Long(CONTENT.length())));
             }
         }
 
@@ -115,18 +119,18 @@ public class FileListTestCase extends FileConnectorTestCase
     }
 
 
-    private List<FileAttributes> doList(String path, boolean recursive) throws Exception
+    private List<MuleMessage<FileInputStream, LocalFileAttributes>> doList(String path, boolean recursive) throws Exception
     {
         return doList("list", path, recursive);
     }
 
-    private List<FileAttributes> doList(String flowName, String path, boolean recursive) throws Exception
+    private List<MuleMessage<FileInputStream, LocalFileAttributes>> doList(String flowName, String path, boolean recursive) throws Exception
     {
         MuleEvent event = getTestEvent("");
         event.setFlowVariable("path", path);
         event.setFlowVariable("recursive", recursive);
 
-        return (List<FileAttributes>) runFlow(flowName, event).getMessage().getPayload();
+        return (List<MuleMessage<FileInputStream, LocalFileAttributes>>) runFlow(flowName, event).getMessage().getPayload();
     }
 
     private void createTestFiles() throws Exception
