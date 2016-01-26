@@ -6,7 +6,7 @@
  */
 package org.mule.module.launcher.application;
 
-import static org.mule.module.launcher.domain.MuleClassLoaderFactory.createMuleClassLoader;
+import static org.mule.module.classloader.MuleClassLoaderFactory.createMuleClassLoader;
 import org.mule.module.launcher.domain.DefaultDomainFactory;
 import org.mule.module.launcher.domain.MuleDomainClassLoaderRepository;
 

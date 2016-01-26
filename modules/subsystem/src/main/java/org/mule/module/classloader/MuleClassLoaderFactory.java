@@ -5,10 +5,8 @@
  * LICENSE.txt file.
  */
 
-package org.mule.functional.junit4;
+package org.mule.module.classloader;
 
-import org.mule.module.classloader.FilteringModuleClassLoader;
-import org.mule.module.classloader.ModuleClassLoaderFilter;
 import org.mule.module.descriptor.LoaderExport;
 import org.mule.module.descriptor.LoaderExportParser;
 import org.mule.module.descriptor.ModuleDescriptor;
@@ -105,7 +103,6 @@ public class MuleClassLoaderFactory
         loaderExports.add("org.mule.module.jaas");
         loaderExports.add("net.sf.saxon");
         loaderExports.add("org.apache.xalan");
-
 
         return loaderExports;
     }

@@ -17,7 +17,7 @@ import org.apache.ws.security.WSPasswordCallback;
 import org.junit.Test;
 
 
-public class zVerifySignatureSecurityFunctionalTestCase extends AbstractWSConsumerFunctionalTestCase
+public class VerifySignatureSecurityFunctionalTestCase extends AbstractWSConsumerFunctionalTestCase
 {
 
     @Override

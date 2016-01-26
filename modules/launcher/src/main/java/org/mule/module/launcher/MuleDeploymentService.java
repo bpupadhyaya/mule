@@ -6,9 +6,9 @@
  */
 package org.mule.module.launcher;
 
+import static org.mule.module.classloader.MuleClassLoaderFactory.createMuleClassLoader;
 import static org.mule.module.launcher.ArtifactDeploymentTemplate.NOP_ARTIFACT_DEPLOYMENT_TEMPLATE;
 import static org.mule.module.launcher.DefaultArchiveDeployer.ZIP_FILE_SUFFIX;
-import static org.mule.module.launcher.domain.MuleClassLoaderFactory.createMuleClassLoader;
 
 import org.mule.module.launcher.application.Application;
 import org.mule.module.launcher.application.ApplicationClassLoaderFactory;

@@ -6,9 +6,9 @@
  */
 package org.mule.module.launcher.descriptor;
 
+import static org.mule.module.classloader.MuleClassLoaderFactory.getMuleUniqueResources;
 import org.mule.MuleServer;
 import org.mule.module.descriptor.LoaderOverride;
-import org.mule.module.launcher.domain.MuleClassLoaderFactory;
 import org.mule.module.reboot.MuleContainerBootstrapUtils;
 
 import java.io.File;
@@ -28,6 +28,6 @@ public class EmptyApplicationDescriptor extends ApplicationDescriptor
         String configPath = String.format(configPathFile.getAbsolutePath());
         setAbsoluteResourcePaths(new String[] {configPath});
         setConfigResourcesFile(new File[] {configPathFile});
-        setLoaderOverride(new LoaderOverride(MuleClassLoaderFactory.getMuleUniqueResources(), Collections.EMPTY_SET, Collections.EMPTY_SET));
+        setLoaderOverride(new LoaderOverride(getMuleUniqueResources(), Collections.EMPTY_SET, Collections.EMPTY_SET));
     }
 }

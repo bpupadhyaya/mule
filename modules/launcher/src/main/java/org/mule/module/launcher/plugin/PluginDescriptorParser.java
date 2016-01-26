@@ -6,12 +6,12 @@
  */
 package org.mule.module.launcher.plugin;
 
+import static org.mule.module.classloader.MuleClassLoaderFactory.getMuleUniqueResources;
 import org.mule.module.descriptor.LoaderExport;
 import org.mule.module.descriptor.LoaderExportParser;
 import org.mule.module.descriptor.LoaderOverrideParser;
 import org.mule.module.launcher.MuleFoldersUtil;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
-import org.mule.module.launcher.domain.MuleClassLoaderFactory;
 import org.mule.module.reboot.MuleContainerBootstrapUtils;
 import org.mule.util.FileUtils;
 import org.mule.util.StringUtils;
@@ -76,7 +76,7 @@ public class PluginDescriptorParser
                 props.load(new FileReader(pluginPropsFile));
 
                 final String overrideString = props.getProperty(PROPERTY_LOADER_OVERRIDE);
-                pd.setLoaderOverride(new LoaderOverrideParser(MuleClassLoaderFactory.getMuleUniqueResources()).parse(overrideString));
+                pd.setLoaderOverride(new LoaderOverrideParser(getMuleUniqueResources()).parse(overrideString));
 
                 String exportedClasses = props.getProperty(PROPERTY_LOADER_EXPORTED);
                 if (StringUtils.isNotBlank(exportedClasses))

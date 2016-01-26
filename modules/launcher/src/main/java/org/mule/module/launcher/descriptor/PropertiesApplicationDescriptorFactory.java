@@ -6,8 +6,8 @@
  */
 package org.mule.module.launcher.descriptor;
 
+import static org.mule.module.classloader.MuleClassLoaderFactory.getMuleUniqueResources;
 import org.mule.module.descriptor.LoaderOverrideParser;
-import org.mule.module.launcher.domain.MuleClassLoaderFactory;
 import org.mule.module.reboot.MuleContainerBootstrapUtils;
 import org.mule.util.PropertiesUtils;
 import org.mule.util.StringUtils;
@@ -59,7 +59,7 @@ public class PropertiesApplicationDescriptorFactory implements ApplicationDescri
         d.setRedeploymentEnabled(BooleanUtils.toBoolean(p.getProperty(PROPERTY_REDEPLOYMENT_ENABLED, Boolean.TRUE.toString())));
 
         final String overrideString = p.getProperty(PROPERTY_LOADER_OVERRIDE);
-        d.setLoaderOverride(new LoaderOverrideParser(MuleClassLoaderFactory.getMuleUniqueResources()).parse(overrideString));
+        d.setLoaderOverride(new LoaderOverrideParser(getMuleUniqueResources()).parse(overrideString));
 
         return d;
     }

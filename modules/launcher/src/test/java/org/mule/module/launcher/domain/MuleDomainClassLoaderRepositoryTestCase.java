@@ -9,9 +9,9 @@ package org.mule.module.launcher.domain;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
+import static org.mule.module.classloader.MuleClassLoaderFactory.createMuleClassLoader;
 import static org.mule.module.launcher.MuleSharedDomainClassLoader.OLD_DOMAIN_LIBRARY_FOLDER;
 import static org.mule.module.launcher.domain.DomainFactory.DEFAULT_DOMAIN_NAME;
-import static org.mule.module.launcher.domain.MuleClassLoaderFactory.createMuleClassLoader;
 import static org.mule.module.reboot.MuleContainerBootstrapUtils.MULE_DOMAIN_FOLDER;
 
 import org.mule.api.config.MuleProperties;
