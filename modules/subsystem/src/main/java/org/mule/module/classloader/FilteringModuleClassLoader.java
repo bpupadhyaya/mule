@@ -47,7 +47,7 @@ public class FilteringModuleClassLoader extends ClassLoader
         }
         else
         {
-            throw new ClassNotFoundException();
+            throw new ClassNotFoundException(name);
         }
     }
 
