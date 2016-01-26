@@ -72,6 +72,13 @@ public abstract class FunctionalTestCase extends AbstractMuleContextTestCase
 
 
     @Override
+    protected ClassLoader getExecutionClassLoader()
+    {
+        //TODO(pablo.kraan): CCL - must use the same class as the one used on the launcher module
+        return MuleClassLoaderFactory.createMuleClassLoader();
+    }
+
+    @Override
     protected ConfigurationBuilder getBuilder() throws Exception
     {
         String configResources = getConfigResources();

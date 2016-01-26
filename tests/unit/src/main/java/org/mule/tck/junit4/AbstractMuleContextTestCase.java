@@ -22,10 +22,10 @@ import org.mule.api.context.MuleContextFactory;
 import org.mule.api.context.notification.MuleContextNotificationListener;
 import org.mule.api.endpoint.InboundEndpoint;
 import org.mule.api.endpoint.OutboundEndpoint;
+import org.mule.api.metadata.DataType;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.registry.RegistrationException;
 import org.mule.api.routing.filter.Filter;
-import org.mule.api.metadata.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.api.transport.Connector;
 import org.mule.config.DefaultMuleConfiguration;
@@ -235,12 +235,13 @@ public abstract class AbstractMuleContextTestCase extends AbstractMuleTestCase
 
             builders.add(getBuilder());
             addBuilders(builders);
-            MuleContextBuilder contextBuilder = new DefaultMuleContextBuilder();
+            DefaultMuleContextBuilder contextBuilder = new DefaultMuleContextBuilder();
             DefaultMuleConfiguration muleConfiguration = new DefaultMuleConfiguration();
             String workingDirectory = this.workingDirectory.getRoot().getAbsolutePath();
             logger.info("Using working directory for test: " + workingDirectory);
             muleConfiguration.setWorkingDirectory(workingDirectory);
             contextBuilder.setMuleConfiguration(muleConfiguration);
+            contextBuilder.setExecutionClassLoader(getExecutionClassLoader());
             configureMuleContext(contextBuilder);
             context = muleContextFactory.createMuleContext(builders, contextBuilder);
             if (!isGracefulShutdown())
@@ -249,6 +250,11 @@ public abstract class AbstractMuleContextTestCase extends AbstractMuleTestCase
             }
         }
         return context;
+    }
+
+    protected  ClassLoader getExecutionClassLoader()
+    {
+        return null;
     }
 
     //This sohuldn't be needed by Test cases but can be used by base testcases that wish to add further builders when
