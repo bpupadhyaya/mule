@@ -132,6 +132,7 @@ public class MuleClassLoaderFactory
         loaderExports.add("org.mule.module.xml.el");
         loaderExports.add("org.mule.module.xml.config");
         loaderExports.add("org.mule.module.xml.transformer");
+        loaderExports.add("org.mule.module.tls");
 
         return loaderExports;
     }
