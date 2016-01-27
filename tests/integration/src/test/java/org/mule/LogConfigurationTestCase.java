@@ -26,11 +26,13 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Checks log4j configuration for application and domains
  */
+@Ignore("CCL - need to define how the logging is expected to work on these scenarios")
 public class LogConfigurationTestCase extends AbstractFakeMuleServerTestCase
 {
 
