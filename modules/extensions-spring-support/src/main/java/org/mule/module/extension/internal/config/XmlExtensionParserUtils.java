@@ -141,6 +141,11 @@ final class XmlExtensionParserUtils
      */
     static ValueResolver parseParameter(ElementDescriptor element, ParameterModel parameterModel)
     {
+        if (parameterModel.getExpressionSupport() == ExpressionSupport.LITERAL)
+        {
+            return new StaticValueResolver<>(getAttributeValue(element, parameterModel.getName(), parameterModel.getDefaultValue()));
+        }
+
         return parseElement(element, parameterModel.getName(), parameterModel.getType(), parameterModel.getDefaultValue());
     }
 
@@ -305,6 +310,11 @@ final class XmlExtensionParserUtils
                 if (resolver == null)
                 {
                     resolver = new StaticValueResolver(null);
+                }
+
+                if (parameterModel.getExpressionSupport() == ExpressionSupport.LITERAL)
+                {
+                    resolver = new StaticValueResolver<>(getAttributeValue(element, parameterModel.getName(), parameterModel.getDefaultValue()));
                 }
 
                 if (resolver.isDynamic() && parameterModel.getExpressionSupport() == ExpressionSupport.NOT_SUPPORTED)
