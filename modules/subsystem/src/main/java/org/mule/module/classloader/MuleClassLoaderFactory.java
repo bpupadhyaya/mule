@@ -90,19 +90,26 @@ public class MuleClassLoaderFactory
 
         //TODO(pablo.kraan): CCL - added to make FunctionalTestCases pass
         loaderExports.add("org.mule.tck");
+        loaderExports.add("org.mule.test");
         loaderExports.add("org.mule.session");
         loaderExports.add("org.mule.transport");
         loaderExports.add("org.mule.transformer");
         loaderExports.add("com.ctc.wstx");
         loaderExports.add("org.mule.module.ws.functional");
-        loaderExports.add("com.sun.xml");
-        loaderExports.add("com/sun/xml");
+        loaderExports.add("com.sun");
+        loaderExports.add("com/sun");
+        loaderExports.add("com.sun");
         loaderExports.add("org.mule.module.cxf.PasswordCallback");
         loaderExports.add("com.sun.org.apache.xerces");
         loaderExports.add("org.mule.module.oauth2.internal.authorizationcode.state.ResourceOwnerOAuthContext");
         loaderExports.add("org.mule.module.jaas");
         loaderExports.add("net.sf.saxon");
         loaderExports.add("org.apache.xalan");
+        loaderExports.add("jdk.nashorn");
+        loaderExports.add("apple.applescript");
+        loaderExports.add("org.codehaus.groovy");
+        loaderExports.add("org.python");
+        loaderExports.add("org.jruby");
 
         return loaderExports;
     }
