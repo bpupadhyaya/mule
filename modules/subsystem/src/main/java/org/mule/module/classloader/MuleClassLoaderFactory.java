@@ -111,6 +111,14 @@ public class MuleClassLoaderFactory
         loaderExports.add("org.python");
         loaderExports.add("org.jruby");
 
+        // Exported to fix deserialization on tests
+        loaderExports.add("org.mule.DefaultMuleEvent");
+        loaderExports.add("org.mule.MessageExchangePattern");
+        loaderExports.add("org.mule.DefaultMuleMessage");
+        loaderExports.add("org.mule.message");
+        loaderExports.add("org.mule.component");
+        loaderExports.add("org.mule.MessagePropertiesContext");
+
         return loaderExports;
     }
 
