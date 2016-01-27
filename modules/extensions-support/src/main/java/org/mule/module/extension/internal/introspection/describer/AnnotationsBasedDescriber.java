@@ -4,12 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.extension.internal.introspection;
+package org.mule.module.extension.internal.introspection.describer;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.mule.module.extension.internal.introspection.MuleExtensionAnnotationParser.getExtension;
-import static org.mule.module.extension.internal.introspection.MuleExtensionAnnotationParser.getMemberName;
-import static org.mule.module.extension.internal.introspection.MuleExtensionAnnotationParser.getParameterName;
+import static org.mule.module.extension.internal.introspection.describer.MuleExtensionAnnotationParser.getExtension;
+import static org.mule.module.extension.internal.introspection.describer.MuleExtensionAnnotationParser.getMemberName;
 import static org.mule.module.extension.internal.util.IntrospectionUtils.getExposedFields;
 import static org.mule.module.extension.internal.util.IntrospectionUtils.getField;
 import static org.mule.module.extension.internal.util.IntrospectionUtils.getInterfaceGenerics;
@@ -18,10 +17,9 @@ import static org.mule.module.extension.internal.util.IntrospectionUtils.getPara
 import static org.mule.module.extension.internal.util.IntrospectionUtils.getParameterGroupFields;
 import static org.mule.module.extension.internal.util.IntrospectionUtils.getSourceName;
 import static org.mule.module.extension.internal.util.IntrospectionUtils.getSuperClassGenerics;
-import static org.mule.module.extension.internal.util.MuleExtensionUtils.getDefaultValue;
 import static org.mule.util.Preconditions.checkArgument;
-
 import org.mule.api.connection.ConnectionProvider;
+import org.mule.api.tls.TlsContextFactory;
 import org.mule.extension.annotation.api.Alias;
 import org.mule.extension.annotation.api.Configuration;
 import org.mule.extension.annotation.api.Configurations;
@@ -30,7 +28,6 @@ import org.mule.extension.annotation.api.Extension;
 import org.mule.extension.annotation.api.ExtensionOf;
 import org.mule.extension.annotation.api.OnException;
 import org.mule.extension.annotation.api.Operations;
-import org.mule.extension.annotation.api.Parameter;
 import org.mule.extension.annotation.api.Sources;
 import org.mule.extension.annotation.api.connector.Providers;
 import org.mule.extension.annotation.api.param.Connection;
@@ -39,11 +36,8 @@ import org.mule.extension.annotation.api.param.UseConfig;
 import org.mule.extension.annotation.api.param.display.Password;
 import org.mule.extension.annotation.api.param.display.Text;
 import org.mule.extension.api.exception.IllegalModelDefinitionException;
-import org.mule.module.extension.internal.exception.IllegalConnectionProviderModelDefinitionException;
-import org.mule.module.extension.internal.exception.IllegalParameterModelDefinitionException;
 import org.mule.extension.api.introspection.DataType;
 import org.mule.extension.api.introspection.ExceptionEnricherFactory;
-import org.mule.extension.api.introspection.ExpressionSupport;
 import org.mule.extension.api.introspection.declaration.DescribingContext;
 import org.mule.extension.api.introspection.declaration.fluent.ConfigurationDescriptor;
 import org.mule.extension.api.introspection.declaration.fluent.ConnectionProviderDescriptor;
@@ -59,9 +53,14 @@ import org.mule.extension.api.introspection.declaration.spi.Describer;
 import org.mule.extension.api.introspection.property.PasswordModelProperty;
 import org.mule.extension.api.introspection.property.TextModelProperty;
 import org.mule.extension.api.runtime.source.Source;
+import org.mule.module.extension.internal.exception.IllegalConnectionProviderModelDefinitionException;
+import org.mule.module.extension.internal.exception.IllegalParameterModelDefinitionException;
+import org.mule.module.extension.internal.introspection.ImmutablePasswordModelProperty;
+import org.mule.module.extension.internal.introspection.ImmutableTextModelProperty;
+import org.mule.module.extension.internal.introspection.ParameterGroup;
+import org.mule.module.extension.internal.introspection.VersionResolver;
 import org.mule.module.extension.internal.model.property.ConfigTypeModelProperty;
 import org.mule.module.extension.internal.model.property.ConnectionTypeModelProperty;
-import org.mule.module.extension.internal.model.property.DeclaringMemberModelProperty;
 import org.mule.module.extension.internal.model.property.ExtendingOperationModelProperty;
 import org.mule.module.extension.internal.model.property.ImplementingMethodModelProperty;
 import org.mule.module.extension.internal.model.property.ImplementingTypeModelProperty;
@@ -72,16 +71,18 @@ import org.mule.module.extension.internal.runtime.executor.ReflectiveOperationEx
 import org.mule.module.extension.internal.runtime.source.DefaultSourceFactory;
 import org.mule.module.extension.internal.util.IntrospectionUtils;
 import org.mule.util.CollectionUtils;
-
-import com.google.common.collect.ImmutableSet;
+import org.mule.util.Predicate;
+import org.mule.util.collection.ImmutableSetCollector;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,6 +102,12 @@ public final class AnnotationsBasedDescriber implements Describer
     private final Class<?> extensionType;
     private final VersionResolver versionResolver;
 
+    /**
+     * An ordered map used to locate a {@link FieldDescriber} that can handle
+     * an specific {@link Field}
+     */
+    private Map<Predicate<Field>, FieldDescriber> fieldDescribers;
+
     public AnnotationsBasedDescriber(Class<?> extensionType)
     {
         this(extensionType, new ManifestBasedVersionResolver(extensionType));
@@ -111,6 +118,15 @@ public final class AnnotationsBasedDescriber implements Describer
         checkArgument(extensionType != null, String.format("describer %s does not specify an extension type", getClass().getName()));
         this.extensionType = extensionType;
         this.versionResolver = versionResolver;
+
+        initialiseFieldDescribers();
+    }
+
+    private void initialiseFieldDescribers()
+    {
+        fieldDescribers = new LinkedHashMap<>();
+        fieldDescribers.put(f -> TlsContextFactory.class.isAssignableFrom(f.getType()), new TlsContextFieldDescriber());
+        fieldDescribers.put(f -> true, new DefaultFieldDescriber());
     }
 
     /**
@@ -273,33 +289,26 @@ public final class AnnotationsBasedDescriber implements Describer
 
     private Set<ParameterDescriptor> declareSingleParameters(Collection<Field> parameterFields, WithParameters with)
     {
-        ImmutableSet.Builder<ParameterDescriptor> parameters = ImmutableSet.builder();
+        return parameterFields.stream()
+                .map(field -> getFieldDescriber(field).describe(field, with))
+                .collect(new ImmutableSetCollector<>());
+    }
 
-        for (Field field : parameterFields)
+    private FieldDescriber getFieldDescriber(Field field)
+    {
+        java.util.Optional<FieldDescriber> describer = fieldDescribers.entrySet().stream()
+                .filter(entry -> entry.getKey().evaluate(field))
+                .map(entry -> entry.getValue())
+                .findFirst();
+
+        if (describer.isPresent())
         {
-            Parameter parameter = field.getAnnotation(Parameter.class);
-            Optional optional = field.getAnnotation(Optional.class);
-
-            String parameterName = getParameterName(field, parameter);
-            ParameterDescriptor parameterDescriptor;
-            DataType dataType = IntrospectionUtils.getFieldDataType(field);
-            if (optional == null)
-            {
-                parameterDescriptor = with.requiredParameter(parameterName);
-            }
-            else
-            {
-                parameterDescriptor = with.optionalParameter(parameterName).defaultingTo(getDefaultValue(optional));
-            }
-
-            parameterDescriptor.ofType(dataType);
-            parameterDescriptor.withExpressionSupport(parameter != null ? parameter.expressionSupport() : ExpressionSupport.SUPPORTED);
-            parameterDescriptor.withModelProperty(DeclaringMemberModelProperty.KEY, new DeclaringMemberModelProperty(field));
-
-            parameters.add(parameterDescriptor);
+            return describer.get();
         }
 
-        return parameters.build();
+        throw new IllegalModelDefinitionException(String.format(
+                "Could not find a %s capable of parsing the field '%s' on class '%s'",
+                FieldDescriber.class.getSimpleName(), field.getName(), field.getDeclaringClass().getName()));
     }
 
     private void declareOperations(DeclarationDescriptor declaration, Class<?> extensionType)

@@ -15,8 +15,8 @@ import static org.mule.extension.api.introspection.DataQualifier.OPERATION;
 import static org.mule.extension.api.introspection.DataQualifier.POJO;
 import static org.mule.extension.api.introspection.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.extension.api.introspection.ExpressionSupport.SUPPORTED;
-import static org.mule.extension.api.introspection.PoolingSupport.REQUIRED;
 import static org.mule.module.extension.internal.ExtensionProperties.TARGET_ATTRIBUTE;
+import static org.mule.module.extension.internal.ExtensionProperties.TLS_ATTRIBUTE_NAME;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.ATTRIBUTE_NAME_VALUE;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.CONFIG_ATTRIBUTE;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.CONFIG_ATTRIBUTE_DESCRIPTION;
@@ -39,11 +39,14 @@ import static org.mule.module.extension.internal.capability.xml.schema.model.Sch
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.MULE_NAMESPACE;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.MULE_POOLING_PROFILE_TYPE;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.MULE_SCHEMA_LOCATION;
+import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.MULE_TLS_NAMESPACE;
+import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.MULE_TLS_SCHEMA_LOCATION;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.OPERATION_SUBSTITUTION_GROUP_SUFFIX;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.SPRING_FRAMEWORK_NAMESPACE;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.SPRING_FRAMEWORK_SCHEMA_LOCATION;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.SUBSTITUTABLE_NAME;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.TARGET_ATTRIBUTE_DESCRIPTION;
+import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.TLS_CONTEXT_TYPE;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.TYPE_SUFFIX;
 import static org.mule.module.extension.internal.capability.xml.schema.model.SchemaConstants.XML_NAMESPACE;
 import static org.mule.module.extension.internal.introspection.utils.ImplicitObjectUtils.getFirstImplicit;
@@ -61,7 +64,7 @@ import static org.mule.module.extension.internal.util.MuleExtensionUtils.getDyna
 import static org.mule.module.extension.internal.util.NameUtils.getTopLevelTypeName;
 import static org.mule.module.extension.internal.util.NameUtils.hyphenize;
 import static org.mule.util.Preconditions.checkArgument;
-
+import org.mule.api.tls.TlsContextFactory;
 import org.mule.extension.annotation.api.Extensible;
 import org.mule.extension.api.introspection.ConfigurationModel;
 import org.mule.extension.api.introspection.ConnectionProviderModel;
@@ -138,7 +141,7 @@ public final class SchemaBuilder
     private final ObjectFactory objectFactory = new ObjectFactory();
 
     private Schema schema;
-
+    private boolean requiresTls = false;
 
     public static SchemaBuilder newSchema(String targetNamespace)
     {
@@ -192,6 +195,17 @@ public final class SchemaBuilder
         muleExtensionImport.setNamespace(MULE_EXTENSION_NAMESPACE);
         muleExtensionImport.setSchemaLocation(MULE_EXTENSION_SCHEMA_LOCATION);
         schema.getIncludeOrImportOrRedefine().add(muleExtensionImport);
+
+        return this;
+    }
+
+    private SchemaBuilder importTlsNamespace()
+    {
+        Import tlsImport = new Import();
+        tlsImport.setNamespace(MULE_TLS_NAMESPACE);
+        tlsImport.setSchemaLocation(MULE_TLS_SCHEMA_LOCATION);
+        schema.getIncludeOrImportOrRedefine().add(tlsImport);
+
         return this;
     }
 
@@ -848,6 +862,13 @@ public final class SchemaBuilder
             public void onPojo()
             {
                 forceOptional = true;
+
+                if (TlsContextFactory.class.isAssignableFrom(parameterModel.getType().getRawType()))
+                {
+                    addTlsSupport();
+                    return;
+                }
+
                 defaultOperation();
                 if (shouldGeneratePojoChildElements(parameterModel.getType().getRawType()))
                 {
@@ -874,6 +895,27 @@ public final class SchemaBuilder
             private boolean shouldGeneratePojoChildElements(Class<?> type)
             {
                 return IntrospectionUtils.isInstantiable(type) && !getExposedFields(type).isEmpty();
+            }
+
+            private void addTlsSupport()
+            {
+                if (!requiresTls)
+                {
+                    importTlsNamespace();
+                    requiresTls = true;
+                }
+                extensionType.getAttributeOrAttributeGroup().add(createAttribute(TLS_ATTRIBUTE_NAME,
+                                                                                 DataType.of(String.class),
+                                                                                 false,
+                                                                                 ExpressionSupport.NOT_SUPPORTED));
+
+                TopLevelElement tlsElement = new TopLevelElement();
+                tlsElement.setRef(TLS_CONTEXT_TYPE);
+                tlsElement.setMinOccurs(ZERO);
+                tlsElement.setMaxOccurs("1");
+
+                all.getParticle().add(objectFactory.createElement(tlsElement));
+
             }
         };
     }

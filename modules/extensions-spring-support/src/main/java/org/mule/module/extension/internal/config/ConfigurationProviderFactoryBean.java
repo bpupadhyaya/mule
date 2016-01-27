@@ -34,9 +34,15 @@ import org.springframework.beans.factory.FactoryBean;
  */
 final class ConfigurationProviderFactoryBean implements FactoryBean<ConfigurationProvider<Object>>
 {
-    private final ConfigurationProvider<Object> configurationProvider;
+
+    private final String name;
+    private final ConfigurationModel configurationModel;
+    private final ElementDescriptor element;
     private final ConfigurationProviderFactory configurationProviderFactory = new DefaultConfigurationProviderFactory();
     private final TimeSupplier timeSupplier;
+    private final ResolverSet resolverSet;
+    private final ValueResolver<ConnectionProvider> connectionProviderResolver;
+    private final MuleContext muleContext;
 
     ConfigurationProviderFactoryBean(String name,
                                      ConfigurationModel configurationModel,
@@ -45,8 +51,20 @@ final class ConfigurationProviderFactoryBean implements FactoryBean<Configuratio
                                      TimeSupplier timeSupplier,
                                      ValueResolver<ConnectionProvider> connectionProviderResolver) throws ConfigurationException
     {
+        this.name = name;
+        this.configurationModel = configurationModel;
+        this.element = element;
+        this.connectionProviderResolver = connectionProviderResolver;
         this.timeSupplier = timeSupplier;
-        ResolverSet resolverSet = getResolverSet(element, configurationModel.getParameterModels());
+        this.muleContext = muleContext;
+
+        resolverSet = getResolverSet(element, configurationModel.getParameterModels());
+    }
+
+    @Override
+    public ConfigurationProvider<Object> getObject() throws Exception
+    {
+        ConfigurationProvider<Object> configurationProvider;
         try
         {
             if (resolverSet.isDynamic() || connectionProviderResolver.isDynamic())
@@ -74,11 +92,6 @@ final class ConfigurationProviderFactoryBean implements FactoryBean<Configuratio
         {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public ConfigurationProvider<Object> getObject() throws Exception
-    {
         return configurationProvider;
     }
 

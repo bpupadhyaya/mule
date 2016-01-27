@@ -32,8 +32,8 @@ import org.mule.module.extension.internal.introspection.SimpleTypeDataQualifierV
 import org.mule.module.extension.internal.runtime.DefaultObjectBuilder;
 import org.mule.module.extension.internal.runtime.ObjectBuilder;
 import org.mule.module.extension.internal.runtime.resolver.CollectionValueResolver;
-import org.mule.module.extension.internal.runtime.resolver.NestedProcessorValueResolver;
 import org.mule.module.extension.internal.runtime.resolver.ExpressionFunctionValueResolver;
+import org.mule.module.extension.internal.runtime.resolver.NestedProcessorValueResolver;
 import org.mule.module.extension.internal.runtime.resolver.ObjectBuilderValueResolver;
 import org.mule.module.extension.internal.runtime.resolver.RegistryLookupValueResolver;
 import org.mule.module.extension.internal.runtime.resolver.ResolverSet;
@@ -442,7 +442,7 @@ final class XmlExtensionParserUtils
      * @param fieldName        the name of the field in which the parsed pojo is going to be assigned
      * @param childElementName the name of the the bean's top level XML element
      * @param pojoType         a {@link DataType} describing the bean's type
-     * @return a {@link org.springframework.beans.factory.config.BeanDefinition} if the bean could be parsed, {@code null}
+     * @return a {@link BeanDefinition} if the bean could be parsed, {@code null}
      * if the bean is not present on the XML definition
      */
     private static ValueResolver parsePojo(ElementDescriptor element,

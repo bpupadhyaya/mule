@@ -7,7 +7,7 @@
 package org.mule.module.extension.internal.runtime.executor;
 
 import static org.apache.commons.lang.ArrayUtils.isEmpty;
-import static org.mule.module.extension.internal.introspection.MuleExtensionAnnotationParser.toMap;
+import static org.mule.module.extension.internal.introspection.describer.MuleExtensionAnnotationParser.toMap;
 import static org.mule.module.extension.internal.util.IntrospectionUtils.isVoid;
 import org.mule.api.MuleEvent;
 import org.mule.api.temporary.MuleMessage;
@@ -20,7 +20,7 @@ import org.mule.extension.api.introspection.ParameterModel;
 import org.mule.extension.api.runtime.ContentMetadata;
 import org.mule.extension.api.runtime.ContentType;
 import org.mule.extension.api.runtime.OperationContext;
-import org.mule.module.extension.internal.introspection.MuleExtensionAnnotationParser;
+import org.mule.module.extension.internal.introspection.describer.MuleExtensionAnnotationParser;
 import org.mule.module.extension.internal.runtime.resolver.ArgumentResolver;
 import org.mule.module.extension.internal.runtime.resolver.ByParameterNameArgumentResolver;
 import org.mule.module.extension.internal.runtime.resolver.ConfigurationArgumentResolver;
