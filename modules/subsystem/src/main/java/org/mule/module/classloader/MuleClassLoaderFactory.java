@@ -118,6 +118,20 @@ public class MuleClassLoaderFactory
         loaderExports.add("org.mule.message");
         loaderExports.add("org.mule.component");
         loaderExports.add("org.mule.MessagePropertiesContext");
+        loaderExports.add("org.mule.module.spring.remoting");
+        loaderExports.add("org.mule.mvel");
+        loaderExports.add("org.mule.TransformationService");
+        loaderExports.add("org.mule.routing");
+        loaderExports.add("org.mule.module.json");
+        loaderExports.add("org.mule.module.management.agent");
+        loaderExports.add("org.mule.module.db.internal.domain.transaction");
+        loaderExports.add("org.mule.module.oauth2.internal.mel");
+        loaderExports.add("org.mule.module.scripting.expression");
+        loaderExports.add("org.mule.module.scripting.config");
+        loaderExports.add("org.mule.module.xml.util");
+        loaderExports.add("org.mule.module.xml.el");
+        loaderExports.add("org.mule.module.xml.config");
+        loaderExports.add("org.mule.module.xml.transformer");
 
         return loaderExports;
     }
