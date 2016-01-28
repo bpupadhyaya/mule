@@ -125,6 +125,7 @@ public class MuleClassLoaderFactory
         loaderExports.add("org.mule.module.json");
         loaderExports.add("org.mule.module.management.agent");
         loaderExports.add("org.mule.module.db.internal.domain.transaction");
+        loaderExports.add("org.mule.module.db.internal.result.statement");
         loaderExports.add("org.mule.module.oauth2.internal.mel");
         loaderExports.add("org.mule.module.scripting.expression");
         loaderExports.add("org.mule.module.scripting.config");
