@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:kryo="http://www.mulesoft.org/schema/mule/kryo"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/kryo http://www.mulesoft.org/schema/mule/kryo/current/mule-kryo.xsd
+        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+
+    <kryo:serializer name="gzip" compressionMode="GZIP"/>
+
+    <configuration defaultObjectSerializer-ref="gzip" />
+
+    <vm:connector name="persistentVmConnector" queueTimeout="1000">
+        <vm:queue-profile>
+            <default-persistent-queue-store/>
+        </vm:queue-profile>
+    </vm:connector>
+
+    <flow name="kryo-vm-persistent-queuesFlow">
+        <vm:outbound-endpoint exchange-pattern="one-way" path="in" connector-ref="persistentVmConnector"/>
+    </flow>
+
+</mule>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:kryo="http://www.mulesoft.org/schema/mule/kryo"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/kryo http://www.mulesoft.org/schema/mule/kryo/current/mule-kryo.xsd">
+
+    <configuration defaultObjectSerializer-ref="gzip" />
+
+    <kryo:serializer name="defaultKryo" />
+
+    <kryo:serializer name="noCompression" compressionMode="NONE"/>
+
+    <kryo:serializer name="deflate" compressionMode="DEFLATE"/>
+
+    <kryo:serializer name="gzip" compressionMode="GZIP"/>
+
+</mule>
+

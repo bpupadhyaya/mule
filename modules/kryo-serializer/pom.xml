@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.mule.modules</groupId>
+        <artifactId>mule-modules</artifactId>
+        <version>4.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>mule-module-kryo-serializer</artifactId>
+    <name>Mule Kryo Serializer</name>
+    <description>An implementation of the ObjectSerializer API which uses Kryo</description>
+
+    <properties>
+        <licensePath>../../LICENSE_HEADER.txt</licensePath>
+        <kryo.version>3.0.1</kryo.version>
+        <objenesis.version>2.1</objenesis.version>
+        <kryo-serializers.version>0.29</kryo-serializers.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>${objenesis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo-shaded</artifactId>
+            <version>${kryo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.javakaffee</groupId>
+            <artifactId>kryo-serializers</artifactId>
+            <version>${kryo-serializers.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.esotericsoftware</groupId>
+                    <artifactId>kryo</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${jodaTimeVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--Mule dependencies-->
+
+        <dependency>
+            <groupId>org.mule</groupId>
+            <artifactId>mule-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-spring-config</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--For the ParameterMap serializer-->
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-http</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!--Test Dependencies-->
+        <dependency>
+            <groupId>org.mule</groupId>
+            <artifactId>mule-core-tests</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.tests</groupId>
+            <artifactId>mule-tests-functional</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.transports</groupId>
+            <artifactId>mule-transport-vm</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.9.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
