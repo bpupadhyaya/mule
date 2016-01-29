@@ -11,10 +11,11 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.mule.api.MuleContext;
+import org.mule.api.context.MuleContextAware;
 import org.mule.api.serialization.ObjectSerializer;
 import org.mule.api.store.ObjectStore;
 import org.mule.api.store.ObjectStoreException;
-import org.mule.serialization.internal.JavaObjectSerializer;
+import org.mule.util.ClassUtils;
 
 public abstract class SerializationTestUtils
 {
@@ -67,10 +68,18 @@ public abstract class SerializationTestUtils
 
     private static ObjectSerializer getJavaSerializer(MuleContext muleContext)
     {
-        JavaObjectSerializer serializer = new JavaObjectSerializer();
-        serializer.setMuleContext(muleContext);
+        ObjectSerializer defaultObjectSerializer = null;
+        try
+        {
+            defaultObjectSerializer = (ObjectSerializer) ClassUtils.instanciateClass("org.mule.module.kryo.KryoObjectSerializer", new Object[0]);
+            ((MuleContextAware) defaultObjectSerializer).setMuleContext(muleContext);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-        return serializer;
+        return defaultObjectSerializer;
     }
 
 }

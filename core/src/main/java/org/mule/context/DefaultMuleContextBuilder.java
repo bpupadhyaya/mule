@@ -28,6 +28,7 @@ import org.mule.api.context.notification.RoutingNotificationListener;
 import org.mule.api.context.notification.SecurityNotificationListener;
 import org.mule.api.context.notification.TransactionNotificationListener;
 import org.mule.api.lifecycle.LifecycleManager;
+import org.mule.api.serialization.ObjectSerializer;
 import org.mule.client.DefaultLocalMuleClient;
 import org.mule.config.DefaultMuleConfiguration;
 import org.mule.config.ImmutableThreadingProfile;
@@ -55,7 +56,6 @@ import org.mule.lifecycle.MuleContextLifecycleManager;
 import org.mule.registry.DefaultRegistryBroker;
 import org.mule.registry.MuleRegistryHelper;
 import org.mule.registry.RegistryDelegatingInjector;
-import org.mule.serialization.internal.JavaObjectSerializer;
 import org.mule.util.ClassUtils;
 import org.mule.util.SplashScreen;
 import org.mule.work.DefaultWorkListener;
@@ -121,9 +121,16 @@ public class DefaultMuleContextBuilder implements MuleContextBuilder
         muleContext.setExecutionClassLoader(getExecutionClassLoader());
         muleContext.setBootstrapServiceDiscoverer(injectMuleContextIfRequired(getBootstrapPropertiesServiceDiscoverer(), muleContext));
 
-        JavaObjectSerializer defaultObjectSerializer = new JavaObjectSerializer();
-        defaultObjectSerializer.setMuleContext(muleContext);
-        muleContext.setObjectSerializer(defaultObjectSerializer);
+        try
+        {
+            ObjectSerializer defaultObjectSerializer = (ObjectSerializer) ClassUtils.instanciateClass("org.mule.module.kryo.KryoObjectSerializer", new Object[0]);
+            ((MuleContextAware) defaultObjectSerializer).setMuleContext(muleContext);
+            muleContext.setObjectSerializer(defaultObjectSerializer);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
         return muleContext;
     }

@@ -17,16 +17,15 @@ import java.util.Set;
 public class MuleClassLoaderFactory
 {
 
-    public static ClassLoader createMuleClassLoader()
+    public static ClassLoader createMuleClassLoader(ClassLoader systemClassLoader)
     {
         //TODO(pablo.kraan): CCL - Move all this code to a different class
-        final ClassLoader muleClassLoader = MuleClassLoaderFactory.class.getClassLoader();
         //TODO(pablo.kraan): CCL - need a descriptor for Mule
         final ModuleDescriptor muleModuleDescriptor = new ModuleDescriptor("MuleCore");
         final LoaderExport loaderExport = createMuleLoaderExport();
         muleModuleDescriptor.setLoaderExport(loaderExport);
         ModuleClassLoaderFilter filter = new ModuleClassLoaderFilter(muleModuleDescriptor);
-        FilteringModuleClassLoader filteredMuleClassLoader = new FilteringModuleClassLoader("MuleCore", muleClassLoader, filter);
+        FilteringModuleClassLoader filteredMuleClassLoader = new FilteringModuleClassLoader("MuleCore", systemClassLoader, filter);
 
         return filteredMuleClassLoader;
     }
@@ -114,10 +113,12 @@ public class MuleClassLoaderFactory
         // Exported to fix deserialization on tests
         loaderExports.add("org.mule.DefaultMuleEvent");
         loaderExports.add("org.mule.MessageExchangePattern");
-        loaderExports.add("org.mule.DefaultMuleMessage");
+        //TODO(pablo.kraan): CCL - removed this classto test the module concept
+        //loaderExports.add("org.mule.DefaultMuleMessage");
         loaderExports.add("org.mule.message");
         loaderExports.add("org.mule.component");
-        loaderExports.add("org.mule.MessagePropertiesContext");
+        //TODO(pablo.kraan): CCL - removed this classto test the module concept
+        //loaderExports.add("org.mule.MessagePropertiesContext");
         loaderExports.add("org.mule.module.spring.remoting");
         loaderExports.add("org.mule.mvel");
         loaderExports.add("org.mule.TransformationService");
@@ -134,6 +135,8 @@ public class MuleClassLoaderFactory
         loaderExports.add("org.mule.module.xml.config");
         loaderExports.add("org.mule.module.xml.transformer");
         loaderExports.add("org.mule.module.tls");
+        loaderExports.add("org.mule.module.kryo");
+        //loaderExports.add("org.apache.xerces");
 
         return loaderExports;
     }

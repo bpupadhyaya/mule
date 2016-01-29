@@ -32,6 +32,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-kryo-serializer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>tanukisoft</groupId>
             <artifactId>wrapper</artifactId>
         </dependency>
@@ -80,6 +85,18 @@
             <artifactId>mule-module-subsystem</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${jodaTimeVersion}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -114,6 +114,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     private static final ArtifactDescriptor dummyMultiPluginLibVersionAppDescriptor = new ArtifactDescriptor("multiPluginLibVersion", "/multiPluginLibVersion.zip", "/multiPluginLibVersion", null, null);
     private static final ArtifactDescriptor dummyAppWithSelfishPluginDescriptor = new ArtifactDescriptor("dummyWithSelfishPlugin", "/dummyWithSelfishPlugin.zip", "/dummyWithSelfishPlugin", null, null);
     private static final ArtifactDescriptor salesforceAppDescriptor = new ArtifactDescriptor("salesforce-app", "/salesforce-app.zip", "/salesforce-app", null, null);
+    private static final ArtifactDescriptor serializationAppDescriptor = new ArtifactDescriptor("serialization-app", "/serialization-app.zip", "/serialization-app", null, null);
 
     //Domain constants
     private static final ArtifactDescriptor brokenDomainDescriptor = new ArtifactDescriptor("brokenDomain", "/broken-domain.zip", null, "brokenDomain.zip", "/broken-config.xml");
@@ -265,6 +266,23 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
 
         mainFlow.process(new DefaultMuleEvent(muleMessage, MessageExchangePattern.REQUEST_RESPONSE, mainFlow));
     }
+
+    @Test
+    public void deserializesPrivateClass() throws Exception
+    {
+        final ArtifactDescriptor appDescriptor = DeploymentServiceTestCase.serializationAppDescriptor;
+
+        addPackedAppFromResource(appDescriptor.zipPath);
+
+        deploymentService.start();
+
+        assertApplicationDeploymentSuccess(applicationDeploymentListener, appDescriptor.id);
+        assertAppsDir(NONE, new String[] {appDescriptor.id}, true);
+        assertApplicationAnchorFileExists(appDescriptor.id);
+
+        Thread.sleep(getTestTimeoutSecs());
+    }
+
 
     @Test
     public void extensionManagerPresent() throws Exception
@@ -1073,7 +1091,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     {
         addPackedAppFromResource(emptyAppDescriptor.zipPath);
 
-        TestApplicationFactory appFactory = new TestApplicationFactory(new MuleApplicationClassLoaderFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader()), new DefaultNativeLibraryFinderFactory()));
+        TestApplicationFactory appFactory = new TestApplicationFactory(new MuleApplicationClassLoaderFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader(this.getClass().getClassLoader())), new DefaultNativeLibraryFinderFactory()));
         appFactory.setFailOnStopApplication(true);
 
         deploymentService.setAppFactory(appFactory);
@@ -1095,7 +1113,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     {
         addPackedAppFromResource(emptyAppDescriptor.zipPath);
 
-        TestApplicationFactory appFactory = new TestApplicationFactory(new MuleApplicationClassLoaderFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader()), new DefaultNativeLibraryFinderFactory()));
+        TestApplicationFactory appFactory = new TestApplicationFactory(new MuleApplicationClassLoaderFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader(this.getClass().getClassLoader())), new DefaultNativeLibraryFinderFactory()));
         appFactory.setFailOnDisposeApplication(true);
         deploymentService.setAppFactory(appFactory);
         deploymentService.start();
@@ -1951,7 +1969,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     {
         addPackedDomainFromResource(emptyDomainDescriptor.zipPath);
 
-        TestDomainFactory testDomainFactory = new TestDomainFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader()));
+        TestDomainFactory testDomainFactory = new TestDomainFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader(this.getClass().getClassLoader())));
         testDomainFactory.setFailOnStopApplication();
 
         deploymentService.setDomainFactory(testDomainFactory);
@@ -1971,7 +1989,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     {
         addPackedDomainFromResource(emptyDomainDescriptor.zipPath);
 
-        TestDomainFactory testDomainFactory = new TestDomainFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader()));
+        TestDomainFactory testDomainFactory = new TestDomainFactory(new MuleDomainClassLoaderRepository(createMuleClassLoader(this.getClass().getClassLoader())));
         testDomainFactory.setFailOnDisposeApplication();
         deploymentService.setDomainFactory(testDomainFactory);
         deploymentService.start();
@@ -3126,7 +3144,8 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     @Override
     public int getTestTimeoutSecs()
     {
-        return 120000;
+        //TODO(pablo.kraan): CCL - remove this
+        return 1200000;
     }
 
     /**

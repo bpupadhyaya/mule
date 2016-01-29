@@ -21,7 +21,7 @@ import org.mule.config.DefaultMuleConfiguration;
 import org.mule.config.i18n.CoreMessages;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.config.spring.util.ProcessingStrategyUtils;
-import org.mule.serialization.internal.JavaObjectSerializer;
+import org.mule.util.ClassUtils;
 
 import java.util.List;
 
@@ -134,9 +134,17 @@ public class MuleConfigurationConfigurator implements MuleContextAware, SmartFac
         ObjectSerializer configuredSerializer = config.getDefaultObjectSerializer();
         if (configuredSerializer == null)
         {
-            configuredSerializer = new JavaObjectSerializer();
-            ((MuleContextAware) configuredSerializer).setMuleContext(muleContext);
-            config.setDefaultObjectSerializer(configuredSerializer);
+
+            try
+            {
+                configuredSerializer = (ObjectSerializer) ClassUtils.instanciateClass("org.mule.module.kryo.KryoObjectSerializer", new Object[0]);
+                ((MuleContextAware) configuredSerializer).setMuleContext(muleContext);
+                config.setDefaultObjectSerializer(configuredSerializer);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
 
         configuration.setDefaultObjectSerializer(configuredSerializer);

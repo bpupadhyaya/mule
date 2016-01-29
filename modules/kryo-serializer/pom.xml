@@ -61,6 +61,11 @@
             <artifactId>mule-module-spring-config</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-subsystem</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--For the ParameterMap serializer-->
         <dependency>
             <groupId>org.mule.modules</groupId>

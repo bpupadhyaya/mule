@@ -7,7 +7,6 @@
 package org.mule.module.kryo;
 
 import org.mule.DefaultMuleEvent;
-import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleContext;
 import org.mule.api.lifecycle.LifecycleUtils;
 import org.mule.api.metadata.SimpleDataType;
@@ -69,7 +68,7 @@ final class KryoInstanceFactory
     private void addMuleSerializers(Kryo kryo, MuleContext muleContext) throws Exception
     {
         kryo.register(TypedValue.class, initSerializer(new TypedValueKryoSerializer(), muleContext));
-        kryo.register(DefaultMuleMessage.class, initSerializer(new MuleMessageKryoSerializer(kryo), muleContext));
+        //kryo.register(DefaultMuleMessage.class, initSerializer(new MuleMessageKryoSerializer(kryo), muleContext));
         kryo.register(DefaultMuleEvent.class, initSerializer(new MuleEventKryoSerializer(kryo), muleContext));
         kryo.register(CopyOnWriteCaseInsensitiveMap.class, new CopyOnWriteCaseInsensitiveMapSerializer());
         kryo.register(SimpleDataType.class, new SimpleDataTypeKryoSerializer());

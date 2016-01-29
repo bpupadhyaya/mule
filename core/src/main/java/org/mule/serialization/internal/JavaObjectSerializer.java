@@ -21,6 +21,7 @@ import java.io.Serializable;
  *
  * @since 3.7.0
  */
+//TODO(pablo.kraan): CCL - remove this class or it will be used on CE?
 public class JavaObjectSerializer extends AbstractObjectSerializer
 {
 

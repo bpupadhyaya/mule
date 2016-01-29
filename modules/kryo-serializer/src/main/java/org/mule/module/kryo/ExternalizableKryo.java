@@ -11,7 +11,6 @@ import org.mule.util.Preconditions;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Registration;
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.util.DefaultClassResolver;
 import com.esotericsoftware.kryo.util.DefaultStreamFactory;
 import com.esotericsoftware.kryo.util.MapReferenceResolver;
 
@@ -41,7 +40,7 @@ final class ExternalizableKryo extends Kryo
 
     public ExternalizableKryo()
     {
-        super(new DefaultClassResolver(), new MapReferenceResolver(), new DefaultStreamFactory());
+        super(new ModuleClassResolver(), new MapReferenceResolver(), new DefaultStreamFactory());
     }
 
     @Override

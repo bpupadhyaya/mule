@@ -12,6 +12,8 @@ import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.serialization.ObjectSerializer;
 import org.mule.api.serialization.SerializationException;
+import org.mule.module.kryo.compression.KryoCompressionMode;
+import org.mule.module.kryo.compression.KryoCompressor;
 import org.mule.serialization.internal.AbstractObjectSerializer;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -20,8 +22,6 @@ import com.esotericsoftware.kryo.io.Output;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import org.mule.module.kryo.compression.KryoCompressionMode;
-import org.mule.module.kryo.compression.KryoCompressor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ public final class KryoObjectSerializer extends AbstractObjectSerializer impleme
 {
 
     private final KryoInstanceFactory kryoInstanceFactory = new KryoInstanceFactory();
-    private LoadingCache<Thread, Kryo> kryoInstances;
+        private LoadingCache<Thread, Kryo> kryoInstances;
     private final KryoCompressor compressor;
 
     /**
@@ -64,6 +64,15 @@ public final class KryoObjectSerializer extends AbstractObjectSerializer impleme
     {
         checkArgument(compressionMode != null, "Cannot have a null compressionMode");
         compressor = compressionMode.getCompressor();
+        //TODO(pablo.kraan): CCL - added just to make it work
+        try
+        {
+            initialise();
+        }
+        catch (InitialisationException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
