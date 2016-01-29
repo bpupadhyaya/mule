@@ -6,6 +6,7 @@
  */
 package org.mule.module.launcher;
 
+import org.mule.module.classloader.Module;
 import org.mule.module.launcher.artifact.AbstractArtifactClassLoader;
 import org.mule.module.launcher.artifact.ArtifactClassLoader;
 import org.mule.module.reboot.MuleContainerBootstrapUtils;
@@ -32,9 +33,9 @@ public class MuleSharedDomainClassLoader extends AbstractArtifactClassLoader imp
     private File domainLibraryFolder;
 
     @SuppressWarnings("unchecked")
-    public MuleSharedDomainClassLoader(String domain, ClassLoader parent)
+    public MuleSharedDomainClassLoader(String domain, ClassLoader parent, Module module)
     {
-        super(parent, new URL[0]);
+        super(parent, new URL[0], module);
         try
         {
             if (domain == null)

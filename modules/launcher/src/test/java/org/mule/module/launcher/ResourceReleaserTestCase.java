@@ -104,7 +104,7 @@ public class ResourceReleaserTestCase extends AbstractMuleTestCase
 
         public TestMuleApplicationClassLoader(ClassLoader parentCl)
         {
-            super("APP-NAME", parentCl, null, CLASSPATH_EMPTY);
+            super("APP-NAME", parentCl, null, CLASSPATH_EMPTY, null);
         }
 
         @Override
@@ -128,7 +128,7 @@ public class ResourceReleaserTestCase extends AbstractMuleTestCase
 
         public TestMuleSharedDomainClassLoader()
         {
-            super("DOMAIN-NAME", Thread.currentThread().getContextClassLoader());
+            super("DOMAIN-NAME", Thread.currentThread().getContextClassLoader(), null);
         }
 
         @Override

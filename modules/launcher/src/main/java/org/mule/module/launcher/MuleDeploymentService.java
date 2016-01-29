@@ -10,8 +10,10 @@ import static org.mule.module.classloader.MuleClassLoaderFactory.createMuleClass
 import static org.mule.module.launcher.ArtifactDeploymentTemplate.NOP_ARTIFACT_DEPLOYMENT_TEMPLATE;
 import static org.mule.module.launcher.DefaultArchiveDeployer.ZIP_FILE_SUFFIX;
 
-import org.mule.module.classloader.Module;
+import org.mule.module.classloader.ModuleTracker;
 import org.mule.module.classloader.MuleClassLoaderFactory;
+import org.mule.module.classloader.MuleModule;
+import org.mule.module.descriptor.ModuleDescriptor;
 import org.mule.module.launcher.application.Application;
 import org.mule.module.launcher.application.ApplicationClassLoaderFactory;
 import org.mule.module.launcher.application.ApplicationFactory;
@@ -72,7 +74,10 @@ public class MuleDeploymentService implements DeploymentService
     public MuleDeploymentService(PluginClassLoaderManager pluginClassLoaderManager)
     {
         final ClassLoader systemClassLoader = MuleClassLoaderFactory.class.getClassLoader();
-        Module.getInstance().addModule("mule-core", systemClassLoader);
+        final ModuleDescriptor muleCoreDescriptor = new ModuleDescriptor("mule-core");
+        final MuleModule muleModule = new MuleModule(muleCoreDescriptor);
+        muleModule.setClassLoader(systemClassLoader);
+        ModuleTracker.getInstance().addModule(muleModule);
         final ClassLoader muleClassLoader = createMuleClassLoader(systemClassLoader);
 
         DomainClassLoaderRepository domainClassLoaderRepository = new MuleDomainClassLoaderRepository(muleClassLoader);

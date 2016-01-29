@@ -56,7 +56,7 @@ public class MuleSharedDomainClassLoaderTestCase extends AbstractMuleTestCase
         createOldDomainFolder(DEFAULT_DOMAIN_NAME);
         createDomainFolder(DEFAULT_DOMAIN_NAME);
         createOldDomainResource(DEFAULT_DOMAIN_NAME, RESOURCE_FILE_NAME);
-        MuleSharedDomainClassLoader classLoader = new MuleSharedDomainClassLoader(DEFAULT_DOMAIN_NAME, getClass().getClassLoader());
+        MuleSharedDomainClassLoader classLoader = new MuleSharedDomainClassLoader(DEFAULT_DOMAIN_NAME, getClass().getClassLoader(), null);
         assertThat(classLoader.findResource(RESOURCE_FILE_NAME), notNullValue());
     }
 
@@ -65,7 +65,7 @@ public class MuleSharedDomainClassLoaderTestCase extends AbstractMuleTestCase
     {
         createDomainFolder(DEFAULT_DOMAIN_NAME);
         createDomainResource(DEFAULT_DOMAIN_NAME, RESOURCE_FILE_NAME);
-        MuleSharedDomainClassLoader classLoader = new MuleSharedDomainClassLoader(DEFAULT_DOMAIN_NAME, getClass().getClassLoader());
+        MuleSharedDomainClassLoader classLoader = new MuleSharedDomainClassLoader(DEFAULT_DOMAIN_NAME, getClass().getClassLoader(), null);
         assertThat(classLoader.findResource(RESOURCE_FILE_NAME), notNullValue());
     }
 
@@ -73,7 +73,7 @@ public class MuleSharedDomainClassLoaderTestCase extends AbstractMuleTestCase
     public void failIfDomainFolderCanNotBeCreated() throws Exception
     {
         System.setProperty(MuleProperties.MULE_HOME_DIRECTORY_PROPERTY, "not a valid folder");
-        new MuleSharedDomainClassLoader(DEFAULT_DOMAIN_NAME, getClass().getClassLoader());
+        new MuleSharedDomainClassLoader(DEFAULT_DOMAIN_NAME, getClass().getClassLoader(), null);
     }
 
 

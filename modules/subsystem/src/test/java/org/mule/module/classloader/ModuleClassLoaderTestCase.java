@@ -29,7 +29,7 @@ public class ModuleClassLoaderTestCase extends AbstractMuleTestCase
     @Test
     public void acceptsNullClassesFolder() throws Exception
     {
-        new ModuleClassLoader(null, new URL[0]);
+        new ModuleClassLoader(null, new URL[0], null);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class ModuleClassLoaderTestCase extends AbstractMuleTestCase
     {
         ClassLoader parentClassLoader = getContextClassLoader();
 
-        ModuleClassLoader pluginClassLoader = new ModuleClassLoader(parentClassLoader, new URL[0]);
+        ModuleClassLoader pluginClassLoader = new ModuleClassLoader(parentClassLoader, new URL[0], null);
         Class<?> aClass = pluginClassLoader.loadClass(this.getClass().getName());
         assertEquals(this.getClass(), aClass);
     }
@@ -46,7 +46,7 @@ public class ModuleClassLoaderTestCase extends AbstractMuleTestCase
     public void addsURLsToClassLoaderUrls() throws Exception
     {
         URL expectedUrl = classesFolder.getRoot().toURI().toURL();
-        ModuleClassLoader pluginClassLoader = new ModuleClassLoader(null, new URL[] {expectedUrl});
+        ModuleClassLoader pluginClassLoader = new ModuleClassLoader(null, new URL[] {expectedUrl}, null);
         assertThat(pluginClassLoader.getURLs().length, equalTo(1));
         assertThat(pluginClassLoader.getURLs()[0], equalTo(expectedUrl));
     }

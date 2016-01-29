@@ -6,6 +6,7 @@
  */
 package org.mule.module.launcher.artifact;
 
+import org.mule.module.classloader.Module;
 import org.mule.module.classloader.ModuleClassLoader;
 import org.mule.module.descriptor.LoaderOverride;
 import org.mule.module.launcher.DirectoryResourceLocator;
@@ -36,14 +37,14 @@ public abstract class AbstractArtifactClassLoader extends ModuleClassLoader impl
 
     private String resourceReleaserClassLocation = DEFAULT_RESOURCE_RELEASER_CLASS_LOCATION;
 
-    public AbstractArtifactClassLoader(ClassLoader parent, URL[] urls)
+    public AbstractArtifactClassLoader(ClassLoader parent, URL[] urls, Module module)
     {
-        this(parent, urls, LoaderOverride.NULL_LOADER_OVERRIDE);
+        this(parent, urls, LoaderOverride.NULL_LOADER_OVERRIDE, module);
     }
 
-    public AbstractArtifactClassLoader(ClassLoader parent, URL[] urls, LoaderOverride loaderOverride)
+    public AbstractArtifactClassLoader(ClassLoader parent, URL[] urls, LoaderOverride loaderOverride, Module module)
     {
-        super(parent, urls, loaderOverride);
+        super(parent, urls, loaderOverride, module);
     }
 
     @Override

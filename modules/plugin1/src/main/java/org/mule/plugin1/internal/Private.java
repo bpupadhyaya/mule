@@ -5,12 +5,20 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.classloader;
+package org.mule.plugin1.internal;
 
-public interface Module
+public class Private
 {
 
-    String getName();
+    private final String name;
 
-    Class<?> loadClass(String name) throws ClassNotFoundException;
+    public Private(String name)
+    {
+        this.name = name;
+    }
+
+    public String sayHi()
+    {
+        return "Hi " + name;
+    }
 }

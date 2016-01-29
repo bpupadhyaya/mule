@@ -32,7 +32,7 @@ public class SynchronizedFineGrainedControlClassLoaderTestCase extends AbstractM
 
     protected ClassLoader createClassLoader()
     {
-        return new FineGrainedControlClassLoader(new URL[] {}, new TestClassLoader());
+        return new FineGrainedControlClassLoader(new URL[] {}, new TestClassLoader(), null);
     }
 
     private void doLoadClassSynchronizationTest(ClassLoader classLoader) throws InterruptedException

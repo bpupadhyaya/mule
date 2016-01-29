@@ -7,10 +7,9 @@
 
 package org.mule.module.classloader;
 
-public interface Module
+public interface ModuleReference
 {
 
-    String getName();
 
-    Class<?> loadClass(String name) throws ClassNotFoundException;
+    Module getModule();
 }

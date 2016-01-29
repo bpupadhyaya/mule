@@ -46,6 +46,7 @@
         <module>tomcat</module>
         <module>ws</module>
         <module>xml</module>
+        <module>plugin1</module>
     </modules>
 
     <build>

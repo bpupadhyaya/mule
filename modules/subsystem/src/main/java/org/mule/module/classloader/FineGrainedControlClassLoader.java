@@ -13,22 +13,24 @@ import java.net.URL;
 /**
  * TODO document overrides, blocked, systemPackages and syntax for specifying those.
  */
-public class FineGrainedControlClassLoader extends GoodCitizenClassLoader
+public class FineGrainedControlClassLoader extends GoodCitizenClassLoader implements ModuleReference
 {
 
     protected String appName;
 
     protected final LoaderOverride loaderOverride;
+    private final Module module;
 
-    public FineGrainedControlClassLoader(URL[] urls, ClassLoader parent)
+    public FineGrainedControlClassLoader(URL[] urls, ClassLoader parent, Module module)
     {
-        this(urls, parent, LoaderOverride.NULL_LOADER_OVERRIDE);
+        this(urls, parent, LoaderOverride.NULL_LOADER_OVERRIDE, module);
     }
 
-    public FineGrainedControlClassLoader(URL[] urls, ClassLoader parent, LoaderOverride loaderOverride)
+    public FineGrainedControlClassLoader(URL[] urls, ClassLoader parent, LoaderOverride loaderOverride, Module module)
     {
         super(urls, parent);
         this.loaderOverride = loaderOverride;
+        this.module = module;
     }
 
     @Override
@@ -107,4 +109,9 @@ public class FineGrainedControlClassLoader extends GoodCitizenClassLoader
         return super.findClass(name);
     }
 
+    @Override
+    public Module getModule()
+    {
+        return module;
+    }
 }

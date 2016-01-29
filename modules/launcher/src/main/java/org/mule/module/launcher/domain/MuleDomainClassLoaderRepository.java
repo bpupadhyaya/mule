@@ -7,6 +7,8 @@
 package org.mule.module.launcher.domain;
 
 import org.mule.config.i18n.CoreMessages;
+import org.mule.module.classloader.Module;
+import org.mule.module.classloader.MuleModule;
 import org.mule.module.launcher.DeploymentException;
 import org.mule.module.launcher.MuleSharedDomainClassLoader;
 import org.mule.module.launcher.artifact.ArtifactClassLoader;
@@ -44,7 +46,10 @@ public class MuleDomainClassLoaderRepository implements DomainClassLoaderReposit
             return domainArtifactClassLoaders.get(domain);
         }
         validateDomain(domain);
-        ArtifactClassLoader classLoader = new MuleSharedDomainClassLoader(domain, muleClassLoader);
+        //TODO(pablo.kraan): CCL - waht classlaoder must set on the module?
+        //TODO(pablo.kraan): CCL - need a descriptor for the domain?
+        final MuleModule module = new MuleModule(null);
+        ArtifactClassLoader classLoader = new MuleSharedDomainClassLoader(domain, muleClassLoader, module);
         classLoader = createClassLoaderUnregisterWrapper(classLoader);
         domainArtifactClassLoaders.put(domain, classLoader);
         return classLoader;
@@ -57,7 +62,12 @@ public class MuleDomainClassLoaderRepository implements DomainClassLoaderReposit
         {
             return defaultDomainArtifactClassLoader;
         }
-        ArtifactClassLoader classLoader = new MuleSharedDomainClassLoader(DomainFactory.DEFAULT_DOMAIN_NAME, muleClassLoader);
+        //TODO(pablo.kraan): CCL - which classloader must set on the module?
+        //TODO(pablo.kraan): CCL - need a descriptor for the domain?
+        final Module module = new MuleModule(null);
+        //TODO(pablo.kraan): CCL - track the module once it has a descriptor
+        //ModuleTracker.getInstance().addModule(module);
+        ArtifactClassLoader classLoader = new MuleSharedDomainClassLoader(DomainFactory.DEFAULT_DOMAIN_NAME, muleClassLoader, module);
         defaultDomainArtifactClassLoader = createClassLoaderUnregisterWrapper(classLoader);
         return defaultDomainArtifactClassLoader;
     }

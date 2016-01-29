@@ -6,6 +6,7 @@
  */
 package org.mule.module.launcher;
 
+import org.mule.module.classloader.Module;
 import org.mule.module.descriptor.LoaderOverride;
 import org.mule.module.launcher.application.ApplicationClassLoader;
 import org.mule.module.launcher.artifact.AbstractArtifactClassLoader;
@@ -46,14 +47,14 @@ public class MuleApplicationClassLoader extends AbstractArtifactClassLoader impl
     private final File classesDir;
     private final NativeLibraryFinder nativeLibraryFinder;
 
-    public MuleApplicationClassLoader(String appName, ClassLoader parentCl, NativeLibraryFinder nativeLibraryFinder, URL[] urls)
+    public MuleApplicationClassLoader(String appName, ClassLoader parentCl, NativeLibraryFinder nativeLibraryFinder, URL[] urls, Module module)
     {
-        this(appName, parentCl, nativeLibraryFinder, urls, LoaderOverride.NULL_LOADER_OVERRIDE);
+        this(appName, parentCl, nativeLibraryFinder, urls, LoaderOverride.NULL_LOADER_OVERRIDE, module);
     }
 
-    public MuleApplicationClassLoader(String appName, ClassLoader parentCl, NativeLibraryFinder nativeLibraryFinder, URL[] urls, LoaderOverride loaderOverride)
+    public MuleApplicationClassLoader(String appName, ClassLoader parentCl, NativeLibraryFinder nativeLibraryFinder, URL[] urls, LoaderOverride loaderOverride, Module module)
     {
-        super(parentCl, urls, loaderOverride);
+        super(parentCl, urls, loaderOverride, module);
         this.appName = appName;
         this.nativeLibraryFinder = nativeLibraryFinder;
 

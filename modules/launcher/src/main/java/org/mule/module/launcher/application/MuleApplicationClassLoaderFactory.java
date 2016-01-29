@@ -9,6 +9,8 @@ package org.mule.module.launcher.application;
 import org.mule.api.config.MuleProperties;
 import org.mule.module.classloader.AbstractModuleClassLoaderFactory;
 import org.mule.module.classloader.GoodCitizenClassLoader;
+import org.mule.module.classloader.ModuleTracker;
+import org.mule.module.classloader.MuleModule;
 import org.mule.module.launcher.MuleApplicationClassLoader;
 import org.mule.module.launcher.artifact.ArtifactClassLoader;
 import org.mule.module.launcher.descriptor.ApplicationDescriptor;
@@ -60,7 +62,11 @@ public class MuleApplicationClassLoaderFactory extends AbstractModuleClassLoader
         File perAppLibs = new File(muleLibs, MuleApplicationClassLoader.PATH_PER_APP);
         loadJarsFromFolder(urls, perAppLibs);
 
-        return new MuleApplicationClassLoader(descriptor.getName(), parent, nativeLibraryFinderFactory.create(descriptor.getName()), urls.toArray(new URL[0]), descriptor.getLoaderOverride());
+        final MuleModule module = new MuleModule(descriptor);
+        final MuleApplicationClassLoader applicationClassLoader = new MuleApplicationClassLoader(descriptor.getName(), parent, nativeLibraryFinderFactory.create(descriptor.getName()), urls.toArray(new URL[0]), descriptor.getLoaderOverride(), module);
+        module.setClassLoader(applicationClassLoader);
+        ModuleTracker.getInstance().addModule(module);
+        return applicationClassLoader;
     }
 
     private ClassLoader getParentClassLoader(ApplicationDescriptor descriptor)

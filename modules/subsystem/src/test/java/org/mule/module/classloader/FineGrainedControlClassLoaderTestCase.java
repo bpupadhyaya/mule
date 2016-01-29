@@ -28,7 +28,7 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
     {
         URLClassLoader parent = new URLClassLoader(new URL[] { hello() }, Thread.currentThread().getContextClassLoader());
 
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent);
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, null);
         assertEquals("Bye", callHi(ext));
     }
 
@@ -39,7 +39,7 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
 
         LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("mypackage"), Collections.EMPTY_SET);
 
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride);
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride, null);
 
         assertEquals("Hello", callHi(ext));
     }
@@ -51,7 +51,7 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
 
         LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.singleton("mypackage"), Collections.EMPTY_SET);
 
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, loaderOverride);
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, loaderOverride, null);
         assertEquals("Hello", callHi(ext));
     }
 
@@ -62,7 +62,7 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
 
         LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.singleton("mypackage"));
 
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride);
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride, null);
         assertEquals("Bye", callHi(ext));
     }
 
@@ -73,7 +73,7 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
 
         LoaderOverride loaderOverride = new LoaderOverride(Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.singleton("mypackage"));
 
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, loaderOverride);
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[0], parent, loaderOverride, null);
         callHi(ext);
     }
 
@@ -84,7 +84,7 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
 
         LoaderOverride loaderOverride = new LoaderOverride(Collections.singleton("mypackage"), Collections.EMPTY_SET, Collections.EMPTY_SET);
 
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride);
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] { bye() }, parent, loaderOverride, null);
 
         assertEquals("Hello", callHi(ext));
     }
@@ -96,7 +96,7 @@ public class FineGrainedControlClassLoaderTestCase extends AbstractMuleTestCase
 
         LoaderOverride loaderOverride = new LoaderOverride(Collections.singleton("mypackage"), Collections.EMPTY_SET, Collections.EMPTY_SET);
 
-        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] {bye()}, parent, loaderOverride);
+        FineGrainedControlClassLoader ext = new FineGrainedControlClassLoader(new URL[] {bye()}, parent, loaderOverride, null);
 
         callHi(ext);
     }

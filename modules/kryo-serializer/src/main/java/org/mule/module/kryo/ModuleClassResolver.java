@@ -8,6 +8,8 @@
 package org.mule.module.kryo;
 
 import org.mule.module.classloader.Module;
+import org.mule.module.classloader.ModuleReference;
+import org.mule.module.classloader.ModuleTracker;
 
 import com.esotericsoftware.kryo.ClassResolver;
 import com.esotericsoftware.kryo.Kryo;
@@ -140,7 +142,14 @@ public class ModuleClassResolver implements ClassResolver
         this.classToNameId.put(type, nameId);
         output.writeVarInt(nameId, true);
         output.writeString(type.getName());
-        output.writeString("mule-core");
+
+        //TODO(pablo.kraan): CCL - define a better name and use a constant
+        String moduleName = "mule-core";
+        if (type.getClassLoader() instanceof ModuleReference)
+        {
+            moduleName = ((ModuleReference) type.getClassLoader()).getModule().getName();
+        }
+        output.writeString(moduleName);
     }
 
     public Registration readClass(Input input) {
@@ -189,8 +198,10 @@ public class ModuleClassResolver implements ClassResolver
             if(type == null) {
                 try {
                     //TODO(pablo.kraan): CCL - need to obtain module classloader here instead of using kryo's
-                    final ClassLoader moduleClassLoader = Module.getInstance().getClassLoader(moduleId);
-                    type = Class.forName(className, false, moduleClassLoader);
+                    final Module module = ModuleTracker.getInstance().getModule(moduleId);
+                    //final ClassLoader moduleClassLoader = ModuleTracker.getInstance().getClassLoader(moduleId);
+                    //type = Class.forName(className, false, moduleClassLoader);
+                    type = module.loadClass(className);
                 } catch (ClassNotFoundException var6) {
                     throw new KryoException("Unable to find class: " + moduleClassName, var6);
                 }
@@ -214,7 +225,14 @@ public class ModuleClassResolver implements ClassResolver
     }
 
     protected Class<?> getTypeByName(String className) {
-        return this.nameToClass != null?(Class)this.nameToClass.get(className):null;
+        if (this.nameToClass != null)
+        {
+            return (Class) this.nameToClass.get(className);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public void reset() {

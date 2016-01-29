@@ -115,6 +115,7 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     private static final ArtifactDescriptor dummyAppWithSelfishPluginDescriptor = new ArtifactDescriptor("dummyWithSelfishPlugin", "/dummyWithSelfishPlugin.zip", "/dummyWithSelfishPlugin", null, null);
     private static final ArtifactDescriptor salesforceAppDescriptor = new ArtifactDescriptor("salesforce-app", "/salesforce-app.zip", "/salesforce-app", null, null);
     private static final ArtifactDescriptor serializationAppDescriptor = new ArtifactDescriptor("serialization-app", "/serialization-app.zip", "/serialization-app", null, null);
+    private static final ArtifactDescriptor serializationPluginAppDescriptor = new ArtifactDescriptor("plugin-serialization-app", "/plugin-serialization-app.zip", "/plugin-serialization-app", null, null);
 
     //Domain constants
     private static final ArtifactDescriptor brokenDomainDescriptor = new ArtifactDescriptor("brokenDomain", "/broken-domain.zip", null, "brokenDomain.zip", "/broken-config.xml");
@@ -271,6 +272,22 @@ public class DeploymentServiceTestCase extends AbstractMuleContextTestCase
     public void deserializesPrivateClass() throws Exception
     {
         final ArtifactDescriptor appDescriptor = DeploymentServiceTestCase.serializationAppDescriptor;
+
+        addPackedAppFromResource(appDescriptor.zipPath);
+
+        deploymentService.start();
+
+        assertApplicationDeploymentSuccess(applicationDeploymentListener, appDescriptor.id);
+        assertAppsDir(NONE, new String[] {appDescriptor.id}, true);
+        assertApplicationAnchorFileExists(appDescriptor.id);
+
+        Thread.sleep(10000);
+    }
+
+    @Test
+    public void deserializesPrivatePluginClass() throws Exception
+    {
+        final ArtifactDescriptor appDescriptor = DeploymentServiceTestCase.serializationPluginAppDescriptor;
 
         addPackedAppFromResource(appDescriptor.zipPath);
 

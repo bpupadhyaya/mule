@@ -80,12 +80,12 @@ public class MuleApplicationClassLoaderTestCase extends AbstractMuleTestCase
         FileUtils.stringToFile(new File(domainDir, RESOURCE_JUST_IN_DOMAIN).getAbsolutePath(), "Some text");
 
         // Create app class loader
-        domainCL = new MuleSharedDomainClassLoader(DOMAIN_NAME, Thread.currentThread().getContextClassLoader());
+        domainCL = new MuleSharedDomainClassLoader(DOMAIN_NAME, Thread.currentThread().getContextClassLoader(), null);
         List<URL> urls = new ArrayList<>();
         urls.add(classesDir.toURI().toURL());
         urls.add(jarFile.toURI().toURL());
 
-        appCL = new MuleApplicationClassLoader(APP_NAME, domainCL, null, urls.toArray(new URL[0]));
+        appCL = new MuleApplicationClassLoader(APP_NAME, domainCL, null, urls.toArray(new URL[0]), null);
     }
 
     private File createDirectory(String format, Object... args)

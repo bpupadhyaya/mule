@@ -31,6 +31,7 @@ import sun.net.www.protocol.jar.Handler;
 public class GoodCitizenClassLoader extends URLClassLoader implements DisposableClassLoader
 {
 
+    //TODO(pablo.kraan): CCL - is this classlaoder class still needed?
     public GoodCitizenClassLoader(URL[] urls, ClassLoader parent)
     {
         super(urls, parent, new NonCachingURLStreamHandlerFactory());

@@ -17,13 +17,13 @@ import java.net.URL;
 public class ModuleClassLoader extends FineGrainedControlClassLoader
 {
 
-    public ModuleClassLoader(ClassLoader parent, URL[] urls)
+    public ModuleClassLoader(ClassLoader parent, URL[] urls, Module module)
     {
-        this(parent, urls, LoaderOverride.NULL_LOADER_OVERRIDE);
+        this(parent, urls, LoaderOverride.NULL_LOADER_OVERRIDE, module);
     }
 
-    public ModuleClassLoader(ClassLoader parent, URL[] urls, LoaderOverride loaderOverride)
+    public ModuleClassLoader(ClassLoader parent, URL[] urls, LoaderOverride loaderOverride, Module module)
     {
-        super(urls, parent, loaderOverride);
+        super(urls, parent, loaderOverride, module);
     }
 }

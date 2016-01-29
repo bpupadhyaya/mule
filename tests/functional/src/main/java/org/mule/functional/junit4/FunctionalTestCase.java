@@ -30,7 +30,6 @@ import org.mule.construct.AbstractPipeline;
 import org.mule.construct.Flow;
 import org.mule.functional.functional.FlowAssert;
 import org.mule.functional.functional.FunctionalTestComponent;
-import org.mule.module.classloader.Module;
 import org.mule.processor.chain.SubflowInterceptingChainLifecycleWrapper;
 import org.mule.tck.SensingNullReplyToHandler;
 import org.mule.tck.junit4.AbstractMuleContextTestCase;
@@ -77,8 +76,7 @@ public abstract class FunctionalTestCase extends AbstractMuleContextTestCase
     protected ClassLoader getExecutionClassLoader()
     {
         final ClassLoader classLoader = this.getClass().getClassLoader();
-        Module.getInstance().addModule("mule-core", classLoader);
-
+        //TODO(pablo.kraan): CCL - need to define a module for tests?
         return createMuleClassLoader(classLoader);
     }
 

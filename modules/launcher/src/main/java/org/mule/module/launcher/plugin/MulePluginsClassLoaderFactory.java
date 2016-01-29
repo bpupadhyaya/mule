@@ -11,6 +11,8 @@ import org.mule.module.classloader.CompositeClassLoader;
 import org.mule.module.classloader.FilteringModuleClassLoader;
 import org.mule.module.classloader.ModuleClassLoader;
 import org.mule.module.classloader.ModuleClassLoaderFilter;
+import org.mule.module.classloader.ModuleTracker;
+import org.mule.module.classloader.MuleModule;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,7 +42,10 @@ public class MulePluginsClassLoaderFactory
 
             System.arraycopy(descriptor.getRuntimeLibs(), 0, urls, 1, descriptor.getRuntimeLibs().length);
 
-            ModuleClassLoader moduleClassLoader = new ModuleClassLoader(parent, urls, descriptor.getLoaderOverride());
+            final MuleModule module = new MuleModule(descriptor);
+            ModuleClassLoader moduleClassLoader = new ModuleClassLoader(parent, urls, descriptor.getLoaderOverride(), module);
+            module.setClassLoader(moduleClassLoader);
+            ModuleTracker.getInstance().addModule(module);
             ModuleClassLoaderFilter filter = new ModuleClassLoaderFilter(descriptor);
 
             classLoaders.add(new FilteringModuleClassLoader(descriptor.getName(), moduleClassLoader, filter));

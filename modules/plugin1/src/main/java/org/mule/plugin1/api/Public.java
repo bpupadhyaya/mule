@@ -5,12 +5,15 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.classloader;
+package org.mule.plugin1.api;
 
-public interface Module
+import org.mule.plugin1.internal.Private;
+
+public class Public
 {
 
-    String getName();
-
-    Class<?> loadClass(String name) throws ClassNotFoundException;
+    public Object getMoncho()
+    {
+        return new Private("Moncho");
+    }
 }

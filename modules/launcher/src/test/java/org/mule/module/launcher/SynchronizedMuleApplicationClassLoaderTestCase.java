@@ -14,6 +14,6 @@ public class SynchronizedMuleApplicationClassLoaderTestCase  extends Synchronize
 
     protected ClassLoader createClassLoader()
     {
-        return new MuleApplicationClassLoader("test", new TestClassLoader(), null, MuleApplicationClassLoader.CLASSPATH_EMPTY);
+        return new MuleApplicationClassLoader("test", new TestClassLoader(), null, MuleApplicationClassLoader.CLASSPATH_EMPTY, null);
     }
 }

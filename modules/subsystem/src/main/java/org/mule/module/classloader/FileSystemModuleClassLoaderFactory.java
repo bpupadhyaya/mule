@@ -52,7 +52,11 @@ public class FileSystemModuleClassLoaderFactory extends AbstractModuleClassLoade
         addDirectoryToClassLoader(urls, new File(rootFolder, CLASSES_DIR));
         loadJarsFromFolder(urls, new File(rootFolder, LIB_DIR));
 
-        return new ModuleClassLoader(parentClassLoader, urls.toArray(new URL[0]), descriptor.getLoaderOverride());
+        final MuleModule module = new MuleModule(descriptor);
+        final ModuleClassLoader moduleClassLoader = new ModuleClassLoader(parentClassLoader, urls.toArray(new URL[0]), descriptor.getLoaderOverride(), module);
+        module.setClassLoader(moduleClassLoader);
+        ModuleTracker.getInstance().addModule(module);
+        return moduleClassLoader;
     }
 
 }
